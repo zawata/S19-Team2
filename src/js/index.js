@@ -1,6 +1,7 @@
 import * as THREE from './three.js'
 import OrbitControls from './OrbitControls.js'
 import earthTextureImg from '../earthmap1k.jpg'
+import totallyMoonTexture from '../plutomap1k.jpg'
 import bumpImg from '../earthbump1k.jpg'
 
 // Class-like promise loader
@@ -67,6 +68,22 @@ loadTexture(earthTextureImg, new THREE.TextureLoader()).then((earthTexture) => {
     earthMesh.rotation.x += 0.5;
     earthMesh.position.x += 5;
     scene.add(earthMesh);
+}).catch((err) => {
+    console.log(err);
+});
+
+// Create moon object (ssshhh.... i'm actually using a pluto texture)
+let moonMesh;
+loadTexture(totallyMoonTexture, new THREE.TextureLoader()).then((moonTexture) => {
+    debugger;
+    let moonGeo = new THREE.SphereGeometry(0.1, 32, 32);
+    let moonMaterial = new THREE.MeshBasicMaterial({
+        map : 	moonTexture,
+    });
+    moonMesh = new THREE.Mesh(moonGeo, moonMaterial);
+    moonMesh.position.x += 6;
+    moonMesh.position.y += 0.2;
+    scene.add(moonMesh);
 }).catch((err) => {
     console.log(err);
 });
