@@ -1,9 +1,9 @@
-import * as THREE from '../three.js'
-import earthTextureImg from '../../earthmap1k.jpg'
+import * as THREE from '../three';
+import earthTextureImg from '../../earthmap1k.jpg';
 
 // Function-like promise loader
-const loadTexture = (path, loader, onProgress) => {
-    return new Promise( (resolve, reject) => {
+const loadTexture = (path, loader, onProgress) => { 
+    return new Promise((resolve, reject) => {
         loader.load(path, resolve, onProgress, reject);
     });
 }
@@ -17,7 +17,7 @@ export default class Earth {
         return loadTexture(earthTextureImg, new THREE.TextureLoader()).then((earthTexture) => {
             let earthGeo = new THREE.SphereGeometry(this.size, 32, 32);
             let earthMaterial = new THREE.MeshBasicMaterial({
-                map : 	earthTexture,
+                map:    earthTexture,
             });
             let earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
             earthMesh.rotation.x += 0.5;

@@ -1,9 +1,7 @@
-import * as THREE from './three.js'
-import OrbitControls from './OrbitControls.js'
-import earthTextureImg from '../earthmap1k.jpg'
-import totallyMoonTexture from '../plutomap1k.jpg'
-import bumpImg from '../earthbump1k.jpg'
+import * as THREE from './three'
+import OrbitControls from './OrbitControls'
 import Earth from './models/earth'
+import Moon from './models/moon'
 
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
@@ -21,7 +19,7 @@ const promisifyLoader = (loader, onProgress) => {
 
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         loader.load(path, resolve, onProgress, reject);
     });
 }
@@ -49,7 +47,7 @@ scene.add(ambientLight);
 let axesHelper = new THREE.AxesHelper( 5 );
 scene.add( axesHelper );
 
-// Create wire-frame object and add to the scene
+// Create wire-frame 'sun' and add to the scene
 let geometry = new THREE.SphereGeometry( 3, 32, 32 );
 let material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: true} );
 let sphere = new THREE.Mesh( geometry, material );
@@ -64,18 +62,10 @@ earth.load().then((earthMesh) => {
 });
 
 // Create moon object (ssshhh.... i'm actually using a pluto texture)
-let moonMesh;
-loadTexture(totallyMoonTexture, new THREE.TextureLoader()).then((moonTexture) => {
-    let moonGeo = new THREE.SphereGeometry(0.1, 32, 32);
-    let moonMaterial = new THREE.MeshBasicMaterial({
-        map : 	moonTexture,
-    });
-    moonMesh = new THREE.Mesh(moonGeo, moonMaterial);
-    moonMesh.position.x += 6;
-    moonMesh.position.y += 0.2;
-    scene.add(moonMesh);
-}).catch((err) => {
-    console.log(err);
+let moon = new Moon(0.1);
+moon.load().then((moonMesh) => {
+    moon = moonMesh;
+    scene.add(moon);
 });
 
 // Create axis of rotation
