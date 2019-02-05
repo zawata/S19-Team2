@@ -3,6 +3,7 @@ import OrbitControls from './OrbitControls.js'
 import earthTextureImg from '../earthmap1k.jpg'
 import totallyMoonTexture from '../plutomap1k.jpg'
 import bumpImg from '../earthbump1k.jpg'
+import Earth from './models/earth'
 
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
@@ -56,26 +57,15 @@ sphere.rotation.x += 0.5;
 scene.add( sphere );
 
 // Create earth object
-let earthMesh;
-let earthMaterial;
-loadTexture(earthTextureImg, new THREE.TextureLoader()).then((earthTexture) => {
-    debugger;
-    let earthGeo = new THREE.SphereGeometry(0.5, 32, 32);
-    let earthMaterial = new THREE.MeshBasicMaterial({
-        map : 	earthTexture,
-    });
-    earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
-    earthMesh.rotation.x += 0.5;
-    earthMesh.position.x += 5;
-    scene.add(earthMesh);
-}).catch((err) => {
-    console.log(err);
+let earth = new Earth(0.5);
+earth.load().then((earthMesh) => {
+    earth = earthMesh;
+    scene.add(earth);
 });
 
 // Create moon object (ssshhh.... i'm actually using a pluto texture)
 let moonMesh;
 loadTexture(totallyMoonTexture, new THREE.TextureLoader()).then((moonTexture) => {
-    debugger;
     let moonGeo = new THREE.SphereGeometry(0.1, 32, 32);
     let moonMaterial = new THREE.MeshBasicMaterial({
         map : 	moonTexture,
@@ -94,7 +84,7 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 // update function (runs on every frame)
 const update = () => {
     sphere.rotateOnAxis(axis, 0.01);
-    earthMesh.rotateOnAxis(axis, 0.01);
+    earth.rotateOnAxis(axis, 0.01);
 };
 
 // sends scene and camera props to renderer
@@ -110,37 +100,3 @@ const animate = () => {
 };
 
 animate();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Attempting to load bump map on top
-// let loadedEarthTexture;
-// loadTexture(earthTextureImg, new THREE.TextureLoader()).then((earthTexture) => {
-//     loadedEarthTexture = earthTexture;
-//     return loadTexture(bumpImg, new THREE.TextureLoader());
-// }).then((bumpTexture) => {
-//     debugger;
-//     earthMaterial = new THREE.MeshBasicMaterial({
-//         map: loadedEarthTexture,
-//         bumpMap: bumpTexture,
-//     });
-//     let earthGeo = new THREE.SphereGeometry(0.5, 32, 32);
-//     earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
-//     earthMesh.rotation.x += 0.5;
-//     earthMesh.position.x += 5;
-//     scene.add(earthMesh);
-// }).catch((err) => {
-//     console.log(err);
-// });
