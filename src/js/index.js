@@ -71,8 +71,13 @@ moon.load().then((moonMesh) => {
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
+const moonOrbitRadius = 1;
+
 // update function (runs on every frame)
 const update = () => {
+    let date = Date.now() * 0.0001;
+    moon.position.x = earth.position.x + Math.cos(date) * moonOrbitRadius;
+    moon.position.z = earth.position.z + Math.sin(date) * moonOrbitRadius;
     sphere.rotateOnAxis(axis, 0.01);
     earth.rotateOnAxis(axis, 0.01);
 };
