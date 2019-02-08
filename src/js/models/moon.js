@@ -15,12 +15,13 @@ export default class Moon {
 
     load() {
         return loadTexture(totallyMoonTexture, new THREE.TextureLoader()).then((moonTexture) => {
-            let geometry = new THREE.SphereGeometry(this.size, 32, 32);
+            let geometry = new THREE.SphereGeometry(this.size, 10, 10);
             let material = new THREE.MeshBasicMaterial({
                 map:    moonTexture,
             });
             let moon = new THREE.Mesh(geometry, material);
-            moon.position.x += 6;
+            moon.scale.set(1.25,1.25,1.25);
+            moon.position.x += 505;
             moon.position.y += 0.2;
             return moon;
         }).catch((err) => {

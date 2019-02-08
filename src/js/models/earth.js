@@ -20,8 +20,9 @@ export default class Earth {
                 map:    earthTexture,
             });
             let earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
-            earthMesh.rotation.x += 0.5;
-            earthMesh.position.x += 5;
+            earthMesh.scale.set(5,5,5);
+            earthMesh.rotation.x += 0.005;
+            earthMesh.position.x += 500;
             return earthMesh;
         }).catch((err) => {
             console.log(err);

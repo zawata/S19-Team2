@@ -51,6 +51,7 @@ scene.add( axesHelper );
 let geometry = new THREE.SphereGeometry( 3, 32, 32 );
 let material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: true} );
 let sphere = new THREE.Mesh( geometry, material );
+sphere.scale.set(50,50,50);
 sphere.rotation.x += 0.5;
 scene.add( sphere );
 
@@ -73,8 +74,9 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
 // update function (runs on every frame)
 const update = () => {
-    sphere.rotateOnAxis(axis, 0.01);
-    earth.rotateOnAxis(axis, 0.01);
+    sphere.rotateOnAxis(axis, 0.000);
+    earth.rotateOnAxis(axis, 0.002);
+    moon.rotateOnAxis(axis,0.002);
 };
 
 // sends scene and camera props to renderer
