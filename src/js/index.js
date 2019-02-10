@@ -28,6 +28,8 @@ const loadTexture = (path, loader, onProgress) => {
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 5; // set camera away from origin
+camera.position.x = 200;
+camera.position.y = 0;
 
 // Add mouse controls
 const controls = new OrbitControls(camera);
@@ -72,8 +74,8 @@ moon.load().then((moonMesh) => {
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
-const moonOrbitRadius = 1;
-const earthOrbitRaius = 6;
+const moonOrbitRadius = 5;
+const earthOrbitRaius = 200;
 
 // update function (runs on every frame)
 const update = () => {
