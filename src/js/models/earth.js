@@ -9,8 +9,9 @@ const loadTexture = (path, loader, onProgress) => {
 }
 
 export default class Earth {
-    constructor(size) {
+    constructor(size, earthScale) {
         this.size = size;
+        this.earthScale = earthScale;
     }
 
     load() {
@@ -20,8 +21,9 @@ export default class Earth {
                 map:    earthTexture,
             });
             let earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
-            earthMesh.rotation.x += 0.5;
-            earthMesh.position.x += 5;
+            earthMesh.scale.set(this.earthScale, this.earthScale, this.earthScale);
+            earthMesh.rotation.x += 0.005;
+            earthMesh.position.x += 500;
             return earthMesh;
         }).catch((err) => {
             console.log(err);

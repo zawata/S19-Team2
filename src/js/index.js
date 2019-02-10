@@ -3,6 +3,11 @@ import OrbitControls from './OrbitControls'
 import Earth from './models/earth'
 import Moon from './models/moon'
 
+// Constants
+const sunScale = 50;
+const earthScale = 5;
+const moonScale = 1.25;
+
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
 const promisifyLoader = (loader, onProgress) => {
@@ -28,6 +33,8 @@ const loadTexture = (path, loader, onProgress) => {
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 5; // set camera away from origin
+camera.position.x = 200;
+camera.position.y = 0;
 
 // Add mouse controls
 const controls = new OrbitControls(camera);
@@ -51,18 +58,19 @@ scene.add( axesHelper );
 let geometry = new THREE.SphereGeometry( 3, 32, 32 );
 let material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: true} );
 let sphere = new THREE.Mesh( geometry, material );
+sphere.scale.set(sunScale,sunScale,sunScale);
 sphere.rotation.x += 0.5;
 scene.add( sphere );
 
 // Create earth object
-let earth = new Earth(0.5);
+let earth = new Earth(0.5, earthScale);
 earth.load().then((earthMesh) => {
     earth = earthMesh;
     scene.add(earth);
 });
 
 // Create moon object (ssshhh.... i'm actually using a pluto texture)
-let moon = new Moon(0.1);
+let moon = new Moon(0.1, moonScale);
 moon.load().then((moonMesh) => {
     moon = moonMesh;
     scene.add(moon);
@@ -71,8 +79,8 @@ moon.load().then((moonMesh) => {
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
-const moonOrbitRadius = 1;
-const earthOrbitRaius = 6;
+const moonOrbitRadius = 5;
+const earthOrbitRaius = 200;
 
 // update function (runs on every frame)
 const update = () => {
