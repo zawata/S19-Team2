@@ -1,4 +1,4 @@
-import * as THREE from '../three'
+import * as THREE from '../three';
 import totallyMoonTexture from '../../plutomap1k.jpg'
 
 // Function-like promise loader
@@ -9,8 +9,9 @@ const loadTexture = (path, loader, onProgress) => {
 }
 
 export default class Moon {
-    constructor(size) {
-        this.size = size
+    constructor(size,moonScale) {
+        this.size = size;
+        this.moonScale = moonScale;
     }
 
     load() {
@@ -20,7 +21,7 @@ export default class Moon {
                 map:    moonTexture,
             });
             let moon = new THREE.Mesh(geometry, material);
-            moon.scale.set(1.25,1.25,1.25);
+            moon.scale.set(moonScale,moonScale,moonScale);
             moon.position.x += 505;
             moon.position.y += 0.2;
             return moon;

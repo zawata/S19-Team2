@@ -3,6 +3,11 @@ import OrbitControls from './OrbitControls'
 import Earth from './models/earth'
 import Moon from './models/moon'
 
+// Constants
+const sunScale = 50;
+const earthScale = 5;
+const moonScale = 1.25;
+
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
 const promisifyLoader = (loader, onProgress) => {
@@ -53,19 +58,19 @@ scene.add( axesHelper );
 let geometry = new THREE.SphereGeometry( 3, 32, 32 );
 let material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: true} );
 let sphere = new THREE.Mesh( geometry, material );
-sphere.scale.set(50,50,50);
+sphere.scale.set(sunScale,sunScale,sunScale);
 sphere.rotation.x += 0.5;
 scene.add( sphere );
 
 // Create earth object
-let earth = new Earth(0.5);
+let earth = new Earth(0.5, earthSphereScale);
 earth.load().then((earthMesh) => {
     earth = earthMesh;
     scene.add(earth);
 });
 
 // Create moon object (ssshhh.... i'm actually using a pluto texture)
-let moon = new Moon(0.1);
+let moon = new Moon(0.1, moonSphereScale);
 moon.load().then((moonMesh) => {
     moon = moonMesh;
     scene.add(moon);
