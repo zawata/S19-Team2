@@ -21,7 +21,7 @@ export default class Moon {
                 map:    moonTexture,
             });
             let moon = new THREE.Mesh(geometry, material);
-            moon.scale.set(moonScale,moonScale,moonScale);
+            moon.scale.set(this.moonScale, this.moonScale, this.moonScale);
             moon.position.x += 505;
             moon.position.y += 0.2;
             return moon;
