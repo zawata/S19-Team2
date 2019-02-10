@@ -63,14 +63,14 @@ sphere.rotation.x += 0.5;
 scene.add( sphere );
 
 // Create earth object
-let earth = new Earth(0.5, earthSphereScale);
+let earth = new Earth(0.5, earthScale);
 earth.load().then((earthMesh) => {
     earth = earthMesh;
     scene.add(earth);
 });
 
 // Create moon object (ssshhh.... i'm actually using a pluto texture)
-let moon = new Moon(0.1, moonSphereScale);
+let moon = new Moon(0.1, moonScale);
 moon.load().then((moonMesh) => {
     moon = moonMesh;
     scene.add(moon);
