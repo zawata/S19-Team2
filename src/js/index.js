@@ -4,9 +4,9 @@ import Earth from './models/earth'
 import Moon from './models/moon'
 
 // Constants
-const sunScale = 50;
-const earthScale = 5;
-const moonScale = 1.25;
+const sunScale = 105;
+const earthScale = 10;
+const moonScale = 2.5;
 
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
@@ -80,7 +80,7 @@ moon.load().then((moonMesh) => {
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
 const moonOrbitRadius = 5;
-const earthOrbitRaius = 200;
+const earthOrbitRaius = 999;
 
 // update function (runs on every frame)
 const update = () => {
