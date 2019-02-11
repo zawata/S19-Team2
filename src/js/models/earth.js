@@ -23,7 +23,7 @@ export default class Earth {
             let earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
             earthMesh.scale.set(this.earthScale, this.earthScale, this.earthScale);
             earthMesh.rotation.x += 0.005;
-            earthMesh.position.x += 500;
+            earthMesh.position.x += 5000;
             return earthMesh;
         }).catch((err) => {
             console.log(err);
