@@ -14,6 +14,7 @@ else()
     set(ARCH "32")
 endif()
 
+#The order here is important. apple is considered to be both "apple" and "unix"
 if(APPLE)
     set(PLATFORM "apple")
 elseif(UNIX)
@@ -38,8 +39,21 @@ link_directories(
 add_library( spyce SHARED
         py_wrapper.cpp
         spyce_main.cpp)
+
+#Move library back to source folder for easy access
 set_target_properties( spyce PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "../../spyce")
+
+#Remove the "lib-" prefix because the naming scheme
+set_target_properties( spyce PROPERTIES
+        PREFIX "")
+
+if(APPLE)
+    #Apparently python doesn't load ".dylib" files. 
+    #We have to change the extension to force it
+    set_target_properties(spyce PROPERTIES 
+            SUFFIX ".so")
+endif()
 
 target_link_libraries( spyce
         cspice_${PLATFORM}_${ARCH}.a)
