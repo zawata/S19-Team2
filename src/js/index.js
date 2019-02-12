@@ -89,7 +89,7 @@ const update = () => {
     moon.position.z = earth.position.z + Math.sin(date * 10) * moonOrbitRadius;
 
     earth.position.x = sphere.position.x + (1.2 * Math.cos(date)) * earthOrbitRaius;
-    earth.position.z = sphere.position.z + Math.sin(date) * earthOrbitRaius;
+    earth.position.z = sphere.position.z + (1.2 * Math.sin(date)) * earthOrbitRaius;
 
     sphere.rotateOnAxis(axis, 0.01);
     earth.rotateOnAxis(axis, 0.01);
