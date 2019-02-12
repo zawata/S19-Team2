@@ -22,8 +22,8 @@ export default class Moon {
             });
             let moon = new THREE.Mesh(geometry, material);
             moon.scale.set(this.moonScale, this.moonScale, this.moonScale);
-            moon.position.x += 500;
-            moon.position.y += 0.2;
+            // moon.position.x += 5;
+            // moon.position.y += 2;
             return moon;
         }).catch((err) => {
             console.log(err);
