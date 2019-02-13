@@ -49,10 +49,10 @@ py::list spyce::get_objects() {
     SPICEINT_CELL(id_list, SPYCE_OBJECTS_MAX);
 
     //have to reset the cell so data doesn't persist per call
-    scard_c(0, id_list)
+    scard_c(0, &id_list);
 
-    py::list ret_obj
-    if(_temp) spkobj_c(file.c_str(), &id_list);
+    py::list ret_obj;
+    spkobj_c(file.c_str(), &id_list);
     for(int i = 0; i < card_c(&id_list); i++) {
         ret_obj.append(SPICE_CELL_ELEM_I(&id_list, i));
     }
