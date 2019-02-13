@@ -8,3 +8,13 @@ dist
 # Misc
 .DS_Store
 .idea
+
+# IDE Files
+.vscode/
+
+# Spyce Files
+build/
+*.so
+
+# Private Things
+test_files/
