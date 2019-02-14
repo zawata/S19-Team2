@@ -96,9 +96,9 @@ const update = () => {
     // sphere.rotateOnAxis(axis, 0.0);
     earth.rotateOnAxis(axis, 0.002);
 
-    // camera.position.z = sphere.position.z + Math.sin(date) * (earthOrbitRaius + 30);
-    // camera.position.x = sphere.position.x + Math.cos(date) * (earthOrbitRaius + 30);
-    // camera.position.y = earth.position.y + 15;
+    camera.position.z = sphere.position.z + Math.sin(date) * (earthOrbitRaius + 10);
+    camera.position.x = sphere.position.x + Math.cos(date) * (earthOrbitRaius + 5);
+    camera.position.y = earth.position.y + 1;
 };
 
 // sends scene and camera props to renderer
