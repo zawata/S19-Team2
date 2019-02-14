@@ -4,9 +4,11 @@ import Earth from './models/earth'
 import Moon from './models/moon'
 
 // Constants
-const sunScale = 50;
-const earthScale = 5;
-const moonScale = 1.25;
+const sunScale = 5;
+const earthScale = 4;
+const moonScale = 1;
+const moonOrbitRadius = 4;
+const earthOrbitRaius = 930;
 
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
@@ -32,7 +34,7 @@ const loadTexture = (path, loader, onProgress) => {
 // Create scene and camera
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-camera.position.z = 5; // set camera away from origin
+camera.position.z = 10; // set camera away from origin
 camera.position.x = 200;
 camera.position.y = 0;
 
@@ -74,25 +76,29 @@ let moon = new Moon(0.1, moonScale);
 moon.load().then((moonMesh) => {
     moon = moonMesh;
     scene.add(moon);
+}).then(() => {
+    animate();
 });
 
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
-const moonOrbitRadius = 5;
-const earthOrbitRaius = 200;
-
 // update function (runs on every frame)
 const update = () => {
-    let date = Date.now() * 0.0001;
-    moon.position.x = earth.position.x + Math.cos(date * 10) * moonOrbitRadius;
-    moon.position.z = earth.position.z + Math.sin(date * 10) * moonOrbitRadius;
+    let date = Date.now() * 0.00001;
 
     earth.position.x = sphere.position.x + Math.cos(date) * earthOrbitRaius;
     earth.position.z = sphere.position.z + Math.sin(date) * earthOrbitRaius;
 
-    sphere.rotateOnAxis(axis, 0.01);
-    earth.rotateOnAxis(axis, 0.01);
+    moon.position.x = earth.position.x + Math.cos(date * 10) * moonOrbitRadius;
+    moon.position.z = earth.position.z + Math.sin(date * 10) * moonOrbitRadius;
+
+    // sphere.rotateOnAxis(axis, 0.0);
+    earth.rotateOnAxis(axis, 0.002);
+
+    camera.position.z = sphere.position.z + Math.sin(date) * (earthOrbitRaius + 10);
+    camera.position.x = sphere.position.x + Math.cos(date) * (earthOrbitRaius + 5);
+    camera.position.y = earth.position.y + 1;
 };
 
 // sends scene and camera props to renderer
@@ -107,4 +113,3 @@ const animate = () => {
     render();
 };
 
-animate();
