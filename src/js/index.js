@@ -54,11 +54,11 @@ window.addEventListener('resize', function() {
                     camera.updateProjectionMatrix();
                 });
 
-// Add lighting
-let directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
-let ambientLight = new THREE.AmbientLight(0xff0000, 3.0);
-scene.add(directionalLight);
-scene.add(ambientLight);
+
+//This lighting makes the Sun glow and removes shadow from the sun
+//Ambient and Directional light do not look as good as HemiLight
+let hemiLight = new THREE.HemisphereLight( 0xf2c559, 0xffffff, 1.25 );
+scene.add(hemiLight);
 
 // Add X, Y, Z axis helper (axes are colored in scene)
 let axesHelper = new THREE.AxesHelper( 5 );
