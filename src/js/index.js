@@ -7,7 +7,7 @@ import Moon from './models/moon'
 const sunScale = 5;
 const earthScale = 4;
 const moonScale = 1;
-const moonOrbitRadius = 4;
+const moonOrbitRadius = 50; //Real Life: Radius is 100x that of the size of the moon
 const earthOrbitRaius = 930;
 
 // Create scene and camera
