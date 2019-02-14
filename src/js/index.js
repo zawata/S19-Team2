@@ -4,9 +4,11 @@ import Earth from './models/earth'
 import Moon from './models/moon'
 
 // Constants
-const sunScale = 105;
-const earthScale = 10;
-const moonScale = 2.5;
+const sunScale = 80;
+const earthScale = 5;
+const moonScale = 2;
+const moonOrbitRadius = 4;
+const earthOrbitRaius = 930;
 
 // Class-like promise loader
 // Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
@@ -32,7 +34,7 @@ const loadTexture = (path, loader, onProgress) => {
 // Create scene and camera
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-camera.position.z = 5; // set camera away from origin
+camera.position.z = 10; // set camera away from origin
 camera.position.x = 200;
 camera.position.y = 0;
 
@@ -79,9 +81,6 @@ moon.load().then((moonMesh) => {
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
-const moonOrbitRadius = 5;
-const earthOrbitRaius = 930;
-
 // update function (runs on every frame)
 const update = () => {
     let date = Date.now() * 0.00001;
@@ -93,6 +92,10 @@ const update = () => {
 
     // sphere.rotateOnAxis(axis, 0.0);
     earth.rotateOnAxis(axis, 0.002);
+
+    // camera.position.z = sphere.position.z + Math.sin(date) * (earthOrbitRaius + 30);
+    // camera.position.x = sphere.position.x + Math.cos(date) * (earthOrbitRaius + 30);
+    // camera.position.y = earth.position.y + 15;
 };
 
 // sends scene and camera props to renderer
