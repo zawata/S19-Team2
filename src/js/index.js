@@ -4,9 +4,9 @@ import Earth from './models/earth'
 import Moon from './models/moon'
 
 // Constants
-const sunScale = 80;
-const earthScale = 5;
-const moonScale = 2;
+const sunScale = 5;
+const earthScale = 4;
+const moonScale = 1;
 const moonOrbitRadius = 4;
 const earthOrbitRaius = 930;
 
