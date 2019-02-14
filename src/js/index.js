@@ -76,6 +76,8 @@ let moon = new Moon(0.1, moonScale);
 moon.load().then((moonMesh) => {
     moon = moonMesh;
     scene.add(moon);
+}).then(() => {
+    animate();
 });
 
 // Create axis of rotation
@@ -111,4 +113,3 @@ const animate = () => {
     render();
 };
 
-animate();
