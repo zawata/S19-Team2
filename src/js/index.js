@@ -45,6 +45,15 @@ let renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+//Code to adapt to resizing of windows- fit to window size
+window.addEventListener('resize', function() {
+                    var widthWindow = window.innerWidth;
+                    var heightWindow = window.innerHeight;
+                    renderer.setSize(widthWindow, heightWindow);
+                    camera.aspect = widthWindow/heightWindow;
+                    camera.updateProjectionMatrix();
+                });
+
 // Add lighting
 let directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
 let ambientLight = new THREE.AmbientLight(0xff0000, 3.0);
@@ -54,16 +63,6 @@ scene.add(ambientLight);
 // Add X, Y, Z axis helper (axes are colored in scene)
 let axesHelper = new THREE.AxesHelper( 5 );
 scene.add( axesHelper );
-
-/*
-// Create wire-frame 'sun' and add to the scene
-let geometry = new THREE.SphereGeometry( 3, 32, 32 );
-let material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: true} );
-let sphere = new THREE.Mesh( geometry, material );
-sphere.scale.set(sunScale,sunScale,sunScale);
-sphere.rotation.x += 0.5;
-scene.add( sphere );
-*/
 
 //Create sun object
 let sun = new Sun(3);
