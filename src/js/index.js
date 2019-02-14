@@ -84,11 +84,12 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 // update function (runs on every frame)
 const update = () => {
     let date = Date.now() * 0.00001;
-    moon.position.x = earth.position.x + Math.cos(date * 10) * moonOrbitRadius;
-    moon.position.z = earth.position.z + Math.sin(date * 10) * moonOrbitRadius;
 
     earth.position.x = sphere.position.x + Math.cos(date) * earthOrbitRaius;
     earth.position.z = sphere.position.z + Math.sin(date) * earthOrbitRaius;
+
+    moon.position.x = earth.position.x + Math.cos(date * 10) * moonOrbitRadius;
+    moon.position.z = earth.position.z + Math.sin(date * 10) * moonOrbitRadius;
 
     // sphere.rotateOnAxis(axis, 0.0);
     earth.rotateOnAxis(axis, 0.002);
