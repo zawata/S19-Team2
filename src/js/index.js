@@ -10,27 +10,6 @@ const moonScale = 1;
 const moonOrbitRadius = 4;
 const earthOrbitRaius = 930;
 
-// Class-like promise loader
-// Pattern inspired by: https://blackthread.io/blog/promisifying-threejs-loaders/
-const promisifyLoader = (loader, onProgress) => {
-    let promiseLoader = (path) => {
-        return new Promise( (resolve, reject) => {
-            loader.load(path, resolve, onProgress, reject);
-        });
-    }
-    return {
-        originalLoader: loader,
-        load: promiseLoader,
-    };
-}
-
-// Function-like promise loader
-const loadTexture = (path, loader, onProgress) => {
-    return new Promise((resolve, reject) => {
-        loader.load(path, resolve, onProgress, reject);
-    });
-}
-
 // Create scene and camera
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
