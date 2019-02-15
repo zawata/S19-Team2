@@ -30,6 +30,7 @@ const loadTexture = (path, loader, onProgress) => {
     });
 }
 
+
 // Create scene and camera
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -80,7 +81,7 @@ earth.load().then((earthMesh) => {
     scene.add(earth);
 });
 
-// Create moon object (ssshhh.... i'm actually using a pluto texture)
+// Create moon object
 let moon = new Moon(0.1, moonScale);
 moon.load().then((moonMesh) => {
     moon = moonMesh;
