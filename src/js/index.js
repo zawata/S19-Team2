@@ -2,6 +2,7 @@ import * as THREE from './three'
 import OrbitControls from './OrbitControls'
 import Earth from './models/earth'
 import Moon from './models/moon'
+import Sun from './models/sun'
 
 // Constants
 const sunScale = 5;
@@ -25,23 +26,24 @@ let renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-// Add lighting
-let directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
-let ambientLight = new THREE.AmbientLight(0xff0000, 3.0);
-scene.add(directionalLight);
-scene.add(ambientLight);
+//Code to adapt to resizing of windows- fit to window size
+window.addEventListener('resize', function() {
+    var widthWindow = window.innerWidth;
+    var heightWindow = window.innerHeight;
+    renderer.setSize(widthWindow, heightWindow);
+    camera.aspect = widthWindow/heightWindow;
+    camera.updateProjectionMatrix();
+});
+
+
+//This lighting makes the Sun glow and removes shadow from the sun
+//Ambient and Directional light do not look as good as HemiLight
+let hemiLight = new THREE.HemisphereLight( 0xf2c559, 0xffffff, 1.25 );
+scene.add(hemiLight);
 
 // Add X, Y, Z axis helper (axes are colored in scene)
 let axesHelper = new THREE.AxesHelper( 5 );
 scene.add( axesHelper );
-
-// Create wire-frame 'sun' and add to the scene
-let geometry = new THREE.SphereGeometry( 3, 32, 32 );
-let material = new THREE.MeshPhongMaterial( {color: 0xffff00, wireframe: true} );
-let sphere = new THREE.Mesh( geometry, material );
-sphere.scale.set(sunScale,sunScale,sunScale);
-sphere.rotation.x += 0.5;
-scene.add( sphere );
 
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
@@ -50,13 +52,13 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 const update = () => {
     let date = Date.now() * 0.00001;
 
-    sphere.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
-    sphere.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
+    sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
+    sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
 
     moon.position.x = earth.position.x + Math.cos(date * 2) * moonOrbitRadius;
     moon.position.z = earth.position.z + Math.sin(date * 2) * moonOrbitRadius;
 
-    // sphere.rotateOnAxis(axis, 0.0);
+    // sun.rotateOnAxis(axis, 0.0);
     earth.rotateOnAxis(axis, 0.002);
 };
 
@@ -72,6 +74,7 @@ const animate = () => {
     render();
 };
 
+let sun = new Sun(3);
 let earth = new Earth(0.5, earthScale);
 let moon = new Moon(0.1, moonScale);
 
@@ -86,9 +89,14 @@ earth.load().then((earthMesh) => {
 }).then((moonMesh) => {
     moon = moonMesh;
     scene.add(moon);
+    return sun.load();
+}).then((sunMesh) => {
+    sun = sunMesh;
+    sun.scale.set(sunScale,sunScale,sunScale);
+    scene.add(sun);
 }).then(() => {
     animate();
-});
+});;
 
 
 
