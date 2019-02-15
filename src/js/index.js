@@ -28,12 +28,12 @@ document.body.appendChild( renderer.domElement );
 
 //Code to adapt to resizing of windows- fit to window size
 window.addEventListener('resize', function() {
-                    var widthWindow = window.innerWidth;
-                    var heightWindow = window.innerHeight;
-                    renderer.setSize(widthWindow, heightWindow);
-                    camera.aspect = widthWindow/heightWindow;
-                    camera.updateProjectionMatrix();
-                });
+    var widthWindow = window.innerWidth;
+    var heightWindow = window.innerHeight;
+    renderer.setSize(widthWindow, heightWindow);
+    camera.aspect = widthWindow/heightWindow;
+    camera.updateProjectionMatrix();
+});
 
 
 //This lighting makes the Sun glow and removes shadow from the sun
@@ -52,13 +52,13 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 const update = () => {
     let date = Date.now() * 0.00001;
 
-    sphere.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
-    sphere.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
+    sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
+    sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
 
     moon.position.x = earth.position.x + Math.cos(date * 2) * moonOrbitRadius;
     moon.position.z = earth.position.z + Math.sin(date * 2) * moonOrbitRadius;
 
-    // sphere.rotateOnAxis(axis, 0.0);
+    // sun.rotateOnAxis(axis, 0.0);
     earth.rotateOnAxis(axis, 0.002);
 };
 
