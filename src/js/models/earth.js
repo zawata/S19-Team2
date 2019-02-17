@@ -1,5 +1,5 @@
 import * as THREE from '../three';
-import earthTextureImg from '../../2k_earth_daymap.jpg';
+import earthTextureImg from '../../1_earth_8k.jpg';
 import earthBumpImg from '../../earthbump1k.jpg';
 
 // Function-like promise loader
