@@ -68,15 +68,8 @@ function addLight( h, s, l, x, y, z ) {
     light.position.set( x, y, z );
     scene.add( light );
 
-    console.log(textureFlare0);
-    console.log(textureFlare3);
-
     var lensflare = new THREE.Lensflare();
     lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100, 0, light.color ) );
-    lensflare.addElement( new THREE.LensflareElement( textureFlare3, 60, 0.6 ) );
-    lensflare.addElement( new THREE.LensflareElement( textureFlare3, 70, 0.7 ) );
-    lensflare.addElement( new THREE.LensflareElement( textureFlare3, 120, 0.9 ) );
-    lensflare.addElement( new THREE.LensflareElement( textureFlare3, 70, 1 ) );
     light.add( lensflare );
 
     return light;
@@ -96,8 +89,8 @@ const update = () => {
     // sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
     // sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
 
-    solarFlareLight.position.x = earth.position.x + Math.cos(date * 10) * earthOrbitRaius;
-    solarFlareLight.position.z = earth.position.z + Math.sin(date * 10) * earthOrbitRaius;
+    solarFlareLight.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
+    solarFlareLight.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
 
     moon.position.x = earth.position.x + Math.cos(date * 2) * moonOrbitRadius;
     moon.position.z = earth.position.z + Math.sin(date * 2) * moonOrbitRadius;
