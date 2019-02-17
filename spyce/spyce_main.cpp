@@ -59,3 +59,30 @@ py::list spyce::get_objects() {
 
     return ret_obj;
 }
+
+int spyce::str_to_id(std::string naif_id) {
+    int  id_code;
+    SpiceBoolean found;
+    bodn2c_c(naif_id.c_str(), &id_code, &found);
+
+    if(!found)
+        throw IDNotFoundException();
+
+    return id_code;
+}
+
+Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
+    SpiceDouble frame[6] = {0};
+    SpiceDouble lt;
+
+    spkez_c(
+        target_id,   // target
+        e_time,      // epoch time
+        "J2000",     // reference frame, TODO: J2000 vs ECLIPJ2000 frame?
+        "NONE",      // Aberration correction setting. TODO: correct for light time?
+        observer_id, // observer reference
+        frame,       // output frame
+        &lt);        // output light time
+
+    return Frame(frame);
+}
