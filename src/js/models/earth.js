@@ -15,11 +15,10 @@ export default class Earth {
         this.earthScale = earthScale;
     }
 
-
     load() {
         return loadTexture(earthTextureImg, new THREE.TextureLoader()).then((earthTexture) => {
             let earthGeo = new THREE.SphereGeometry(this.size, 32, 32);
-            let earthMaterial = new THREE.MeshBasicMaterial({
+            let earthMaterial = new THREE.MeshPhongMaterial({
                 map:    earthTexture,
             });
             earthMaterial.bumpMap = new THREE.TextureLoader().load(earthBumpImg);
