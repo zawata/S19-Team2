@@ -3,23 +3,33 @@
 #include "spyce_exceptions.hpp"
 #include "spyce.hpp"
 
-
-//credit: https://stackoverflow.com/questions/2261858/boostpython-export-custom-exception
 namespace py = boost::python;
-template <class E, class... Policies, class... Args>
-py::class_<E, Policies...> exception_(Args&&... args) {
-    py::class_<E, Policies...> cls(std::forward<Args>(args)...);
-    py::register_exception_translator<E>([ptr=cls.ptr()](E const& e){
-        PyErr_SetObject(ptr, py::object(e).ptr());
-    });
-    return cls;
+template <class E> void exception_(const char *name) {
+    //check that class type E inherits from SpyceException(to Ensure it has a `what` call)
+    static_assert(std::is_base_of<SpyceException, E>::value, "Exception must inherit from Spyce Exception");
+
+    //build Full Qualified Object Name underneath the current Module
+    std::string full_name = std::string(py::extract<std::string>(py::scope().attr("__name__"))) + "." + name;
+
+    //Declare a new Python Error that inherits from the `Exception Class` in python
+    PyObject *exc = PyErr_NewException(full_name.c_str(), PyExc_Exception, 0);
+
+    //give control of python exception class to Boost Python
+    py::scope().attr(name) = py::handle<>(exc);
+
+    //register the exception translator for the new exception class <template E>
+    py::register_exception_translator<E>(
+        //c++ lambda
+        [exc=exc](E const&e){
+            //throw a Python Exception with that same `what` data as the C++ Exception
+            PyErr_SetString(exc, e.what().c_str());
+        });
 }
 
 BOOST_PYTHON_MODULE(spyce) {
     using namespace boost::python;
 
-    exception_<FileNotFoundException>("FileNotFoundException")
-        .add_property("what", &FileNotFoundException::what);
+    exception_<FileNotFoundException>("FileNotFoundError");
 
     class_<spyce>("spyce")
         .add_property("main_file",&spyce::_get_file, &spyce::_set_file)
