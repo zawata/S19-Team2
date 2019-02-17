@@ -6,16 +6,16 @@ CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
 app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
 spy = spyce.spyce()
-SPK_FILENAME = "spacecraft.spk"
+BSP_FILENAME = "spacecraft.bsp"
 TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
 spy_loaded = False
 
 #loading initial file for spy
 #snippet derived from https://stackoverflow.com/questions/1724693/find-a-file-in-python
-def load_spacecraft_spk():
+def load_spacecraft_bsp():
     for root, dirs, files in os.walk(TRAJECTORY_FOLDER):
-        if "spacecraft.spk" in files:
-                spy.main_file = os.path.join(root, SPK_FILENAME)
+        if "spacecraft.bsp" in files:
+                spy.main_file = os.path.join(root, BSP_FILENAME)
                 spy_loaded = True
 
 @app.route('/')
@@ -41,14 +41,14 @@ def change_trajectory_file():
         if file.filename == '':
             print ("[WARN]: No file selected.")
             return redirect(request.url)
-        if file and file.filename[-4:] == ".spk":
-            file.save(os.path.join(TRAJECTORY_FOLDER, SPK_FILENAME))
+        if file and file.filename[-4:] == ".bsp":
+            file.save(os.path.join(TRAJECTORY_FOLDER, BSP_FILENAME))
             #TODO: replace with actual webpages
             try:
-                load_spacecraft_spk()
+                load_spacecraft_bsp()
                 return "File change successful!"
             except:
-                return "Unable to use SPK file"
+                return "Unable to use BSP file"
         print ("[WARN]: improper file format")
 
     #TODO: replace with actual webpage.
@@ -80,6 +80,6 @@ if __name__ == '__main__':
     print(app.url_map)
     app.run(debug=True)
     try:
-        load_spacecraft_spk()
+        load_spacecraft_bsp()
     except:
-        print ("[WARN]: Unable to load SPK file")
+        print ("[WARN]: Unable to load BSP file")
