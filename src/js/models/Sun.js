@@ -9,13 +9,13 @@ const loadTexture = (path, loader, onProgress) => {
 }
 
 export default class Sun {
-    constructor(size) {
-        this.size = size;
+    constructor(sunScale) {
+        this.sunScale = sunScale;
     }
 
     load() {
         return loadTexture(sunTextureImg, new THREE.TextureLoader()).then((sunTexture) => {
-            let sunGeo = new THREE.SphereGeometry(this.size, 32, 32);
+            let sunGeo = new THREE.SphereGeometry(this.sunScale, 32, 32);
             let sunMaterial = new THREE.MeshPhongMaterial({
                 map:    sunTexture,
             });

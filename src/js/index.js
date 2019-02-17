@@ -8,7 +8,7 @@ import Sun from './models/sun'
 const sunScale = 5;
 const earthScale = 4;
 const moonScale = 1;
-const moonOrbitRadius = 50; //Real Life: Radius is 100x that of the size of the moon
+const moonOrbitRadius = 3;
 const earthOrbitRaius = 930;
 
 
@@ -56,11 +56,10 @@ const update = () => {
     sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
     sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
 
-    moon.position.x = earth.position.x + Math.cos(date * 2) * moonOrbitRadius;
-    moon.position.z = earth.position.z + Math.sin(date * 2) * moonOrbitRadius;
+    moon.position.x = earth.position.x + Math.cos(date * 3) * moonOrbitRadius;
+    moon.position.z = earth.position.z + Math.sin(date * 3) * moonOrbitRadius;
 
-    // sun.rotateOnAxis(axis, 0.0);
-    earth.rotateOnAxis(axis, 0.002);
+    earth.rotateOnAxis(axis, 0.0009);
 };
 
 // sends scene and camera props to renderer
@@ -75,7 +74,7 @@ const animate = () => {
     render();
 };
 
-let sun = new Sun(3);
+let sun = new Sun(sunScale);
 let earth = new Earth(0.5, earthScale);
 let moon = new Moon(0.1, moonScale);
 
@@ -98,7 +97,3 @@ earth.load().then((earthMesh) => {
 }).then(() => {
     animate();
 });;
-
-
-
-
