@@ -1,6 +1,6 @@
 import * as THREE from '../three';
 import earthTextureImg from '../../1_earth_8k.jpg';
-import earthBumpImg from '../../earthbump1k.jpg';
+import earthBumpImg from '../../nasa_bump_map.png';
 
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => { 
