@@ -7,9 +7,9 @@ import Sun from './models/sun'
 // Constants
 const sunScale = 5;
 const earthScale = 4;
-const moonScale = 1;
-const moonOrbitRadius = 3;
-const earthOrbitRaius = 930;
+const moonScale = 3.5;
+const moonOrbitRadius = 3.5;
+const earthOrbitRadius = 930;
 
 
 // Create scene and camera
@@ -53,13 +53,14 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 const update = () => {
     let date = Date.now() * 0.00001;
 
-    sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRaius;
-    sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRaius;
+    sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRadius;
+    sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRadius;
 
     moon.position.x = earth.position.x + Math.cos(date * 3) * moonOrbitRadius;
     moon.position.z = earth.position.z + Math.sin(date * 3) * moonOrbitRadius;
 
     earth.rotateOnAxis(axis, 0.0009);
+    moon.rotateOnAxis(axis, 0.001);     //moon's rotation on its axis
 };
 
 // sends scene and camera props to renderer
