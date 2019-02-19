@@ -11,7 +11,7 @@ import solarBubble from '../lensflare3.png'
 const sunScale = 5;
 const earthScale = 4;
 const moonScale = 3.5;
-const moonOrbitRadius = 3.5;
+const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 
 // Function-like promise loader
