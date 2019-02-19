@@ -33,7 +33,8 @@ BOOST_PYTHON_MODULE(spyce) {
 
     class_<spyce>("spyce")
         .add_property("main_file",&spyce::_get_file, &spyce::_set_file)
-        .staticmethod("str_to_id", &spyce::str_to_id)
+        .def("str_to_id", &spyce::str_to_id)
+        .staticmethod("str_to_id")
         .def("add_kernel", &spyce::add_kernel)
         .def("remove_kernel", &spyce::remove_kernel)
         .def("get_objects", &spyce::get_objects);
