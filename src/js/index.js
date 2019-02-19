@@ -53,11 +53,11 @@ let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 const update = () => {
     let date = Date.now() * 0.00001;
 
-    sun.position.x = earth.position.x + Math.cos(date) * earthOrbitRadius;
-    sun.position.z = earth.position.z + Math.sin(date) * earthOrbitRadius;
+    sun.position.x = earth.position.x + Math.sin(date) * earthOrbitRadius;
+    sun.position.z = earth.position.z + Math.cos(date) * earthOrbitRadius;
 
-    moon.position.x = earth.position.x + Math.cos(date * 3) * moonOrbitRadius;
-    moon.position.z = earth.position.z + Math.sin(date * 3) * moonOrbitRadius;
+    moon.position.x = earth.position.x + Math.sin(date * 3) * moonOrbitRadius;
+    moon.position.z = earth.position.z + Math.cos(date * 3) * moonOrbitRadius;
 
     earth.rotateOnAxis(axis, 0.0009);
     moon.rotateOnAxis(axis, 0.001);     //moon's rotation on its axis
