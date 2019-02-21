@@ -1,5 +1,6 @@
 import * as THREE from '../three';
-import earthTextureImg from '../../earthmap1k.jpg';
+import earthTextureImg from '../../1_earth_8k.jpg';
+import earthBumpImg from '../../nasa_bump_map.png';
 
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => { 
@@ -9,19 +10,21 @@ const loadTexture = (path, loader, onProgress) => {
 }
 
 export default class Earth {
-    constructor(size) {
+    constructor(size, earthScale) {
         this.size = size;
+        this.earthScale = earthScale;
     }
 
     load() {
         return loadTexture(earthTextureImg, new THREE.TextureLoader()).then((earthTexture) => {
             let earthGeo = new THREE.SphereGeometry(this.size, 32, 32);
-            let earthMaterial = new THREE.MeshBasicMaterial({
+            let earthMaterial = new THREE.MeshPhongMaterial({
                 map:    earthTexture,
             });
+            earthMaterial.bumpMap = new THREE.TextureLoader().load(earthBumpImg);
+            earthMaterial.bumpScale = 0.05;
             let earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
-            earthMesh.rotation.x += 0.5;
-            earthMesh.position.x += 5;
+            earthMesh.scale.set(this.earthScale, this.earthScale, this.earthScale);
             return earthMesh;
         }).catch((err) => {
             console.log(err);
