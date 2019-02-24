@@ -9,8 +9,8 @@
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html"
   },
-  "engines":{
-    "node":"10.5.0"
+  "engines": {
+    "node": "10.5.0"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "parcel-bundler": "^1.11.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-standard": "^12.0.0",
