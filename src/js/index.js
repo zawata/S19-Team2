@@ -15,15 +15,17 @@ const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 
 //deploy
-const http = require('http');
-const port = process.env.PORT || 1234;
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-});
 
-server.listen(port,() => {
-    console.log(`Server running at port ${port}`);
-});
+// const http = require('http');
+const port = process.env.PORT || 1234;
+// const server = http.createServer((req, res) => {
+    // res.statusCode = 200;
+// });
+
+// server.listen(port,() => {
+    // console.log(`Server running at port ${port}`);
+// });
+
 
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => { 
