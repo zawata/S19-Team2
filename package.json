@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node src/js/index.js",
     "lint": "eslint",
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html"
+  },
+  "engines":{
+    "node":"10.5.0"
   },
   "keywords": [],
   "author": "",

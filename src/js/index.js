@@ -14,6 +14,9 @@ const moonScale = 3.5;
 const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 
+//deploy
+const port = process.env.PORT || 1234;
+
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => { 
     return new Promise((resolve, reject) => {
