@@ -5,6 +5,8 @@
 #include "spyce.hpp"
 #include "spyce_exceptions.hpp"
 
+#define SPYCE_OBJECTS_MAX 100
+
 Frame::Frame(SpiceDouble *frame) {
     this->x  = frame[0];
     this->y  = frame[1];
@@ -41,35 +43,46 @@ void spyce::remove_kernel(std::string s) {
     unload_c(s.c_str());
 }
 
+namespace py = boost::python;
+py::list spyce::get_objects() {
+    //NOTE: this cell is static per the macro definition
+    SPICEINT_CELL(id_list, SPYCE_OBJECTS_MAX);
 
-// int main() {
-//     //furnsh_c("LMAP.DP7.bsp");
-//     const char *const file = "LMAP_FullTrajectory_ScienceExtension.bsp";
+    //have to reset the cell so data doesn't persist per call
+    scard_c(0, &id_list);
 
-//     SPICEINT_CELL(id_list, 8);
-//     SPICEDOUBLE_CELL( cover, 1000 );
+    py::list ret_obj;
+    spkobj_c(file.c_str(), &id_list);
+    for(int i = 0; i < card_c(&id_list); i++) {
+        ret_obj.append(SPICE_CELL_ELEM_I(&id_list, i));
+    }
 
-//     spkobj_c(file, &id_list);
+    return ret_obj;
+}
 
-//     for(int i = 0; i < card_c(&id_list); i++) {
-//         SpiceInt obj = SPICE_CELL_ELEM_I(&id_list, i);
+int spyce::str_to_id(std::string naif_id) {
+    int  id_code;
+    SpiceBoolean found;
+    bodn2c_c(naif_id.c_str(), &id_code, &found);
 
-//         scard_c(0, &cover); //reset coverage cell
+    if(!found)
+        throw IDNotFoundException();
 
-//         std::cout << "object id: " << obj << std::endl;
+    return id_code;
+}
 
-//         spkcov_c(file, obj, &cover); //load coverage data of `obj` id
+Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
+    SpiceDouble frame[6] = {0};
+    SpiceDouble lt;
 
-//         int inv_num = wncard_c(&cover);
+    spkez_c(
+        target_id,   // target
+        e_time,      // epoch time
+        "J2000",     // reference frame, TODO: J2000 vs ECLIPJ2000 frame?
+        "NONE",      // Aberration correction setting. TODO: correct for light time?
+        observer_id, // observer reference
+        frame,       // output frame
+        &lt);        // output light time
 
-//         std::cout << "number of intervals: " << inv_num << std::endl;
-
-//         double beg, end;
-
-//         wnfetd_c(&cover, 0, &beg, &end);
-
-//         std::cout << "start: " << beg << std::endl;
-//         std::cout << "end:   "   << end << std::endl;
-
-//     }
-// }
+    return Frame(frame);
+}

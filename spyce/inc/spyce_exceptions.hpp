@@ -11,3 +11,7 @@ public:
 struct FileNotFoundException : public SpyceException {
     explicit FileNotFoundException() : SpyceException("File Not Found") {}
 };
+
+struct IDNotFoundException : public SpyceException {
+    explicit IDNotFoundException(): SpyceException("ID Not Found") {}
+};
