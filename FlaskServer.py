@@ -20,11 +20,8 @@ def load_spacecraft_bsp():
 
 @app.route('/')
 def root():
-    return "This is the root endpoint for this server. You probably shouldn't be here. try /dist/index.html"
+    return redirect("/index.html")
 
-@app.route('/dist/index.html', methods=['GET'])
-def home_page():
-    return render_template('index.html')
 
 @app.route('/spacecraft/pos', methods=['GET'])
 def get_spacecraft_pos():
@@ -62,20 +59,9 @@ def change_trajectory_file():
         </form>
         '''
 
-
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
-    print("PATH: " + filename)
-    print (filename[-3:])
-    if (filename[-3:] == ".js" or
-            filename[-4:] == ".jpg" or
-            filename[-4:] == ".map" or
-            filename[-4:] == ".ico"):
-
-        return send_from_directory('dist', filename)
-    return "OOOPSIE WOOOPSIE!"
-
-
+    return send_from_directory('dist', filename)
 if __name__ == '__main__':
     print(app.url_map)
     app.run(debug=True)
