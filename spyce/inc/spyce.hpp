@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/python.hpp>
+
 #include "SpiceUsr.h"
 
 struct Frame {
@@ -9,7 +11,7 @@ struct Frame {
     Frame();
 };
 
-
+namespace py = boost::python;
 struct spyce {
     std::string file;
 
@@ -21,4 +23,6 @@ struct spyce {
 
     void add_kernel(std::string s);
     void remove_kernel(std::string s);
+
+    py::list get_objects();
 };

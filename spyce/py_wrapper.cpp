@@ -34,7 +34,8 @@ BOOST_PYTHON_MODULE(spyce) {
     class_<spyce>("spyce")
         .add_property("main_file",&spyce::_get_file, &spyce::_set_file)
         .def("add_kernel", &spyce::add_kernel)
-        .def("remove_kernel", &spyce::remove_kernel);
+        .def("remove_kernel", &spyce::remove_kernel)
+        .def("get_objects", &spyce::get_objects);
 
     class_<Frame>("Frame")
         .def_readwrite("x",  &Frame::x)
