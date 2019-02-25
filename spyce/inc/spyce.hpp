@@ -16,6 +16,7 @@ struct spyce {
     std::string file;
 
     spyce();
+    spyce(std::string log_file)
 
     //get and set for file.
     void _set_file(std::string s);
