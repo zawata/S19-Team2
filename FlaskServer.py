@@ -27,6 +27,10 @@ def root():
 def get_spacecraft_pos():
     return "TODO"
 
+@app.route('/api/all_objects', methods=['GET'])
+def get_all_objects():
+    return "TODO"
+
 #code derived from http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
 @app.route('/data/trajectory', methods=['GET', 'POST'])
 def change_trajectory_file():
@@ -71,3 +75,13 @@ if __name__ == '__main__':
         load_spacecraft_bsp()
     except:
         print ("[WARN]: Unable to load BSP file")
+
+def frame_to_json(frame):
+    jsonData = {}
+    jsonData['x'] = frame.x
+    jsonData['y'] = frame.y
+    jsonData['z'] = frame.z
+    jsonData['dx'] = frame.dx
+    jsonData['dy'] = frame.dy
+    jsonData['dz'] = frame.dz
+    return json.dumps(jsonData)
