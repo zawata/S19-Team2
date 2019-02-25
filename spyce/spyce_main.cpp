@@ -28,16 +28,16 @@ Frame::Frame() {
 // Error Handling
 //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/error.html
 spyce::spyce() {
-    erract_c("SET", 0, "RETURN"); // disable "exit on error"
-    errprt_c("SET", 0, "NONE");   // don't print anything
-    errdev_c("SET", 0, "NULL")    // in case something is printed, send it nowhere.
+    erract_c("SET", 0, (SpiceChar *)"RETURN"); // disable "exit on error"
+    errprt_c("SET", 0, (SpiceChar *)"NONE");   // don't print anything
+    errdev_c("SET", 0, (SpiceChar *)"NULL");   // in case something is printed, send it nowhere.
 }
 
 //Give the user to chance to set a log file.
 spyce::spyce(std::string log_file) {
-    erract_c("SET", 0, "RETURN");         // disable "exit on error"
-    errprt_c("SET", 0, "ALL");            // print everything
-    errdev_c("SET", 0, log_file.c_str()); // in case something is printed, send it to the user file.
+    erract_c("SET", 0, (SpiceChar *)"RETURN");         // disable "exit on error"
+    errprt_c("SET", 0, (SpiceChar *)"ALL");            // print everything
+    errdev_c("SET", 0, (SpiceChar *)log_file.c_str()); // in case something is printed, send it to the user file.
 }
 
 void spyce::_set_file(std::string s) {
