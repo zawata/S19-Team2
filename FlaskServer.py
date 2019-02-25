@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for
-import spyce
-import os, fnmatch
+from spyce import spyce
+import os, json
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
@@ -25,6 +25,10 @@ def root():
 
 @app.route('/spacecraft/pos', methods=['GET'])
 def get_spacecraft_pos():
+    return "TODO"
+
+@app.route('/api/all_objects', methods=['GET'])
+def get_all_objects():
     return "TODO"
 
 #code derived from http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
@@ -71,3 +75,13 @@ if __name__ == '__main__':
         load_spacecraft_bsp()
     except:
         print ("[WARN]: Unable to load BSP file")
+
+def frame_to_json(frame):
+    jsonData = {}
+    jsonData['x'] = frame.x
+    jsonData['y'] = frame.y
+    jsonData['z'] = frame.z
+    jsonData['dx'] = frame.dx
+    jsonData['dy'] = frame.dy
+    jsonData['dz'] = frame.dz
+    return json.dumps(jsonData)
