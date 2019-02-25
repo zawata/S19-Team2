@@ -28,7 +28,5 @@ struct spyce {
 
     py::list get_objects();
 
-    int str_to_id(std::string naif_id);
-
     Frame get_frame_data(int target_id, int observer_id, double e_time);
 };

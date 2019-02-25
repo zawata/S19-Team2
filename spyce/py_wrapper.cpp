@@ -37,8 +37,7 @@ BOOST_PYTHON_MODULE(spyce) {
         .staticmethod("str_to_id")
         .def("add_kernel", &spyce::add_kernel)
         .def("remove_kernel", &spyce::remove_kernel)
-        .def("get_objects", &spyce::get_objects);
-        .def("str_to_id", &spyce::str_to_id)
+        .def("get_objects", &spyce::get_objects)
         .def("get_frame_data", &spyce::get_frame_data);
 
     class_<Frame>("Frame")
