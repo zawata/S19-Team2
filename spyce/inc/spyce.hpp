@@ -16,7 +16,7 @@ struct spyce {
     std::string file;
 
     spyce();
-    spyce(std::string log_file)
+    spyce(std::string log_file);
 
     static int str_to_id(std::string naif_id);
 
