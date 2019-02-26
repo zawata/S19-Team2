@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/js/index.js",
+    "start": "parcel build src/index.html",
     "lint": "eslint",
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html"

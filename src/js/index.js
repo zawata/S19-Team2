@@ -16,15 +16,15 @@ const earthOrbitRadius = 930;
 
 //deploy
 
-const http = require('http');
-const port = process.env.PORT || 1234;
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-});
+// const http = require('http');
+const port = process.env.PORT || 3000;
+// const server = http.createServer((req, res) => {
+    // res.statusCode = 200;
+// });
 
-server.listen(port,() => {
-    console.log(`Server running at port ${port}`);
-});
+// server.listen(port,() => {
+    // console.log(`Server running at port ${port}`);
+// });
 
 
 // Function-like promise loader
