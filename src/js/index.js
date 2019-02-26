@@ -3,7 +3,7 @@ import OrbitControls from './OrbitControls'
 import LesnFlare from './LensFlare'
 import Earth from './models/earth'
 import Moon from './models/moon'
-import Sun from './models/sun'
+import Sun from './models/Sun'
 import solarFlare from '../lensflare0.png'
 import solarBubble from '../lensflare3.png'
 
