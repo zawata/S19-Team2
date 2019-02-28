@@ -28,7 +28,7 @@ var scene2 = new THREE.Scene();
 
 scene = scene1;
 
-//OnClick event for the button
+//OnClick event for the button- the animation doesn't stop.
 const myButton = document.getElementById('myButtonID');
 myButton.onclick = function() {
     this.classList.toggle('is-loading');

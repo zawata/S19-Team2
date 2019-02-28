@@ -1,7 +1,12 @@
+<!--
+ - Idea for button derived from:
+ - author Alex Carpenter - https://github.com/alexcarpenter
+-->
+
 <html>
 	<head>
 		<title>My first three.js app</title>
-		<style>
+		<style type="text/css">
 			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
 			#myButtonID {
@@ -19,6 +24,34 @@
 			#myButtonID:hover {
 		    	opacity: 1.0;
 				filter: alpha(opacity=100) }
+			#myButtonID:after {
+				content: '';
+				position: absolute;
+				animation: spin 500ms linear infinite;
+				top: calc(50% - 0.5rem);
+				left: calc(50% - 0.5rem);
+				width: 1rem;
+				height: 1rem;
+				border: 2px solid #fff;
+				border-top-color: transparent;
+				border-left-color: transparent;
+				border-radius: 50%;
+				opacity: 0;
+			}
+			#myButtonID.is-loading {
+				color: transparent;
+			}
+			#myButtonID.is-loading:after {
+				opacity: 1;
+			}
+			@keyframes spin{
+				from {
+					transform: rotate(0deg);
+				}
+				to {
+					transform: rotate(359deg);	
+				}
+			}
 		</style>
 	</head>
 	<body>
