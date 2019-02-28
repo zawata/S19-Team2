@@ -41,23 +41,19 @@ RUN npm run build
 FROM debian:stable-slim as flaskapp
 
 # Adding globally needed libraries
-RUN apt-get update &&\
-    apt-get install -y \
-    libboost-python-dev \
-    libboost-filesystem-dev \
-    python3-pip
+RUN apt-get update
+RUN apt-get install -y libboost-python-dev
+RUN apt-get install -y libboost-filesystem-dev
+RUN apt-get install -y python3-pip
 RUN pip3 install flask
 
 #create app directory
 WORKDIR /app
 
 # Copy relevant files
-COPY --from=stage1 /spyce/spyce.so        /app/spyce
+COPY --from=stage1 /spyce/spyce.so        /app/spyce.so
 COPY --from=stage2 /stage2/dist           /app/dist
 COPY               FlaskServer.py         /app
-
-# Expose flask server port
-EXPOSE 5000
 
 # Start Flask Server
 CMD [ "python3", "FlaskServer.py" ]
