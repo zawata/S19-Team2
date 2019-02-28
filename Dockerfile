@@ -1,10 +1,18 @@
 #===== Stage 1: Build spyce =====#
-FROM alpine:latest as stage1
+FROM debian:stable-slim as stage1
 
 # Adding needed libraries
-RUN apk add boost-dev
-RUN apk add g++ make cmake
-RUN apk add python3-dev
+RUN apt-get update &&\
+    apt-get install -y \
+    curl \
+    libboost-python-dev \
+    libboost-filesystem-dev \
+    build-essential \
+    python3-dev
+
+RUN curl -L https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4-Linux-x86_64.sh -o curl.sh &&\
+    chmod +x curl.sh &&\
+    ./curl.sh --skip-license --prefix=/usr
 
 # create stage directory
 WORKDIR /stage1
@@ -30,20 +38,21 @@ RUN npm install
 RUN npm run build
 
 #===== Stage 3: Python + Final =====#
-FROM alpine:latest as flaskapp
+FROM debian:stable-slim as flaskapp
 
 # Adding globally needed libraries
-RUN apk add --no-cache libstdc++
-RUN apk add boost-system boost-filesystem boost-python3
-RUN apk add python3
-RUN python3 -m ensurepip
+RUN apt-get update &&\
+    apt-get install -y \
+    libboost-python-dev \
+    libboost-filesystem-dev \
+    python3-pip
 RUN pip3 install flask
 
 #create app directory
 WORKDIR /app
 
 # Copy relevant files
-COPY --from=stage1 /spyce/spyce.so        /app/
+COPY --from=stage1 /spyce/spyce.so        /app/spyce
 COPY --from=stage2 /stage2/dist           /app/dist
 COPY               FlaskServer.py         /app
 
