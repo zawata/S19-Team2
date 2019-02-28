@@ -22,7 +22,26 @@ const loadTexture = (path, loader, onProgress) => {
 }
 
 // Create scene and camera
-let scene = new THREE.Scene();
+var scene;
+var scene1 = new THREE.Scene();
+var scene2 = new THREE.Scene();
+
+scene = scene1;
+
+//OnClick event for the button
+const myButton = document.getElementById('myButtonID');
+myButton.onclick = function() {
+    this.classList.toggle('is-loading');
+    if(scene == scene1) {
+        console.log('Changed to Scene 2');
+        scene = scene2;
+    } else {
+        console.log('Changed to scene 1');
+        scene = scene1;
+    }
+}
+
+//The scenes share the same camera, controls, renderer defined below 
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 10; // set camera away from origin
 camera.position.x = 10;
@@ -45,6 +64,7 @@ window.addEventListener('resize', function() {
     camera.updateProjectionMatrix();
 });
 
+//The following textures and flares are for the Sun in the first scene
 var textureFlare0;
 var textureFlare3;
 let solarFlareLight;
@@ -66,7 +86,7 @@ function addLight( h, s, l, x, y, z ) {
     var light = new THREE.PointLight( 0xffffff, 1.5, 2000 );
     light.color.setHSL( h, s, l );
     light.position.set( x, y, z );
-    scene.add( light );
+    scene1.add( light );
 
     var lensflare = new THREE.Lensflare();
     lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100, 0, light.color ) );
@@ -82,7 +102,8 @@ scene.add( axesHelper );
 // Create axis of rotation
 let axis = new THREE.Vector3(0,0.4101524,0).normalize();
 
-// Declaring update, render, and animation function
+//Scene 1 spheres
+// Declaring update, render, and animation function: rotations for the first scene
 const update = () => {
     let date = Date.now() * 0.00001;
 
@@ -96,6 +117,49 @@ const update = () => {
     moon.rotateOnAxis(axis, 0.001);     //moon's rotation on its axis
 };
 
+let sun = new Sun(sunScale);
+let earth = new Earth(0.5, earthScale);
+let moon = new Moon(0.1, moonScale);
+
+// Load and Kick Off Simulation
+earth.load().then((earthMesh) => {
+    earth = earthMesh;
+    earth.position.x = 0;
+    earth.position.y = 0;
+    earth.position.z = 0;
+    scene1.add(earth);
+    return moon.load();
+}).then((moonMesh) => {
+    moon = moonMesh;
+    scene1.add(moon);
+    return sun.load();
+}).then((sunMesh) => {
+    // sun = sunMesh;
+    // sun.scale.set(sunScale,sunScale,sunScale);
+    // scene1.add(sun);
+}).then(() => {
+    animate();
+});;
+
+//Scene 2 here:
+//Extra light created for scene2
+var lightScene2 = new THREE.DirectionalLight( 0xffffff );
+lightScene2.position.set( 0, 0, 0 ).normalize();
+
+scene2.add(lightScene2);
+
+let moonScene2 = new Moon(0.8, moonScale);
+
+moonScene2.load().then((moonMesh2) => {
+    moonScene2 = moonMesh2;
+    moonScene2.position.x = 0;
+    moonScene2.position.y = 0;
+    moonScene2.position.z = 0;
+    scene2.add(moonScene2);
+}).then(() => {
+       render();
+});;
+
 // sends scene and camera props to renderer
 const render = () => {
     renderer.render(scene, camera);
@@ -108,26 +172,3 @@ const animate = () => {
     render();
 };
 
-let sun = new Sun(sunScale);
-let earth = new Earth(0.5, earthScale);
-let moon = new Moon(0.1, moonScale);
-
-// Load and Kick Off Simulation
-earth.load().then((earthMesh) => {
-    earth = earthMesh;
-    earth.position.x = 0;
-    earth.position.y = 0;
-    earth.position.z = 0;
-    scene.add(earth);
-    return moon.load();
-}).then((moonMesh) => {
-    moon = moonMesh;
-    scene.add(moon);
-    return sun.load();
-}).then((sunMesh) => {
-    // sun = sunMesh;
-    // sun.scale.set(sunScale,sunScale,sunScale);
-    // scene.add(sun);
-}).then(() => {
-    animate();
-});;
