@@ -63,8 +63,10 @@ def change_trajectory_file():
 def get_file(filename):
     return send_from_directory('dist', filename)
 if __name__ == '__main__':
-    print(app.url_map)
-    app.run(debug=True, host='0.0.0.0')
+    port = os.getenv('PORT', 5000)
+    host = '0.0.0.0'
+
+    app.run(host=host, port=port)
     try:
         load_spacecraft_bsp()
     except:

@@ -55,5 +55,7 @@ COPY --from=stage1 /spyce/spyce.so        /app/spyce.so
 COPY --from=stage2 /stage2/dist           /app/dist
 COPY               FlaskServer.py         /app
 
+EXPOSE 5000
+
 # Start Flask Server
 CMD [ "python3", "FlaskServer.py" ]
