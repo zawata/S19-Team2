@@ -58,7 +58,7 @@ def get_all_objects():
             #TODO: add john's idtoname
             celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
-
+    spy.main_file = main_kernel
     return jsonify(jsonResponse)
 
 @app.route('/<path:filename>', methods=['GET'])
