@@ -1,4 +1,5 @@
 #include <boost/filesystem.hpp>
+#include <iostream>
 
 #include "SpiceUsr.h"
 
@@ -6,6 +7,34 @@
 #include "spyce_exceptions.hpp"
 
 #define SPYCE_OBJECTS_MAX 100
+
+void check_spice_errors() {
+    if(!failed_c()) return;
+
+    char mesg[26] = {0};
+
+    getmsg_c("SHORT", 26, mesg);
+
+    reset_c();
+    if       (eqstr_c(mesg, "SPICE(EMPTYSTRING)")) {
+        throw InvalidArgumentException("Empty String");
+    } else if(eqstr_c(mesg, "SPICE(NOSUCHFILE)")) {
+        throw FileNotFoundException();
+    } else if(eqstr_c(mesg, "SPICE(BADFILETYPE)")) {
+        throw InvalidFileException("Bad File Type");
+    } else if(eqstr_c(mesg, "SPICE(BADARCHTYPE)")) {
+        throw InvalidFileException("Bad Architecture Type");
+    } else if(eqstr_c(mesg, "SPICE(INVALIDFORMAT)")) {
+        throw InvalidFileException("Invalid Format");
+    } else if(eqstr_c(mesg, "SPICE(IDCODENOTFOUND)")) {
+        throw IDNotFoundException();
+    } else if(eqstr_c(mesg, "SPICE(SPKINSUFFDATA)")) {
+        throw InsufficientDataException();
+    } else {
+        //any other errors throw and InternalException
+        throw InternalException(mesg);
+    }
+}
 
 Frame::Frame(SpiceDouble *frame) {
     this->x  = frame[0];
@@ -50,10 +79,12 @@ std::string spyce::_get_file() { return file; }
 
 void spyce::add_kernel(std::string s) {
     furnsh_c(s.c_str());
+    check_spice_errors();
 }
 
 void spyce::remove_kernel(std::string s) {
     unload_c(s.c_str());
+    check_spice_errors();
 }
 
 namespace py = boost::python;
@@ -63,10 +94,16 @@ py::list spyce::get_objects() {
 
     //have to reset the cell so data doesn't persist per call
     scard_c(0, &id_list);
+    check_spice_errors();
 
     py::list ret_obj;
     spkobj_c(file.c_str(), &id_list);
-    for(int i = 0; i < card_c(&id_list); i++) {
+    check_spice_errors();
+
+    int limit = card_c(&id_list);
+    check_spice_errors();
+
+    for(int i = 0; i < limit; i++) {
         ret_obj.append(SPICE_CELL_ELEM_I(&id_list, i));
     }
 
@@ -76,7 +113,9 @@ py::list spyce::get_objects() {
 int spyce::str_to_id(std::string naif_id) {
     int  id_code;
     SpiceBoolean found;
+
     bodn2c_c(naif_id.c_str(), &id_code, &found);
+    check_spice_errors();
 
     if(!found)
         throw IDNotFoundException();
@@ -92,10 +131,11 @@ Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
         target_id,   // target
         e_time,      // epoch time
         "J2000",     // reference frame, TODO: J2000 vs ECLIPJ2000 frame?
-        "NONE",      // Aberration correction setting. TODO: correct for light time?
+        "NONE",      // Aberration correction setting.
         observer_id, // observer reference
         frame,       // output frame
         &lt);        // output light time
+    check_spice_errors();
 
     return Frame(frame);
 }
