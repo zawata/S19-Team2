@@ -28,18 +28,18 @@ var scene2 = new THREE.Scene();
 
 scene = scene1;
 
-//OnClick event for the button- the animation doesn't stop.
-const myButton = document.getElementById('myButtonID');
-myButton.onclick = function() {
-    this.classList.toggle('is-loading');
+//The button loading animation uses Bootstrap and Font Awesome
+$('#myButtonID').on('click', function(event){
+    event.target.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> loading...';
+    setTimeout(function(){
+        $('#myButtonID').html('<i class="fas fa-rocket"></i>  Submit');
+    }, 2000);
     if(scene == scene1) {
-        console.log('Changed to Scene 2');
-        scene = scene2;
+    scene = scene2;
     } else {
-        console.log('Changed to scene 1');
-        scene = scene1;
+    scene = scene1;
     }
-}
+});
 
 //The scenes share the same camera, controls, renderer defined below 
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -141,7 +141,7 @@ earth.load().then((earthMesh) => {
     animate();
 });;
 
-//Scene 2 here:
+//Scene 2 here: Just Moon right now 
 //Extra light created for scene2
 var lightScene2 = new THREE.DirectionalLight( 0xffffff );
 lightScene2.position.set( 0, 0, 0 ).normalize();
