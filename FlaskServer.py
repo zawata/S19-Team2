@@ -23,13 +23,13 @@ astral_names = {
 def load_config():
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
-        main_filepath = CURRENT_PATH + "/config/spyce_files/trajectory/" + conf_data['main_file']
+        main_filepath = CURRENT_PATH + "/config/kernels/" + conf_data['main_file']
         spy.main_file = main_filepath
         spy.add_kernel(main_filepath)
         main_subject = conf_data['main_subject']
         spy.add_kernel()
         for kern in conf_data['kernels']:
-            spy.add_kernel("config/spyce_files/kernels/" + kern)
+            spy.add_kernel("config/kernels/kernels/" + kern)
 
 @app.route('/')
 def root():
