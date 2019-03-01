@@ -6,10 +6,13 @@ CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
 app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
 spy = spyce.spyce()
-BSP_FILENAME = "spacecraft.bsp"
-TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
-spy_loaded = False
+main_kernel = ""
+TRAJECTORY_FOLDER = CURRENT_PATH + "/config/spyce_files/trajectory/"
+kernels = []
+main_subject = None
 
+#being replaced by john's idtoname
+"""
 astral_names = {
     10: "SUN",
     399: "EARTH"
@@ -29,10 +32,14 @@ def load_config():
         main_filepath = CURRENT_PATH + "/config/kernels/" + conf_data['main_file']
         spy.main_file = main_filepath
         spy.add_kernel(main_filepath)
+        main_kernel = main_filepath
+        kernels.append(main_filepath)
         main_subject = conf_data['main_subject']
-        spy.add_kernel()
         for kern in conf_data['kernels']:
-            spy.add_kernel("config/kernels/kernels/" + kern)
+            kernel_filepath = "config/kernels/" + kern
+            spy.add_kernel(kernel_filepath)
+            kernels.append(kernel_filepath)
+
 
 @app.route('/')
 def root():
@@ -47,15 +54,18 @@ def get_spacecraft_pos():
 def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
-    for id in spy.getObjects():
-        name = astral_names[id]
-        frame = spy.get_frame_data(id, 399, time)
-        frame_as_dict = frame_to_dict(frame)
-        celestialObj = {}
-        celestialObj['id'] = id
-        celestialObj['name'] = name
-        celestialObj['frame'] = frame_as_dict
-        jsonResponse.append(celestialObj)
+    time = float(time)
+    for k in kernels:
+        spy.main_file = k
+        for id in spy.get_objects():
+            frame = spy.get_frame_data(id, 399, time)
+            frame_as_dict = frame_to_dict(frame)
+            celestialObj = {}
+            celestialObj['id'] = id
+            #TODO: add john's idtoname
+            celestialObj['frame'] = frame_as_dict
+            jsonResponse.append(celestialObj)
+
     return jsonify(jsonResponse)
 
 
