@@ -26,8 +26,13 @@ def load_spacecraft_bsp():
 def load_config():
     with open('config.json') as conf_file:
         conf_data = json.load(conf_file)
-        for sc in conf_data['spacecraft']:
-            astral_names[sc["id"]] = sc["name"]
+        main_filepath = CURRENT_PATH + "/config/spyce_files/trajectory/" + conf_data['main_file']
+        spy.main_file = main_filepath
+        spy.add_kernel(main_filepath)
+        main_subject = conf_data['main_subject']
+        spy.add_kernel()
+        for kern in conf_data['kernels']:
+            spy.add_kernel("config/spyce_files/kernels/" + kern)
 
 @app.route('/')
 def root():
