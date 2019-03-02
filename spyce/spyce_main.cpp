@@ -8,6 +8,7 @@
 
 #define SPYCE_OBJECTS_MAX 100
 #define NAIF_NAME_MAX     33
+#define DATE_STR_MAX      81
 
 void check_spice_errors() {
     if(!failed_c()) return;
@@ -68,6 +69,26 @@ spyce::spyce(std::string log_file) {
     erract_c("SET", 0, (SpiceChar *)"RETURN");         // disable "exit on error"
     errprt_c("SET", 0, (SpiceChar *)"ALL");            // print everything
     errdev_c("SET", 0, (SpiceChar *)log_file.c_str()); // in case something is printed, send it to the user file.
+}
+
+double utc_to_et(std::string date) {
+    //acceptable date formats:
+    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
+
+    double et;
+    utc2et_c(date.c_str(), &et);
+
+    return et;
+}
+
+std::string et_to_utc(double et, std::string format) {
+    //acceptable date formats:
+    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
+
+    char date_out[DATE_STR_MAX]
+    et2utc_c(et, format.c_str(), 0, DATE_STR_MAX, date_out);
+
+    return std::string(date_out);
 }
 
 void spyce::_set_file(std::string s) {

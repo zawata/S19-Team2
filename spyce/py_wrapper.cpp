@@ -40,6 +40,9 @@ BOOST_PYTHON_MODULE(spyce) {
     def("str_to_id", &spyce::str_to_id);
     def("id_to_str", &spyce::id_to_str);
 
+    def("utc_to_et", &spyce::utc_to_et);
+    def("et_to_utc", &spyce::et_to_utc);
+
     class_<spyce>("spyce")
         .add_property("main_file",&spyce::_get_file, &spyce::_set_file)
         .def("add_kernel", &spyce::add_kernel)

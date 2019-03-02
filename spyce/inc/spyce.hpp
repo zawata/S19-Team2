@@ -21,6 +21,9 @@ struct spyce {
     static int str_to_id(std::string naif_id);
     static std::string id_to_str(int naif_id);
 
+    static double utc_to_et(std::string date);
+    static std::string et_to_utc(double et, std::string format);
+
     //get and set for file.
     void _set_file(std::string s);
     std::string _get_file();
