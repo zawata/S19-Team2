@@ -7,6 +7,7 @@
 #include "spyce_exceptions.hpp"
 
 #define SPYCE_OBJECTS_MAX 100
+#define NAIF_NAME_MAX     33
 
 void check_spice_errors() {
     if(!failed_c()) return;
@@ -121,6 +122,18 @@ int spyce::str_to_id(std::string naif_id) {
         throw IDNotFoundException();
 
     return id_code;
+}
+
+std::string spyce::id_to_str(int naif_id) {
+    char naif_name[NAIF_NAME_MAX] = {0};
+    SpiceBoolean found;
+
+    bodc2n_c(naif_id, NAIF_NAME_MAX, naif_name, &found);
+
+    if(!found)
+        throw IDNotFoundException();
+
+    return std::string(naif_name);
 }
 
 Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
