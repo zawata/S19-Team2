@@ -1,3 +1,7 @@
+/*
+* GIF Source: https://dribbble.com/Tmotion (Non Commercial Use)
+*/
+
 import * as THREE from './three'
 import OrbitControls from './OrbitControls'
 import LesnFlare from './LensFlare'
@@ -40,6 +44,13 @@ $('#myButtonID').on('click', function(event){
     scene = scene1;
     }
 });
+
+//GIF loading animation
+var loader = document.getElementById("loadGIF");
+            window.addEventListener("load", function(){
+                loader.style.visibility = "hidden";
+            });
+
 
 //The scenes share the same camera, controls, renderer defined below 
 let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
