@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for
-from spyce import spyce
+import spyce
 import os, fnmatch
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -63,8 +63,10 @@ def change_trajectory_file():
 def get_file(filename):
     return send_from_directory('dist', filename)
 if __name__ == '__main__':
-    print(app.url_map)
-    app.run(debug=True)
+    port = os.getenv('PORT', 5000)
+    host = '0.0.0.0'
+
+    app.run(host=host, port=port)
     try:
         load_spacecraft_bsp()
     except:
