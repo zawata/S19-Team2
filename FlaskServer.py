@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
 from spyce import spyce
+import datetime
+from dateutil.parser import parse
 import os, json
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -38,7 +40,6 @@ def load_config():
 def root():
     return redirect("/index.html")
 
-
 @app.route('/api/spacecraft/pos', methods=['GET'])
 def get_spacecraft_pos():
     return "TODO"
@@ -61,6 +62,8 @@ def get_all_objects():
     spy.main_file = main_kernel
     return jsonify(jsonResponse)
 
+@app.rotue('/api/')
+
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
     return send_from_directory('dist', filename)
@@ -74,6 +77,7 @@ def frame_to_dict(frame):
     frameDict['dy'] = frame.dy
     frameDict['dz'] = frame.dz
     return frameDict
+
 
 if __name__ == '__main__':
     print(app.url_map)
