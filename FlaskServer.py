@@ -10,6 +10,7 @@ main_kernel_filepath = ""
 TRAJECTORY_FOLDER = CURRENT_PATH + "/config/spyce_files/trajectory/"
 kernels = []
 main_subject = None
+main_subject_name = ""
 
 def load_config():
     with open('config/config.json') as conf_file:
@@ -20,7 +21,9 @@ def load_config():
             spy.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
         global main_subject
+        global main_subject_name
         main_subject = conf_data['main_subject']
+        main_subject_name = conf_data['subject_name']
 
 @app.route('/')
 def root():
@@ -31,10 +34,11 @@ def root():
 def get_spacecraft_pos():
     return "TODO"
 
-@app.route('/api/main_id', methods=['GET'])
+@app.route('/api/main_object', methods=['GET'])
 def get_main_id():
     jsonResponse = {}
     jsonResponse['id'] = main_subject
+    jsonResponse['name'] = main_subject_name
     return jsonify(jsonResponse)
 
 @app.route('/api/all_objects', methods=['GET'])
@@ -50,7 +54,15 @@ def get_all_objects():
             frame_as_dict = frame_to_dict(frame)
             celestialObj = {}
             celestialObj['id'] = id
-            #TODO: add john's idtoname
+            name = ""
+            if id == main_subject:
+                name = main_subject_name
+            else:
+                try:
+                    name = spyce.id_to_str(id)
+                except:
+                    print("[ERROR]: NAIF not found")
+            celestialObj['name'] = name
             celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
     return jsonify(jsonResponse)
