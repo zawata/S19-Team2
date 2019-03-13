@@ -31,6 +31,12 @@ def root():
 def get_spacecraft_pos():
     return "TODO"
 
+@app.route('/api/main_id', methods=['GET'])
+def get_main_id():
+    jsonResponse = {}
+    jsonResponse['id'] = main_subject
+    return jsonify(jsonResponse)
+
 @app.route('/api/all_objects', methods=['GET'])
 def get_all_objects():
     jsonResponse = []
