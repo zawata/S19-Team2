@@ -18,6 +18,7 @@ struct spyce {
     spyce();
 
     static int str_to_id(std::string naif_id);
+    static std::string id_to_str(int naif_id);
 
     //get and set for file.
     void _set_file(std::string s);
