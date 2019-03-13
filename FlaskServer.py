@@ -35,17 +35,19 @@ def get_spacecraft_pos():
 def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
-    time = float(time)
-    print (kernels)
+    frame_data_requested = time == None
+    if (frame_data_requested):
+        time = float(time)
     for k in kernels:
         spy.main_file = k
         for id in spy.get_objects():
-            frame = spy.get_frame_data(id, 399, time)
-            frame_as_dict = frame_to_dict(frame)
             celestialObj = {}
             celestialObj['id'] = id
-            #TODO: add john's idtoname
-            celestialObj['frame'] = frame_as_dict
+            # TODO: add john's idtoname
+            if (frame_data_requested):
+                frame = spy.get_frame_data(id, 399, time)
+                frame_as_dict = frame_to_dict(frame)
+                celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
     return jsonify(jsonResponse)
 
