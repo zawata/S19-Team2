@@ -19,6 +19,8 @@ def load_config():
             kernel_filepath = "config/kernels/" + kern
             spy.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
+        global main_subject
+        main_subject = conf_data['main_subject']
 
 @app.route('/')
 def root():
