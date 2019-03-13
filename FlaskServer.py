@@ -71,10 +71,12 @@ def frame_to_dict(frame):
 
 if __name__ == '__main__':
     #print(app.url_map)
+    port = os.getenv('PORT', 5000)
+    host = '0.0.0.0'
+
+    app.run(host=host, port=port)
     try:
         load_config()
     except:
         print ("[ERROR]: Unable to load config")
-    app.run(debug=True)
-
 
