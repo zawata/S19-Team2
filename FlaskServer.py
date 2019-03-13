@@ -46,7 +46,6 @@ def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
     time = float(time)
-    print (kernels)
     for k in kernels:
         spy.main_file = k
         for id in spy.get_objects():
