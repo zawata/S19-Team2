@@ -45,12 +45,12 @@ def get_main_id():
 def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
-    time = float(time)
+    frame_data_requested = time == None
+    if (frame_data_requested):
+        time = float(time)
     for k in kernels:
         spy.main_file = k
         for id in spy.get_objects():
-            frame = spy.get_frame_data(id, 399, time)
-            frame_as_dict = frame_to_dict(frame)
             celestialObj = {}
             celestialObj['id'] = id
             name = ""
@@ -62,7 +62,10 @@ def get_all_objects():
                 except:
                     print("[ERROR]: NAIF not found")
             celestialObj['name'] = name
-            celestialObj['frame'] = frame_as_dict
+            if (frame_data_requested):
+                frame = spy.get_frame_data(id, 399, time)
+                frame_as_dict = frame_to_dict(frame)
+                celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
     return jsonify(jsonResponse)
 
