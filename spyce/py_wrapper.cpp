@@ -25,11 +25,17 @@ template <class E> void exception_(const char *name) {
             PyErr_SetString(exc, e.what().c_str());
         });
 }
+#define exception(NAME) exception_<NAME ## Exception>(#NAME"Error")
 
 BOOST_PYTHON_MODULE(spyce) {
     using namespace boost::python;
 
-    exception_<FileNotFoundException>("FileNotFoundError");
+    exception(FileNotFound);
+    exception(InvalidFile);
+    exception(InvalidArgument);
+    exception(Internal);
+    exception(IDNotFound);
+    exception(InsufficientData);
 
     class_<spyce>("spyce")
         .add_property("main_file",&spyce::_get_file, &spyce::_set_file)

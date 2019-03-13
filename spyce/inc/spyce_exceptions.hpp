@@ -1,5 +1,11 @@
 #pragma once
 
+#define build_exception_msg(NAME, MSG) struct NAME ## Exception : public SpyceException { \
+    explicit NAME ## Exception() : SpyceException(MSG) {}}
+
+#define build_exception(NAME) struct NAME ## Exception : public SpyceException { \
+    explicit NAME ## Exception(std::string err) : SpyceException(err) {}}
+
 class SpyceException {
     std::string str;
 public:
@@ -8,10 +14,9 @@ public:
     const std::string& what() const {return str;};
 };
 
-struct FileNotFoundException : public SpyceException {
-    explicit FileNotFoundException() : SpyceException("File Not Found") {}
-};
-
-struct IDNotFoundException : public SpyceException {
-    explicit IDNotFoundException(): SpyceException("ID Not Found") {}
-};
+build_exception_msg(FileNotFound, "File Not Found");
+build_exception(InvalidFile);
+build_exception(InvalidArgument);
+build_exception(Internal);
+build_exception_msg(IDNotFound, "ID Not Found");
+build_exception_msg(InsufficientData, "Insufficient Data");

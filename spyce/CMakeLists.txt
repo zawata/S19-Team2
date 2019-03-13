@@ -58,7 +58,7 @@ endif()
 target_link_libraries( spyce
         cspice_${PLATFORM}_${ARCH}.a)
 
-find_package(Python3 COMPONENTS Development)
+find_package(Python3 REQUIRED COMPONENTS Development)
 IF (Python3_FOUND)
     include_directories(${Python3_INCLUDE_DIR})
     target_link_libraries( spyce
@@ -66,7 +66,7 @@ IF (Python3_FOUND)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS
-        system filesystem python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})
+        filesystem python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})
 IF (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
     target_link_libraries( spyce
