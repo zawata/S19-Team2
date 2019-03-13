@@ -45,7 +45,7 @@ def get_main_id():
 def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
-    frame_data_requested = time == None
+    frame_data_requested = time != None
     if (frame_data_requested):
         time = float(time)
     for k in kernels:
