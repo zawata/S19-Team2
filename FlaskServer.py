@@ -12,20 +12,13 @@ kernels = []
 main_subject = None
 
 def load_config():
-
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
-        global main_kernel_filepath
-        main_kernel_filepath = CURRENT_PATH + "/config/kernels/" + conf_data['main_file']
-
-        spy.main_file = main_kernel_filepath
-        spy.add_kernel(main_kernel_filepath)
-        kernels.append(main_kernel_filepath)
+        print(conf_data['kernels'])
         for kern in conf_data['kernels']:
             kernel_filepath = "config/kernels/" + kern
             spy.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
-
 
 @app.route('/')
 def root():
@@ -41,7 +34,7 @@ def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
     time = float(time)
-    print("MKFP: ", main_kernel_filepath)
+    print (kernels)
     for k in kernels:
         spy.main_file = k
         for id in spy.get_objects():
@@ -52,7 +45,6 @@ def get_all_objects():
             #TODO: add john's idtoname
             celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
-    spy.main_file = main_kernel_filepath
     return jsonify(jsonResponse)
 
 @app.route('/<path:filename>', methods=['GET'])
@@ -71,12 +63,13 @@ def frame_to_dict(frame):
 
 if __name__ == '__main__':
     #print(app.url_map)
-    port = os.getenv('PORT', 5000)
-    host = '0.0.0.0'
-
-    app.run(host=host, port=port)
     try:
         load_config()
     except:
         print ("[ERROR]: Unable to load config")
+    port = os.getenv('PORT', 5000)
+    host = '0.0.0.0'
+
+    app.run(host=host, port=port)
+
 
