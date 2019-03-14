@@ -75,28 +75,6 @@ spyce::spyce(std::string log_file) {
     errdev_c("SET", 0, (SpiceChar *)log_file.c_str()); // in case something is printed, send it to the user file.
 }
 
-double utc_to_et(std::string date) {
-    //acceptable date formats:
-    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
-
-    double et;
-    utc2et_c(date.c_str(), &et);
-    check_spice_errors();
-
-    return et;
-}
-
-std::string et_to_utc(double et, std::string format) {
-    //acceptable date formats:
-    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
-
-    char date_out[DATE_STR_MAX]
-    et2utc_c(et, format.c_str(), 0, DATE_STR_MAX, date_out);
-    check_spice_errors();
-
-    return std::string(date_out);
-}
-
 void spyce::_set_file(std::string s) {
     if(!boost::filesystem::exists(s))
         throw FileNotFoundException();
@@ -162,6 +140,29 @@ std::string spyce::id_to_str(int naif_id) {
         throw IDNotFoundException();
 
     return std::string(naif_name);
+}
+
+
+double spyce::utc_to_et(std::string date) {
+    //acceptable date formats:
+    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
+
+    double et;
+    utc2et_c(date.c_str(), &et);
+    check_spice_errors();
+
+    return et;
+}
+
+std::string spyce::et_to_utc(double et, std::string format) {
+    //acceptable date formats:
+    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
+
+    char date_out[DATE_STR_MAX];
+    et2utc_c(et, format.c_str(), 0, DATE_STR_MAX, date_out);
+    check_spice_errors();
+
+    return std::string(date_out);
 }
 
 Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
