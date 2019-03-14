@@ -1,2 +1,0 @@
-This file only exists so that I can create this directory for git without including a dummy spk file that we don't
-want.

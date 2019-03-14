@@ -1,33 +1,60 @@
-from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for
+from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
 import spyce
-import os, fnmatch
+import os, json
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
 app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
 spy = spyce.spyce()
-BSP_FILENAME = "spacecraft.bsp"
-TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
-spy_loaded = False
+main_kernel_filepath = ""
+TRAJECTORY_FOLDER = CURRENT_PATH + "/config/spyce_files/trajectory/"
+kernels = []
+main_subject = None
 
-#loading initial file for spy
-#snippet derived from https://stackoverflow.com/questions/1724693/find-a-file-in-python
-def load_spacecraft_bsp():
-    for root, dirs, files in os.walk(TRAJECTORY_FOLDER):
-        if "spacecraft.bsp" in files:
-                spy.main_file = os.path.join(root, BSP_FILENAME)
-                spy_loaded = True
+def load_config():
+    with open('config/config.json') as conf_file:
+        conf_data = json.load(conf_file)
+        print(conf_data['kernels'])
+        for kern in conf_data['kernels']:
+            kernel_filepath = "config/kernels/" + kern
+            spy.add_kernel(kernel_filepath)
+            kernels.append(kernel_filepath)
+        global main_subject
+        main_subject = conf_data['main_subject']
 
 @app.route('/')
 def root():
     return redirect("/index.html")
 
 
-@app.route('/spacecraft/pos', methods=['GET'])
+@app.route('/api/spacecraft/pos', methods=['GET'])
 def get_spacecraft_pos():
     return "TODO"
 
+@app.route('/api/all_objects', methods=['GET'])
+def get_all_objects():
+    jsonResponse = []
+    time = request.args.get('time')
+    frame_data_requested = time != None
+    if (frame_data_requested):
+        time = float(time)
+    for k in kernels:
+        spy.main_file = k
+        for id in spy.get_objects():
+            celestialObj = {}
+            celestialObj['id'] = id
+            # TODO: add john's idtoname
+            if (frame_data_requested):
+                frame = spy.get_frame_data(id, 399, time)
+                frame_as_dict = frame_to_dict(frame)
+                celestialObj['frame'] = frame_as_dict
+            jsonResponse.append(celestialObj)
+    return jsonify(jsonResponse)
+
+
 #code derived from http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
+#Apparently, sponsor will not be using our server to upload files.
+"""
 @app.route('/data/trajectory', methods=['GET', 'POST'])
 def change_trajectory_file():
     if request.method == 'POST':
@@ -58,16 +85,31 @@ def change_trajectory_file():
           <input type=submit value=Upload>
         </form>
         '''
+"""
 
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
     return send_from_directory('dist', filename)
+
+def frame_to_dict(frame):
+    frameDict = {}
+    frameDict['x'] = frame.x
+    frameDict['y'] = frame.y
+    frameDict['z'] = frame.z
+    frameDict['dx'] = frame.dx
+    frameDict['dy'] = frame.dy
+    frameDict['dz'] = frame.dz
+    return frameDict
+
 if __name__ == '__main__':
+    #print(app.url_map)
+    try:
+        load_config()
+    except:
+        print ("[ERROR]: Unable to load config")
     port = os.getenv('PORT', 5000)
     host = '0.0.0.0'
 
-    app.run(host=host, port=port)
-    try:
-        load_spacecraft_bsp()
-    except:
-        print ("[WARN]: Unable to load BSP file")
+    app.run(debug=True, host=host, port=port)
+
+

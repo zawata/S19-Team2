@@ -54,6 +54,7 @@ WORKDIR /app
 COPY --from=stage1 /spyce/spyce.so        /app/spyce.so
 COPY --from=stage2 /stage2/dist           /app/dist
 COPY               FlaskServer.py         /app
+COPY               config/                /app/config/
 
 EXPOSE 5000
 
