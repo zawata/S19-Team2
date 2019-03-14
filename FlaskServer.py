@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
 import spyce
-import os, json, fnmatch
+import os, json
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
@@ -91,18 +91,6 @@ def change_trajectory_file():
 def get_file(filename):
     return send_from_directory('dist', filename)
 
-if __name__ == '__main__':
-    port = os.getenv('PORT', 5000)
-    host = '0.0.0.0'
-
-    app.run(host=host, port=port)
-    print(app.url_map)
-    load_config()
-    try:
-        load_spacecraft_bsp()
-    except:
-        print ("[WARN]: Unable to load BSP file")
-
 def frame_to_dict(frame):
     frameDict = {}
     frameDict['x'] = frame.x
@@ -122,6 +110,6 @@ if __name__ == '__main__':
     port = os.getenv('PORT', 5000)
     host = '0.0.0.0'
 
-    app.run(host=host, port=port)
+    app.run(debug=True, host=host, port=port)
 
 
