@@ -1,6 +1,5 @@
 import * as THREE from './three'
 import OrbitControls from './OrbitControls'
-import LesnFlare from './LensFlare'
 import Earth from './models/earth'
 import Moon from './models/moon'
 import Sun from './models/sun'
@@ -85,12 +84,10 @@ loadTexture(solarFlare, new THREE.TextureLoader()).then((flareTexture) => {
 
 // https://threejs.org/examples/#webgl_lensflares
 function addLight(h, s, l, x, y, z) {
-
   let light = new THREE.PointLight(0xffffff, 1.5, 2000);
   light.color.setHSL(h, s, l);
   light.position.set(x, y, z);
   spaceScene.add(light);
-
   let lensflare = new THREE.Lensflare();
   lensflare.addElement(new THREE.LensflareElement(textureFlare0, 100, 0, light.color));
   light.add(lensflare);
@@ -137,9 +134,6 @@ earth.load().then((earthMesh) => {
   spaceScene.add(moon);
   return sun.load();
 }).then((sunMesh) => {
-  // sun = sunMesh;
-  // sun.scale.set(sunScale,sunScale,sunScale);
-  // spaceScene.add(sun);
 }).then(() => {
   animate();
 });;
