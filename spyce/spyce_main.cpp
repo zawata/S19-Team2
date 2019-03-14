@@ -32,6 +32,10 @@ void check_spice_errors() {
         throw IDNotFoundException();
     } else if(eqstr_c(mesg, "SPICE(SPKINSUFFDATA)")) {
         throw InsufficientDataException();
+    } else if(eqstr_c(mesg, "SPICE(INVALIDTIMESTRING)")) {
+        throw InvalidArgumentException("Invalid Time String");
+    } else if(eqstr_c(mesg, "SPICE(INVALIDTIMEFORMAT)")) {
+        throw InvalidArgumentException("Invalid Time Format");
     } else {
         //any other errors throw and InternalException
         throw InternalException(mesg);
@@ -77,6 +81,7 @@ double utc_to_et(std::string date) {
 
     double et;
     utc2et_c(date.c_str(), &et);
+    check_spice_errors();
 
     return et;
 }
@@ -87,6 +92,7 @@ std::string et_to_utc(double et, std::string format) {
 
     char date_out[DATE_STR_MAX]
     et2utc_c(et, format.c_str(), 0, DATE_STR_MAX, date_out);
+    check_spice_errors();
 
     return std::string(date_out);
 }
