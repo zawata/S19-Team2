@@ -29,6 +29,7 @@ struct spyce {
     void remove_kernel(std::string s);
 
     py::list get_objects();
+    py::list get_coverage_windows(int obj_id);
 
     Frame get_frame_data(int target_id, int observer_id, double e_time);
 };

@@ -45,6 +45,7 @@ BOOST_PYTHON_MODULE(spyce) {
         .def("add_kernel", &spyce::add_kernel)
         .def("remove_kernel", &spyce::remove_kernel)
         .def("get_objects", &spyce::get_objects)
+        .def("get_coverage_windows", &spyce::get_coverage_windows)
         .def("get_frame_data", &spyce::get_frame_data);
 
     class_<Frame>("Frame")

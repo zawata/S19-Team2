@@ -111,6 +111,33 @@ py::list spyce::get_objects() {
     return ret_obj;
 }
 
+namespace py = boost::python;
+py::list spyce::get_coverage_windows(int obj_id) {
+    //NOTE: this cell is static per the macro definition
+    SPICEDOUBLE_CELL(cover, SPYCE_OBJECTS_MAX);
+
+    //have to reset the cell so data doesn't persist per call
+    scard_c(0, &cover);
+    check_spice_errors();
+
+    py::list ret_obj;
+    spkcov_c(file.c_str(), obj_id, &cover); //load coverage data of `obj` id
+    check_spice_errors();
+
+    int limit = card_c(&cover) / 2;
+    check_spice_errors();
+
+    double beg, end;
+    for(int i = 0; i < limit; i++) {
+        wnfetd_c(&cover, i, &beg, &end);
+        check_spice_errors();
+
+        ret_obj.append(py::make_tuple(beg,end));
+    }
+
+    return ret_obj;
+}
+
 int spyce::str_to_id(std::string naif_id) {
     int  id_code;
     SpiceBoolean found;
