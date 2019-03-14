@@ -84,7 +84,6 @@ def frame_to_dict(frame):
     return frameDict
 
 if __name__ == '__main__':
-    #print(app.url_map)
     try:
         load_config()
     except:
