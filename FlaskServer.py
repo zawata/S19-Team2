@@ -141,6 +141,41 @@ def frame_to_dict(frame):
     frameDict['dz'] = frame.dz
     return frameDict
 
+@app.route('/api/toJ2000', methods=['GET'])
+def toJ2000():
+    time = request.args.get("time")
+    if time == None:
+        abort(400)
+    try:
+        ret = spy.utc_to_et(time)
+        jsonObj = {}
+        jsonObj["UTC"] = time
+        jsonObj["J2000"] = ret
+        return jsonify(jsonObj)
+    except spyce.InvalidArgumentError:
+        abort(400)
+    except spyce.InternalError:
+        abort(500)
+
+@app.route('/api/toUTC', methods=['GET'])
+def toUTC():
+    time = request.args.get("time")
+    if time == None:
+        abort(400)
+    try:
+        time = float(time)
+        ret = spy.et_to_utc(time, "ISOC")
+        jsonObj = {}
+        jsonObj["UTC"] = ret
+        jsonObj["J2000"] = time
+        return jsonify(jsonObj)
+    except ValueError:
+        abort(400)
+    except spyce.InvalidArgumentError:
+        abort(400)
+    except spyce.InternalError:
+        abort(500)
+
 if __name__ == '__main__':
     try:
         load_config()
