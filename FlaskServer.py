@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
-import spyce
+from spyce import spyce
 import os, json
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
