@@ -49,23 +49,27 @@ def get_all_objects():
         time = float(time)
     for k in kernels:
         spy.main_file = k
-        for id in spy.get_objects():
-            celestialObj = {}
-            celestialObj['id'] = id
-            if (frame_data_requested):
-                frame = spy.get_frame_data(id, 399, time)
-                frame_as_dict = frame_to_dict(frame)
-                celestialObj['frame'] = frame_as_dict
-            name = ""
-            if id == main_subject:
-                name = main_subject_name
-            else:
-                try:
-                    name = spyce.id_to_str(id)
-                except:
-                    print("[ERROR]: NAIF not found")
-            celestialObj['name'] = name
-            jsonResponse.append(celestialObj)
+        try:
+            for id in spy.get_objects():
+                celestialObj = {}
+                celestialObj['id'] = id
+                if (frame_data_requested):
+                    frame = spy.get_frame_data(id, 399, time)
+                    frame_as_dict = frame_to_dict(frame)
+                    celestialObj['frame'] = frame_as_dict
+                name = ""
+                if id == main_subject:
+                    name = main_subject_name
+                else:
+                    try:
+                        name = spyce.id_to_str(id)
+                    except:
+                        print("[ERROR]: NAIF not found")
+                celestialObj['name'] = name
+                jsonResponse.append(celestialObj)
+        except spyce.InternalError:
+            #thrown when kernel does not have objects, like leapseconds
+            pass
     return jsonify(jsonResponse)
 
 @app.route('/<path:filename>', methods=['GET'])
