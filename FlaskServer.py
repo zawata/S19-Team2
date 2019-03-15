@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
-from flask import abort
+from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort
 from spyce import spyce
 import os, json
 
@@ -11,22 +10,25 @@ BSP_FILENAME = "spacecraft.bsp"
 TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
 spy_loaded = False
 kernels = []
+main_subject = None
 
 def load_config():
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
+        print(conf_data['kernels'])
         for kern in conf_data['kernels']:
             kernel_filepath = "config/kernels/" + kern
             spy.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
-
+        global main_subject
+        main_subject = conf_data['main_subject']
 
 @app.route('/')
 def root():
     return redirect("/index.html")
 
 
-@app.route('/spacecraft/pos', methods=['GET'])
+@app.route('/api/spacecraft/pos', methods=['GET'])
 def get_spacecraft_pos():
     return "TODO"
 
@@ -34,19 +36,57 @@ def get_spacecraft_pos():
 def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
-    time = float(time)
+    frame_data_requested = time != None
+    if (frame_data_requested):
+        time = float(time)
     for k in kernels:
         spy.main_file = k
         for id in spy.get_objects():
-            frame = spy.get_frame_data(id, 399, time)
-            frame_as_dict = frame_to_dict(frame)
             celestialObj = {}
             celestialObj['id'] = id
-            #TODO: add john's idtoname
-            celestialObj['frame'] = frame_as_dict
+            # TODO: add john's idtoname
+            if (frame_data_requested):
+                frame = spy.get_frame_data(id, 399, time)
+                frame_as_dict = frame_to_dict(frame)
+                celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
-    spy.main_file = main_kernel
     return jsonify(jsonResponse)
+
+
+#code derived from http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
+#Apparently, sponsor will not be using our server to upload files.
+"""
+@app.route('/data/trajectory', methods=['GET', 'POST'])
+def change_trajectory_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            print ("[WARN]: No file recieved.")
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            print ("[WARN]: No file selected.")
+            return redirect(request.url)
+        if file and file.filename[-4:] == ".bsp":
+            file.save(os.path.join(TRAJECTORY_FOLDER, BSP_FILENAME))
+            #TODO: replace with actual webpages
+            try:
+                load_spacecraft_bsp()
+                return "File change successful!"
+            except:
+                return "Unable to use BSP file"
+        print ("[WARN]: improper file format")
+
+    #TODO: replace with actual webpage.
+    return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form method=post enctype=multipart/form-data>
+          <input type=file name=file>
+          <input type=submit value=Upload>
+        </form>
+        '''
+"""
 
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
@@ -79,22 +119,28 @@ def toJ2000():
     except spyce.InternalError:
         abort(500)
 
-
 @app.route('/api/toUTC')
 def toUTC():
     time = request.args.get("time")
+    print (time)
     if time == None:
         abort(400)
     try:
+        time = float(time)
         ret = spy.et_to_utc(time, "ISOC")
         jsonObj = {}
         jsonObj["UTC"] = ret
         jsonObj["J2000"] = time
         return jsonify(jsonObj)
-    except:
+    except ValueError:
         abort(400)
+    except spyce.InvalidArgumentError:
+        abort(400)
+    except spyce.InternalError:
+        abort(500)
 
 if __name__ == '__main__':
+    #print(app.url_map)
     try:
         load_config()
     except:
@@ -103,5 +149,3 @@ if __name__ == '__main__':
     host = '0.0.0.0'
 
     app.run(host=host, port=port)
-
-
