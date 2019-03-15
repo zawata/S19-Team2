@@ -146,7 +146,7 @@ earth.load().then((earthMesh) => {
 
 //Scene 2 here: Just Moon right now
 //Extra light created for moonScene
-let lightMoonScene = new THREE.DirectionalLight(0xffffff);
+let lightMoonScene = new THREE.AmbientLight(0xffffff);
 lightMoonScene.position.set(0, 0, 0).normalize();
 
 moonScene.add(lightMoonScene);
