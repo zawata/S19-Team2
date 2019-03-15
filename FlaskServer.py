@@ -1,35 +1,20 @@
 from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
+from flask import abort
 from spyce import spyce
-import datetime
-from dateutil.parser import parse
 import os, json
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
 app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
 spy = spyce.spyce()
-main_kernel = ""
-TRAJECTORY_FOLDER = CURRENT_PATH + "/config/spyce_files/trajectory/"
+BSP_FILENAME = "spacecraft.bsp"
+TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
+spy_loaded = False
 kernels = []
-main_subject = None
-
-#being replaced by john's idtoname
-"""
-astral_names = {
-    10: "SUN",
-    399: "EARTH"
-}
-"""
 
 def load_config():
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
-        main_filepath = CURRENT_PATH + "/config/kernels/" + conf_data['main_file']
-        spy.main_file = main_filepath
-        spy.add_kernel(main_filepath)
-        main_kernel = main_filepath
-        kernels.append(main_filepath)
-        main_subject = conf_data['main_subject']
         for kern in conf_data['kernels']:
             kernel_filepath = "config/kernels/" + kern
             spy.add_kernel(kernel_filepath)
@@ -40,7 +25,8 @@ def load_config():
 def root():
     return redirect("/index.html")
 
-@app.route('/api/spacecraft/pos', methods=['GET'])
+
+@app.route('/spacecraft/pos', methods=['GET'])
 def get_spacecraft_pos():
     return "TODO"
 
@@ -76,13 +62,46 @@ def frame_to_dict(frame):
     frameDict['dz'] = frame.dz
     return frameDict
 
+@app.route('/api/toJ2000')
+def toJ2000():
+    time = request.args.get("time")
+    print(time)
+    if time == None:
+        abort(400)
+    try:
+        ret = spy.utc_to_et(time)
+        jsonObj = {}
+        jsonObj["UTC"] = time
+        jsonObj["J2000"] = ret
+        return jsonify(jsonObj)
+    except spyce.InvalidArgumentError:
+        abort(400)
+    except spyce.InternalError:
+        abort(500)
+
+
+@app.route('/api/toUTC')
+def toUTC():
+    time = request.args.get("time")
+    if time == None:
+        abort(400)
+    try:
+        ret = spy.et_to_utc(time, "ISOC")
+        jsonObj = {}
+        jsonObj["UTC"] = ret
+        jsonObj["J2000"] = time
+        return jsonify(jsonObj)
+    except:
+        abort(400)
 
 if __name__ == '__main__':
-    print(app.url_map)
     try:
         load_config()
     except:
         print ("[ERROR]: Unable to load config")
-    app.run(debug=True)
+    port = os.getenv('PORT', 5000)
+    host = '0.0.0.0'
+
+    app.run(host=host, port=port)
 
 
