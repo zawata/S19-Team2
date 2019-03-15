@@ -6,8 +6,9 @@ CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
 app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
 spy = spyce.spyce()
-main_kernel_filepath = ""
-TRAJECTORY_FOLDER = CURRENT_PATH + "/config/spyce_files/trajectory/"
+BSP_FILENAME = "spacecraft.bsp"
+TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
+spy_loaded = False
 kernels = []
 main_subject = None
 main_subject_name = ""
@@ -153,6 +154,41 @@ def get_objects(**kwargs):
         abort(500, "Error when retrieving frame data.")
 
     return ret
+
+@app.route('/api/toJ2000', methods=['GET'])
+def toJ2000():
+    time = request.args.get("time")
+    if time == None:
+        abort(400)
+    try:
+        ret = spy.utc_to_et(time)
+        jsonObj = {}
+        jsonObj["UTC"] = time
+        jsonObj["J2000"] = ret
+        return jsonify(jsonObj)
+    except spyce.InvalidArgumentError:
+        abort(400)
+    except spyce.InternalError:
+        abort(500)
+
+@app.route('/api/toUTC', methods=['GET'])
+def toUTC():
+    time = request.args.get("time")
+    if time == None:
+        abort(400)
+    try:
+        time = float(time)
+        ret = spy.et_to_utc(time, "ISOC")
+        jsonObj = {}
+        jsonObj["UTC"] = ret
+        jsonObj["J2000"] = time
+        return jsonify(jsonObj)
+    except ValueError:
+        abort(400)
+    except spyce.InvalidArgumentError:
+        abort(400)
+    except spyce.InternalError:
+        abort(500)
 
 if __name__ == '__main__':
     try:
