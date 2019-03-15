@@ -65,7 +65,6 @@ def get_all_objects():
                 except:
                     print("[ERROR]: NAIF not found")
             celestialObj['name'] = name
-            celestialObj['frame'] = frame_as_dict
             jsonResponse.append(celestialObj)
     return jsonify(jsonResponse)
 
