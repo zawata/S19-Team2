@@ -62,8 +62,6 @@ def get_all_objects():
     spy.main_file = main_kernel
     return jsonify(jsonResponse)
 
-@app.rotue('/api/')
-
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
     return send_from_directory('dist', filename)
