@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
+from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort
 from spyce import spyce
 import os, json
 
@@ -45,6 +45,7 @@ def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
     frame_data_requested = time != None
+    id = None
     if (frame_data_requested):
         time = float(time)
     for k in kernels:
@@ -70,6 +71,9 @@ def get_all_objects():
         except spyce.InternalError:
             #thrown when kernel does not have objects, like leapseconds
             pass
+        except spyce.InsufficientDataError:
+            #An object does not have frame data for this instant
+            print("[WARN]: object %s does not have data for %s" % (id, time))
     return jsonify(jsonResponse)
 
 @app.route('/<path:filename>', methods=['GET'])
