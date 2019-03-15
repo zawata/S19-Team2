@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify
+from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort
 import spyce
 import os, json
 
@@ -10,17 +10,19 @@ main_kernel_filepath = ""
 TRAJECTORY_FOLDER = CURRENT_PATH + "/config/spyce_files/trajectory/"
 kernels = []
 main_subject = None
+main_subject_name = ""
 
 def load_config():
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
-        print(conf_data['kernels'])
         for kern in conf_data['kernels']:
             kernel_filepath = "config/kernels/" + kern
             spy.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
         global main_subject
+        global main_subject_name
         main_subject = conf_data['main_subject']
+        main_subject_name = conf_data['subject_name']
 
 @app.route('/')
 def root():
@@ -31,61 +33,48 @@ def root():
 def get_spacecraft_pos():
     return "TODO"
 
+@app.route('/api/main_object', methods=['GET'])
+def get_main_id():
+    jsonResponse = {}
+    jsonResponse['id'] = main_subject
+    jsonResponse['name'] = main_subject_name
+    return jsonify(jsonResponse)
+
 @app.route('/api/all_objects', methods=['GET'])
 def get_all_objects():
     jsonResponse = []
     time = request.args.get('time')
     frame_data_requested = time != None
+    id = None
     if (frame_data_requested):
         time = float(time)
     for k in kernels:
         spy.main_file = k
-        for id in spy.get_objects():
-            celestialObj = {}
-            celestialObj['id'] = id
-            # TODO: add john's idtoname
-            if (frame_data_requested):
-                frame = spy.get_frame_data(id, 399, time)
-                frame_as_dict = frame_to_dict(frame)
-                celestialObj['frame'] = frame_as_dict
-            jsonResponse.append(celestialObj)
+        try:
+            for id in spy.get_objects():
+                celestialObj = {}
+                celestialObj['id'] = id
+                if (frame_data_requested):
+                    frame = spy.get_frame_data(id, 399, time)
+                    frame_as_dict = frame_to_dict(frame)
+                    celestialObj['frame'] = frame_as_dict
+                name = ""
+                if id == main_subject:
+                    name = main_subject_name
+                else:
+                    try:
+                        name = spyce.id_to_str(id)
+                    except:
+                        print("[ERROR]: NAIF not found")
+                celestialObj['name'] = name
+                jsonResponse.append(celestialObj)
+        except spyce.InternalError:
+            #thrown when kernel does not have objects, like leapseconds
+            pass
+        except spyce.InsufficientDataError:
+            #An object does not have frame data for this instant
+            print("[WARN]: object %s does not have data for %s" % (id, time))
     return jsonify(jsonResponse)
-
-
-#code derived from http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
-#Apparently, sponsor will not be using our server to upload files.
-"""
-@app.route('/data/trajectory', methods=['GET', 'POST'])
-def change_trajectory_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            print ("[WARN]: No file recieved.")
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            print ("[WARN]: No file selected.")
-            return redirect(request.url)
-        if file and file.filename[-4:] == ".bsp":
-            file.save(os.path.join(TRAJECTORY_FOLDER, BSP_FILENAME))
-            #TODO: replace with actual webpages
-            try:
-                load_spacecraft_bsp()
-                return "File change successful!"
-            except:
-                return "Unable to use BSP file"
-        print ("[WARN]: improper file format")
-
-    #TODO: replace with actual webpage.
-    return '''
-        <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
-        <form method=post enctype=multipart/form-data>
-          <input type=file name=file>
-          <input type=submit value=Upload>
-        </form>
-        '''
-"""
 
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
@@ -102,7 +91,6 @@ def frame_to_dict(frame):
     return frameDict
 
 if __name__ == '__main__':
-    #print(app.url_map)
     try:
         load_config()
     except:
@@ -110,6 +98,4 @@ if __name__ == '__main__':
     port = os.getenv('PORT', 5000)
     host = '0.0.0.0'
 
-    app.run(debug=True, host=host, port=port)
-
-
+    app.run(host=host, port=port)
