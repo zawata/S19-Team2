@@ -15,7 +15,6 @@ main_subject_name = ""
 def load_config():
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
-        print(conf_data['kernels'])
         for kern in conf_data['kernels']:
             kernel_filepath = "config/kernels/" + kern
             spy.add_kernel(kernel_filepath)

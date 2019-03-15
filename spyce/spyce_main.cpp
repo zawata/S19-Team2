@@ -129,6 +129,7 @@ std::string spyce::id_to_str(int naif_id) {
     SpiceBoolean found;
 
     bodc2n_c(naif_id, NAIF_NAME_MAX, naif_name, &found);
+    check_spice_errors();
 
     if(!found)
         throw IDNotFoundException();
