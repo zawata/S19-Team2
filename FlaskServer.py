@@ -102,7 +102,7 @@ def frame_to_dict(frame):
     frameDict['dz'] = frame.dz
     return frameDict
 
-@app.route('/api/toJ2000')
+@app.route('/api/toJ2000', methods=['GET'])
 def toJ2000():
     time = request.args.get("time")
     print(time)
@@ -119,7 +119,7 @@ def toJ2000():
     except spyce.InternalError:
         abort(500)
 
-@app.route('/api/toUTC')
+@app.route('/api/toUTC', methods=['GET'])
 def toUTC():
     time = request.args.get("time")
     print (time)
