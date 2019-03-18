@@ -55,6 +55,18 @@ export function makeLensflare(textureFlare, light) {
   return lensflare;
 }
 
+export function addLighting(scene) {
+  return new Promise((resolve, reject) => {
+    makeTextureFlare().then(textureFlare => {
+      let pointLight = makePointLight(0.995, 0.5, 0.9, 0, 0, 0);
+      let lensFlare = makeLensflare(textureFlare, pointLight);
+      scene.add(pointLight);
+      pointLight.add(lensFlare);
+      resolve(pointLight);
+    });
+  });
+}
+
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => {
   return new Promise((resolve, reject) => {
