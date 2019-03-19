@@ -2,6 +2,8 @@ import * as THREE from '../js/three';
 import OrbitControls from '../js/OrbitControls';
 import solarFlare from '../lensflare0.png';
 import solarBubble from '../lensflare3.png';
+import Earth from '../js/models/earth'
+import Moon from '../js/models/moon'
 
 export function buildScene() {
   let scene = new THREE.Scene();
@@ -63,6 +65,29 @@ export function addLighting(scene) {
       scene.add(pointLight);
       pointLight.add(lensFlare);
       resolve(pointLight);
+    });
+  });
+}
+
+export function addObjects(scene, earthScale, moonScale) {
+  return new Promise((resolve, reject) => {
+    let earth = new Earth(0.5, earthScale);
+    let moon = new Moon(0.1, moonScale);
+    earth.load().then((earthMesh) => {
+      earth = earthMesh;
+      earth.position.x = 0;
+      earth.position.y = 0;
+      earth.position.z = 0;
+      scene.add(earth);
+      return moon.load();
+    }).then((moonMesh) => {
+      moon = moonMesh;
+      scene.add(moon);
+    }).then(() => {
+      resolve({
+        earthObj: earth,
+        moonObj: moon
+      });
     });
   });
 }
