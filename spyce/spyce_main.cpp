@@ -1,9 +1,41 @@
 #include <boost/filesystem.hpp>
+#include <iostream>
 
 #include "SpiceUsr.h"
 
 #include "spyce.hpp"
 #include "spyce_exceptions.hpp"
+
+#define SPYCE_OBJECTS_MAX 100
+#define NAIF_NAME_MAX     33
+
+void check_spice_errors() {
+    if(!failed_c()) return;
+
+    char mesg[26] = {0};
+
+    getmsg_c("SHORT", 26, mesg);
+
+    reset_c();
+    if       (eqstr_c(mesg, "SPICE(EMPTYSTRING)")) {
+        throw InvalidArgumentException("Empty String");
+    } else if(eqstr_c(mesg, "SPICE(NOSUCHFILE)")) {
+        throw FileNotFoundException();
+    } else if(eqstr_c(mesg, "SPICE(BADFILETYPE)")) {
+        throw InvalidFileException("Bad File Type");
+    } else if(eqstr_c(mesg, "SPICE(BADARCHTYPE)")) {
+        throw InvalidFileException("Bad Architecture Type");
+    } else if(eqstr_c(mesg, "SPICE(INVALIDFORMAT)")) {
+        throw InvalidFileException("Invalid Format");
+    } else if(eqstr_c(mesg, "SPICE(IDCODENOTFOUND)")) {
+        throw IDNotFoundException();
+    } else if(eqstr_c(mesg, "SPICE(SPKINSUFFDATA)")) {
+        throw InsufficientDataException();
+    } else {
+        //any other errors throw and InternalException
+        throw InternalException(mesg);
+    }
+}
 
 Frame::Frame(SpiceDouble *frame) {
     this->x  = frame[0];
@@ -23,7 +55,20 @@ Frame::Frame() {
     this->dz = 0;
 }
 
-spyce::spyce() {}
+// Error Handling
+//https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/error.html
+spyce::spyce() {
+    erract_c("SET", 0, (SpiceChar *)"RETURN"); // disable "exit on error"
+    errprt_c("SET", 0, (SpiceChar *)"NONE");   // don't print anything
+    errdev_c("SET", 0, (SpiceChar *)"NULL");   // in case something is printed, send it nowhere.
+}
+
+//Give the user to chance to set a log file.
+spyce::spyce(std::string log_file) {
+    erract_c("SET", 0, (SpiceChar *)"RETURN");         // disable "exit on error"
+    errprt_c("SET", 0, (SpiceChar *)"ALL");            // print everything
+    errdev_c("SET", 0, (SpiceChar *)log_file.c_str()); // in case something is printed, send it to the user file.
+}
 
 void spyce::_set_file(std::string s) {
     if(!boost::filesystem::exists(s))
@@ -35,41 +80,76 @@ std::string spyce::_get_file() { return file; }
 
 void spyce::add_kernel(std::string s) {
     furnsh_c(s.c_str());
+    check_spice_errors();
 }
 
 void spyce::remove_kernel(std::string s) {
     unload_c(s.c_str());
+    check_spice_errors();
 }
 
+namespace py = boost::python;
+py::list spyce::get_objects() {
+    //NOTE: this cell is static per the macro definition
+    SPICEINT_CELL(id_list, SPYCE_OBJECTS_MAX);
 
-// int main() {
-//     //furnsh_c("LMAP.DP7.bsp");
-//     const char *const file = "LMAP_FullTrajectory_ScienceExtension.bsp";
+    //have to reset the cell so data doesn't persist per call
+    scard_c(0, &id_list);
+    check_spice_errors();
 
-//     SPICEINT_CELL(id_list, 8);
-//     SPICEDOUBLE_CELL( cover, 1000 );
+    py::list ret_obj;
+    spkobj_c(file.c_str(), &id_list);
+    check_spice_errors();
 
-//     spkobj_c(file, &id_list);
+    int limit = card_c(&id_list);
+    check_spice_errors();
 
-//     for(int i = 0; i < card_c(&id_list); i++) {
-//         SpiceInt obj = SPICE_CELL_ELEM_I(&id_list, i);
+    for(int i = 0; i < limit; i++) {
+        ret_obj.append(SPICE_CELL_ELEM_I(&id_list, i));
+    }
 
-//         scard_c(0, &cover); //reset coverage cell
+    return ret_obj;
+}
 
-//         std::cout << "object id: " << obj << std::endl;
+int spyce::str_to_id(std::string naif_id) {
+    int  id_code;
+    SpiceBoolean found;
 
-//         spkcov_c(file, obj, &cover); //load coverage data of `obj` id
+    bodn2c_c(naif_id.c_str(), &id_code, &found);
+    check_spice_errors();
 
-//         int inv_num = wncard_c(&cover);
+    if(!found)
+        throw IDNotFoundException();
 
-//         std::cout << "number of intervals: " << inv_num << std::endl;
+    return id_code;
+}
 
-//         double beg, end;
+std::string spyce::id_to_str(int naif_id) {
+    char naif_name[NAIF_NAME_MAX] = {0};
+    SpiceBoolean found;
 
-//         wnfetd_c(&cover, 0, &beg, &end);
+    bodc2n_c(naif_id, NAIF_NAME_MAX, naif_name, &found);
+    check_spice_errors();
 
-//         std::cout << "start: " << beg << std::endl;
-//         std::cout << "end:   "   << end << std::endl;
+    if(!found)
+        throw IDNotFoundException();
 
-//     }
-// }
+    return std::string(naif_name);
+}
+
+Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
+    SpiceDouble frame[6] = {0};
+    SpiceDouble lt;
+
+    spkez_c(
+        target_id,   // target
+        e_time,      // epoch time
+        "J2000",     // reference frame, TODO: J2000 vs ECLIPJ2000 frame?
+        "NONE",      // Aberration correction setting.
+        observer_id, // observer reference
+        frame,       // output frame
+        &lt);        // output light time
+    check_spice_errors();
+
+    return Frame(frame);
+}

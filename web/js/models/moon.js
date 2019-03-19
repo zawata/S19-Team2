@@ -17,7 +17,7 @@ export default class Moon {
     load() {
         return loadTexture(moonTextureImg, new THREE.TextureLoader()).then((moonTexture) => {
             let geometry = new THREE.SphereGeometry(this.size, 15, 15);
-            let material = new THREE.MeshBasicMaterial({
+            let material = new THREE.MeshPhongMaterial({
                 map:    moonTexture,
             });
             let moon = new THREE.Mesh(geometry, material);
