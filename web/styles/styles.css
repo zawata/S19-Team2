@@ -72,3 +72,8 @@ canvas {
   background-color: #81C3D7;
   border: none;
 }
+
+.space-scene {
+  width: 100%;
+  height: 100%;
+}

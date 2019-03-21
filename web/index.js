@@ -5,7 +5,6 @@ import SpaceScene from './components/SpaceScene';
 const App = () =>{
   return (
     <div>
-      <h1>Hello Parcel</h1>
       <SpaceScene/>
     </div>
   )

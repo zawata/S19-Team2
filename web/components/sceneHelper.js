@@ -92,6 +92,12 @@ export function addObjects(scene, earthScale, moonScale) {
   });
 }
 
+export function addAxisHelper(scene) {
+  let axesHelper = new THREE.AxesHelper(5);
+  scene.add(axesHelper);
+}
+
+
 // Function-like promise loader
 const loadTexture = (path, loader, onProgress) => {
   return new Promise((resolve, reject) => {
