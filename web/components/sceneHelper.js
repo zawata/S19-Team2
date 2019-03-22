@@ -1,16 +1,19 @@
-import * as THREE from '../js/three';
-import OrbitControls from '../js/OrbitControls';
-import solarFlare from '../lensflare0.png';
-import solarBubble from '../lensflare3.png';
-import Earth from '../js/models/earth'
-import Moon from '../js/models/moon'
+import * as THREE from '../three/three';
+import { loadTexture } from '../textures/texture';
+import OrbitControls from '../three/OrbitControls';
+import solarFlare from '../textures/lensflare0.png';
+import Earth from '../models/earth'
+import Moon from '../models/moon'
 
+/**
+ * buildScene
+ * Creates the scene, camera, and controls
+ */
 export function buildScene() {
   let scene = new THREE.Scene();
 
-  //The scenes share the same camera, controls, renderer defined below
   let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 10; // set camera away from origin
+  camera.position.z = 10;
   camera.position.x = 10;
   camera.position.y = 0;
 

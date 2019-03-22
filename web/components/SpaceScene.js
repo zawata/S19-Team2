@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import * as THREE from '../js/three';
-import LensFlare from '../js/LensFlare'
-import OrbitControls from '../js/OrbitControls';
+import * as THREE from '../three/three';
+import LensFlare from '../three/LensFlare'
+import OrbitControls from '../three/OrbitControls';
 import { 
-  addLighting, 
+  addLighting,
   buildScene, 
   addObjects,
   addAxisHelper
@@ -14,14 +14,6 @@ const moonScale = 3.5;
 const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
-
-/**
- * Structure should be
- * Make scene, camera, and renderer
- * Add lights
- * Add objects
- * Start animation
- */
 
 export default class SpaceScene extends Component {
 
@@ -34,6 +26,11 @@ export default class SpaceScene extends Component {
     };
   }
 
+  /**
+   * componentDidMount
+   * Lifecycle method in React
+   * Gets called everytime the component (page) loads
+   */
   componentDidMount() {
     
     // Build base scene objects
