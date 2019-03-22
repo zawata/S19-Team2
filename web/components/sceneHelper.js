@@ -25,7 +25,7 @@ export function buildScene() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  //Code to adapt to resizing of windows- fit to window size
+  // Make scene responsive
   window.addEventListener('resize', function() {
     let widthWindow = window.innerWidth;
     let heightWindow = window.innerHeight;
@@ -34,6 +34,7 @@ export function buildScene() {
     camera.updateProjectionMatrix();
   });
 
+  // Return created objects to the scene
   return {
     scene,
     camera,
@@ -42,10 +43,61 @@ export function buildScene() {
   }
 }
 
+/**
+ * addObjects
+ * Adds earth and moon to the scene
+ */
+export async function addObjects(scene, earthScale, moonScale) {
+
+    // Create base objects
+    let earth = new Earth(0.5, earthScale);
+    let moon = new Moon(0.1, moonScale);
+
+    // Load earth texture, and add to the scene
+    const earthMesh = await earth.load();
+    earth = earthMesh;
+    earth.position.x = 0;
+    earth.position.y = 0;
+    earth.position.z = 0;
+    scene.add(earth);
+
+    // Load moon texture, and add to scene
+    const moonMesh = await moon.load();
+    moon = moonMesh;
+    scene.add(moon);
+
+    // Return loaded earth and moon objects
+    return {
+        earthObj: earth,
+        moonObj: moon
+    };
+}
+
+/**
+ * addLighting
+ * Returns a promise that loads sun lighting / textures
+ */
+export async function addLighting(scene) {
+  const textureFlare = await makeTextureFlare();
+  let pointLight = makePointLight(0.995, 0.5, 0.9, 0, 0, 0);
+  let lensFlare = makeLensflare(textureFlare, pointLight);
+  scene.add(pointLight);
+  pointLight.add(lensFlare);
+  return pointLight;
+}
+
+/**
+ * makeTextureFlare
+ * loads the solarFlare texture
+ */
 export function makeTextureFlare() {
   return loadTexture(solarFlare, new THREE.TextureLoader())
 }
 
+/**
+ * makePointLight
+ * Creates point light and sets color of light
+ */
 export function makePointLight(h, s, l, x, y, z) {
   let light = new THREE.PointLight(0xffffff, 1.5, 2000);
   light.color.setHSL(h, s, l);
@@ -54,56 +106,21 @@ export function makePointLight(h, s, l, x, y, z) {
   return light;
 }
 
+/**
+ * makeLensflare
+ * Creates lensflare effect
+ */
 export function makeLensflare(textureFlare, light) {
   let lensflare = new THREE.Lensflare();
   lensflare.addElement(new THREE.LensflareElement(textureFlare, 100, 0, light.color));
   return lensflare;
 }
 
-export function addLighting(scene) {
-  return new Promise((resolve, reject) => {
-    makeTextureFlare().then(textureFlare => {
-      let pointLight = makePointLight(0.995, 0.5, 0.9, 0, 0, 0);
-      let lensFlare = makeLensflare(textureFlare, pointLight);
-      scene.add(pointLight);
-      pointLight.add(lensFlare);
-      resolve(pointLight);
-    });
-  });
-}
-
-export function addObjects(scene, earthScale, moonScale) {
-  return new Promise((resolve, reject) => {
-    let earth = new Earth(0.5, earthScale);
-    let moon = new Moon(0.1, moonScale);
-    earth.load().then((earthMesh) => {
-      earth = earthMesh;
-      earth.position.x = 0;
-      earth.position.y = 0;
-      earth.position.z = 0;
-      scene.add(earth);
-      return moon.load();
-    }).then((moonMesh) => {
-      moon = moonMesh;
-      scene.add(moon);
-    }).then(() => {
-      resolve({
-        earthObj: earth,
-        moonObj: moon
-      });
-    });
-  });
-}
-
+/**
+ * addAxisHelper
+ * Adds axis at origin to orient
+ */
 export function addAxisHelper(scene) {
   let axesHelper = new THREE.AxesHelper(5);
   scene.add(axesHelper);
-}
-
-
-// Function-like promise loader
-const loadTexture = (path, loader, onProgress) => {
-  return new Promise((resolve, reject) => {
-    loader.load(path, resolve, onProgress, reject);
-  });
 }
