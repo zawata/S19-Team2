@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import * as THREE from '../three/three';
-import LensFlare from '../three/LensFlare'
-import OrbitControls from '../three/OrbitControls';
 import { 
   addLighting,
   buildScene, 

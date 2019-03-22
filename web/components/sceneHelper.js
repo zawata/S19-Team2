@@ -1,6 +1,7 @@
 import * as THREE from '../three/three';
 import { loadTexture } from '../textures/texture';
 import OrbitControls from '../three/OrbitControls';
+import LensFlare from '../three/LensFlare'
 import solarFlare from '../textures/lensflare0.png';
 import Earth from '../models/earth'
 import Moon from '../models/moon'
