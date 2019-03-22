@@ -31,23 +31,7 @@ export default class SpaceScene extends Component {
    * Lifecycle method in React
    * Gets called everytime the component (page) loads
    */
-  componentDidMount() {
-    
-    // Build base scene objects
-    let { scene, camera, controls, renderer } = buildScene();
-
-    // Add lighting, objects, and axis helper
-    addLighting(scene).then(pointLighting => this.setState({ pointLight: pointLighting }));
-
-    addObjects(scene, earthScale, moonScale).then(({ earthObj, moonObj }) => {
-      this.setState({ earth: earthObj });
-      this.setState({ moon: moonObj });
-    }).then(() => {
-      animate();
-    });
-
-    addAxisHelper(scene);
-
+  async componentDidMount() {
 
     /**
      * Update function
@@ -83,6 +67,22 @@ export default class SpaceScene extends Component {
       update();
       render();
     };
+    
+    // Build base scene objects
+    let { scene, camera, controls, renderer } = buildScene();
+
+    // Add lighting (sun flare)
+    let lighting = await addLighting(scene);
+    this.setState({ pointLight: lighting });
+
+    // Load mesh objects for earth and moon
+    let { earthObj, moonObj } = await addObjects(scene, earthScale, moonScale);
+    this.setState({ earth: earthObj });
+    this.setState({ moon: moonObj });
+
+    addAxisHelper(scene);
+
+    animate();
   }
 
   render() {
