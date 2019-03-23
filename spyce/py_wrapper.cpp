@@ -44,6 +44,8 @@ BOOST_PYTHON_MODULE(spyce) {
         .add_property("main_file",&spyce::_get_file, &spyce::_set_file)
         .def("add_kernel", &spyce::add_kernel)
         .def("remove_kernel", &spyce::remove_kernel)
+        .def("utc_to_et", &spyce::utc_to_et)
+        .def("et_to_utc", &spyce::et_to_utc)
         .def("get_objects", &spyce::get_objects)
         .def("get_frame_data", &spyce::get_frame_data);
 

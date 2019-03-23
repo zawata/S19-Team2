@@ -28,6 +28,9 @@ struct spyce {
     void add_kernel(std::string s);
     void remove_kernel(std::string s);
 
+    double utc_to_et(std::string date);
+    std::string et_to_utc(double et, std::string format);
+
     py::list get_objects();
 
     Frame get_frame_data(int target_id, int observer_id, double e_time);
