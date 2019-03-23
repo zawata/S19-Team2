@@ -54,7 +54,7 @@ def get_object():
     observer = request.args.get('observer')
     if observer == None:
         observer = EARTH
-    object_id = request.args.get('id')
+    object_id = request.args.get('object_id')
     return jsonify(get_objects(time=time, observer=observer, object_id=object_id))
 
 @app.route('/api/all_objects', methods=['GET'])
@@ -104,14 +104,19 @@ def get_objects(**kwargs):
     ret = []
     frame_data_requested = time != None
     all_objects_requested = object_id == None
-    print("AOR: ", all_objects_requested)
-    print("FDR: ", frame_data_requested)
-    print("ID: ", object_id)
+    time = kwargs.get('time', None)
+    object_id = kwargs.get('object_id', None)
+    observer = kwargs.get('observer', EARTH)
+
+    ret = []
+    frame_data_requested = time != None
+    all_objects_requested = object_id == None
+
     for k in kernels:
         spy.main_file = k
         try:
             for id in spy.get_objects():
-                if not all_objects_requested and id != object_id:
+                if all_objects_requested and id != object_id:
                     continue
                 celestialObj = {}
                 celestialObj['id'] = id
@@ -136,13 +141,10 @@ def get_objects(**kwargs):
                     ret.append(celestialObj)
                 else:
                     return celestialObj
-            """
-            except spyce.InternalError:
-                #thrown when kernel does not have objects, like leapseconds
-                print("[ERROR]: spyce does not have enough info to properly calculate request.")
-                
-                pass
-            """
+        except spyce.InternalError:
+            #thrown when kernel does not have objects, like leapseconds
+            print("[ERROR]: spyce does not have enough info to properly calculate request.")
+            pass
         except spyce.InsufficientDataError:
             #An object does not have frame data for this instant in this kernel.
             print("[WARN]: object %s does not have data for %s" % (id, time))
@@ -151,7 +153,7 @@ def get_objects(**kwargs):
             pass
 
     if not all_objects_requested:
-        abort(500, "Error when retrieving frame data.")
+        abort(404, "Object not found")
 
     return ret
 
@@ -189,6 +191,7 @@ def toUTC():
         abort(400)
     except spyce.InternalError:
         abort(500)
+    return ret
 
 if __name__ == '__main__':
     try:
