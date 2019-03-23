@@ -10,6 +10,9 @@
 #define NAIF_NAME_MAX     33
 #define DATE_STR_MAX      81
 
+/**
+ * Internal Functions
+ **/
 void check_spice_errors() {
     if(!failed_c()) return;
 
@@ -41,7 +44,9 @@ void check_spice_errors() {
         throw InternalException(mesg);
     }
 }
-
+/**
+ * Frame class
+ **/
 Frame::Frame(SpiceDouble *frame) {
     this->x  = frame[0];
     this->y  = frame[1];
@@ -60,89 +65,18 @@ Frame::Frame() {
     this->dz = 0;
 }
 
-// Error Handling
-//https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/error.html
-spyce::spyce() {
+/**
+ * Spyce
+ **/
+void init() {
+    // Error Handling
+    //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/error.html
     erract_c("SET", 0, (SpiceChar *)"RETURN"); // disable "exit on error"
     errprt_c("SET", 0, (SpiceChar *)"NONE");   // don't print anything
     errdev_c("SET", 0, (SpiceChar *)"NULL");   // in case something is printed, send it nowhere.
 }
 
-//Give the user to chance to set a log file.
-spyce::spyce(std::string log_file) {
-    erract_c("SET", 0, (SpiceChar *)"RETURN");         // disable "exit on error"
-    errprt_c("SET", 0, (SpiceChar *)"ALL");            // print everything
-    errdev_c("SET", 0, (SpiceChar *)log_file.c_str()); // in case something is printed, send it to the user file.
-}
-
-void spyce::_set_file(std::string s) {
-    if(!boost::filesystem::exists(s))
-        throw FileNotFoundException();
-    file = s;
-}
-
-std::string spyce::_get_file() { return file; }
-
-void spyce::add_kernel(std::string s) {
-    furnsh_c(s.c_str());
-    check_spice_errors();
-}
-
-void spyce::remove_kernel(std::string s) {
-    unload_c(s.c_str());
-    check_spice_errors();
-}
-
-namespace py = boost::python;
-py::list spyce::get_objects() {
-    //NOTE: this cell is static per the macro definition
-    SPICEINT_CELL(id_list, SPYCE_OBJECTS_MAX);
-
-    //have to reset the cell so data doesn't persist per call
-    scard_c(0, &id_list);
-    check_spice_errors();
-
-    py::list ret_obj;
-    spkobj_c(file.c_str(), &id_list);
-    check_spice_errors();
-
-    int limit = card_c(&id_list);
-    check_spice_errors();
-
-    for(int i = 0; i < limit; i++) {
-        ret_obj.append(SPICE_CELL_ELEM_I(&id_list, i));
-    }
-
-    return ret_obj;
-}
-
-namespace py = boost::python;
-py::list spyce::get_coverage_windows(int obj_id) {
-    //NOTE: this cell is static per the macro definition
-    SPICEDOUBLE_CELL(cover, SPYCE_OBJECTS_MAX);
-
-    //have to reset the cell so data doesn't persist per call
-    scard_c(0, &cover);
-    check_spice_errors();
-
-    py::list ret_obj;
-    spkcov_c(file.c_str(), obj_id, &cover); //load coverage data of `obj` id
-    check_spice_errors();
-
-    int limit = card_c(&cover) / 2;
-    check_spice_errors();
-
-    double beg, end;
-    for(int i = 0; i < limit; i++) {
-        wnfetd_c(&cover, i, &beg, &end);
-        check_spice_errors();
-
-        ret_obj.append(py::make_tuple(beg,end));
-    }
-
-    return ret_obj;
-}
-
+//Helper Functions
 int spyce::str_to_id(std::string naif_id) {
     int  id_code;
     SpiceBoolean found;
@@ -169,7 +103,6 @@ std::string spyce::id_to_str(int naif_id) {
     return std::string(naif_name);
 }
 
-
 double spyce::utc_to_et(std::string date) {
     //acceptable date formats:
     //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
@@ -192,6 +125,67 @@ std::string spyce::et_to_utc(double et, std::string format) {
     return std::string(date_out);
 }
 
+//File Operations
+namespace py = boost::python;
+py::list spyce::get_objects(std::string file) {
+    //NOTE: this cell is static per the macro definition
+    SPICEINT_CELL(id_list, SPYCE_OBJECTS_MAX);
+
+    //have to reset the cell so data doesn't persist per call
+    scard_c(0, &id_list);
+    check_spice_errors();
+
+    py::list ret_obj;
+    spkobj_c(file.c_str(), &id_list);
+    check_spice_errors();
+
+    int limit = card_c(&id_list);
+    check_spice_errors();
+
+    for(int i = 0; i < limit; i++) {
+        ret_obj.append(SPICE_CELL_ELEM_I(&id_list, i));
+    }
+
+    return ret_obj;
+}
+
+namespace py = boost::python;
+py::list spyce::get_coverage_windows(std::string file, int obj_id) {
+    //NOTE: this cell is static per the macro definition
+    SPICEDOUBLE_CELL(cover, SPYCE_OBJECTS_MAX);
+
+    //have to reset the cell so data doesn't persist per call
+    scard_c(0, &cover);
+    check_spice_errors();
+
+    py::list ret_obj;
+    spkcov_c(file.c_str(), obj_id, &cover); //load coverage data of `obj` id
+    check_spice_errors();
+
+    int limit = card_c(&cover) / 2;
+    check_spice_errors();
+
+    double beg, end;
+    for(int i = 0; i < limit; i++) {
+        wnfetd_c(&cover, i, &beg, &end);
+        check_spice_errors();
+
+        ret_obj.append(py::make_tuple(beg,end));
+    }
+
+    return ret_obj;
+}
+
+//Kernel functions
+void spyce::add_kernel(std::string s) {
+    furnsh_c(s.c_str());
+    check_spice_errors();
+}
+
+void spyce::remove_kernel(std::string s) {
+    unload_c(s.c_str());
+    check_spice_errors();
+}
 Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
     SpiceDouble frame[6] = {0};
     SpiceDouble lt;
