@@ -126,7 +126,7 @@ def get_objects(**kwargs):
         spy.main_file = k
         try:
             for id in spy.get_objects():
-                if all_objects_requested and id != object_id:
+                if not all_objects_requested and id != object_id:
                     continue
                 celestialObj = {}
                 celestialObj['id'] = id
@@ -151,10 +151,6 @@ def get_objects(**kwargs):
                     ret.append(celestialObj)
                 else:
                     return celestialObj
-        except spyce.InternalError:
-            #thrown when kernel does not have objects, like leapseconds
-            print("[ERROR]: spyce does not have enough info to properly calculate request.")
-            pass
         except spyce.InsufficientDataError:
             #An object does not have frame data for this instant in this kernel.
             print("[WARN]: object %s does not have data for %s" % (id, time))
@@ -199,7 +195,8 @@ def toUTC():
     except spyce.InvalidArgumentError:
         abort(400)
     except spyce.InternalError:
-        abort(500)
+        abort(500, "Error when retrieving frame data.")
+
     return ret
 
 if __name__ == '__main__':
