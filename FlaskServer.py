@@ -125,7 +125,7 @@ def get_objects(**kwargs):
         spy.main_file = k
         try:
             for id in spy.get_objects():
-                if all_objects_requested and id != object_id:
+                if not all_objects_requested and id != object_id:
                     continue
                 celestialObj = {}
                 celestialObj['id'] = id
@@ -166,7 +166,6 @@ def get_objects(**kwargs):
 
     if not all_objects_requested:
         abort(404, "Unable to find object.")
-
     return ret
 
 if __name__ == '__main__':
