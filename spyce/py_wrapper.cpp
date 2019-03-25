@@ -40,8 +40,7 @@ BOOST_PYTHON_MODULE(spyce) {
     /**
      * Initialization
      **/
-    init();
-
+    spyce_init();
 
     /**
      * Declarations
@@ -53,19 +52,19 @@ BOOST_PYTHON_MODULE(spyce) {
     exception(IDNotFound);
     exception(InsufficientData);
 
-    def("str_to_id", &str_to_id);
-    def("id_to_str", &id_to_str);
+    def("str_to_id", &spyce_str_to_id);
+    def("id_to_str", &spyce_id_to_str);
 
-    def("utc_to_et", &spyce::utc_to_et);
-    def("et_to_utc", &spyce::et_to_utc);
+    def("utc_to_et", &spyce_utc_to_et);
+    def("et_to_utc", &spyce_et_to_utc);
 
-    def("add_kernel", &add_kernel)
-    def("remove_kernel", &remove_kernel)
+    def("add_kernel", &spyce_add_kernel);
+    def("remove_kernel", &spyce_remove_kernel);
 
-    def("get_objects", &get_objects)
-    def("get_coverage_windows", &spyce::get_coverage_windows)
+    def("get_objects", &spyce_get_objects);
+    def("get_coverage_windows", &spyce_get_coverage_windows);
 
-    def("get_frame_data", &get_frame_data);
+    def("get_frame_data", &spyce_get_frame_data);
 
     class_<Frame>("Frame")
         .def_readonly("x",  &Frame::x)
