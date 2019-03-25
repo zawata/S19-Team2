@@ -47,6 +47,7 @@ BOOST_PYTHON_MODULE(spyce) {
         .def("utc_to_et", &spyce::utc_to_et)
         .def("et_to_utc", &spyce::et_to_utc)
         .def("get_objects", &spyce::get_objects)
+        .def("get_coverage_windows", &spyce::get_coverage_windows)
         .def("get_frame_data", &spyce::get_frame_data);
 
     class_<Frame>("Frame")

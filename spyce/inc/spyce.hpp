@@ -32,6 +32,7 @@ struct spyce {
     std::string et_to_utc(double et, std::string format);
 
     py::list get_objects();
+    py::list get_coverage_windows(int obj_id);
 
     Frame get_frame_data(int target_id, int observer_id, double e_time);
 };
