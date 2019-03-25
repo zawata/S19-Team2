@@ -41,6 +41,12 @@ def get_main_id():
     jsonResponse['name'] = main_subject_name
     return jsonify(jsonResponse)
 
+"""
+parameters: 
+id, required. id of object you want info about
+time, optional. time for which you want frame data about (provides no frame data by default.)
+observer, optional. NAIF id on which to base frame data coordinates (defaults to Earth: 399)
+"""
 @app.route('/api/get_object', methods=['GET'])
 def get_object():
     time = request.args.get('time')
