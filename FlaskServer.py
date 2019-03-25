@@ -47,7 +47,7 @@ def get_object():
     observer = request.args.get('observer')
     if observer == None:
         observer = EARTH
-    object_id = request.args.get('object_id')
+    object_id = request.args.get('id')
     return jsonify(get_objects(time=time, observer=observer, object_id=object_id))
 
 @app.route('/api/all_objects', methods=['GET'])
@@ -73,26 +73,49 @@ def frame_to_dict(frame):
     return frameDict
 
 def get_objects(**kwargs):
+    #Get and validate arguments.
     time = kwargs.get('time', None)
+    if time != None:
+        try:
+            time = float(time)
+        except:
+            abort(400, "time is not a number.")
+            return
     object_id = kwargs.get('object_id', None)
+    if object_id != None:
+        try:
+            object_id = int(object_id)
+        except:
+            abort(400, 'id is not an int')
     observer = kwargs.get('observer', EARTH)
+    try:
+        observer = int(observer)
+    except:
+        abort(400, 'observer is not an int')
 
+    #ret is only returned if all objects are requested.
     ret = []
     frame_data_requested = time != None
     all_objects_requested = object_id == None
-
+    print("AOR: ", all_objects_requested)
+    print("FDR: ", frame_data_requested)
+    print("ID: ", object_id)
     for k in kernels:
         spy.main_file = k
         try:
             for id in spy.get_objects():
-                if all_objects_requested and id != object_id:
+                if not all_objects_requested and id != object_id:
                     continue
                 celestialObj = {}
                 celestialObj['id'] = id
                 if (frame_data_requested):
-                    frame = spy.get_frame_data(id, observer, time)
-                    frame_as_dict = frame_to_dict(frame)
-                    celestialObj['frame'] = frame_as_dict
+                    try:
+                        frame = spy.get_frame_data(id, observer, time)
+                        frame_as_dict = frame_to_dict(frame)
+                        celestialObj['frame'] = frame_as_dict
+                    except spyce.InsufficientDataError:
+                        #this kernel does not have coverage for this object
+                        continue
                 name = ""
                 if id == main_subject:
                     name = main_subject_name
@@ -106,13 +129,23 @@ def get_objects(**kwargs):
                     ret.append(celestialObj)
                 else:
                     return celestialObj
-        except spyce.InternalError:
-            #thrown when kernel does not have objects, like leapseconds
-            print("[ERROR]: spyce does not have enough info to properly calculate request.")
-            pass
+            """
+            except spyce.InternalError:
+                #thrown when kernel does not have objects, like leapseconds
+                print("[ERROR]: spyce does not have enough info to properly calculate request.")
+                
+                pass
+            """
         except spyce.InsufficientDataError:
-            #An object does not have frame data for this instant
+            #An object does not have frame data for this instant in this kernel.
             print("[WARN]: object %s does not have data for %s" % (id, time))
+        except spyce.InternalError:
+            #can occur when calling get_objects on the leapseconds kernel.
+            pass
+
+    if not all_objects_requested:
+        abort(500, "Error when retrieving frame data.")
+
     return ret
 
 if __name__ == '__main__':
@@ -120,6 +153,7 @@ if __name__ == '__main__':
         load_config()
     except:
         print ("[ERROR]: Unable to load config")
+    print (kernels)
     port = os.getenv('PORT', 5000)
     host = '0.0.0.0'
 
