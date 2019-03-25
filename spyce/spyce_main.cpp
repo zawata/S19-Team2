@@ -68,7 +68,7 @@ Frame::Frame() {
 /**
  * Spyce
  **/
-void init() {
+void spyce_init() {
     // Error Handling
     //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/error.html
     erract_c("SET", 0, (SpiceChar *)"RETURN"); // disable "exit on error"
@@ -77,7 +77,7 @@ void init() {
 }
 
 //Helper Functions
-int spyce::str_to_id(std::string naif_id) {
+int spyce_str_to_id(std::string naif_id) {
     int  id_code;
     SpiceBoolean found;
 
@@ -90,7 +90,7 @@ int spyce::str_to_id(std::string naif_id) {
     return id_code;
 }
 
-std::string spyce::id_to_str(int naif_id) {
+std::string spyce_id_to_str(int naif_id) {
     char naif_name[NAIF_NAME_MAX] = {0};
     SpiceBoolean found;
 
@@ -103,7 +103,7 @@ std::string spyce::id_to_str(int naif_id) {
     return std::string(naif_name);
 }
 
-double spyce::utc_to_et(std::string date) {
+double spyce_utc_to_et(std::string date) {
     //acceptable date formats:
     //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
 
@@ -114,7 +114,7 @@ double spyce::utc_to_et(std::string date) {
     return et;
 }
 
-std::string spyce::et_to_utc(double et, std::string format) {
+std::string spyce_et_to_utc(double et, std::string format) {
     //acceptable date formats:
     //https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/utc2et_c.html#Examples
 
@@ -127,7 +127,7 @@ std::string spyce::et_to_utc(double et, std::string format) {
 
 //File Operations
 namespace py = boost::python;
-py::list spyce::get_objects(std::string file) {
+py::list spyce_get_objects(std::string file) {
     //NOTE: this cell is static per the macro definition
     SPICEINT_CELL(id_list, SPYCE_OBJECTS_MAX);
 
@@ -150,7 +150,7 @@ py::list spyce::get_objects(std::string file) {
 }
 
 namespace py = boost::python;
-py::list spyce::get_coverage_windows(std::string file, int obj_id) {
+py::list spyce_get_coverage_windows(std::string file, int obj_id) {
     //NOTE: this cell is static per the macro definition
     SPICEDOUBLE_CELL(cover, SPYCE_OBJECTS_MAX);
 
@@ -177,16 +177,16 @@ py::list spyce::get_coverage_windows(std::string file, int obj_id) {
 }
 
 //Kernel functions
-void spyce::add_kernel(std::string s) {
+void spyce_add_kernel(std::string s) {
     furnsh_c(s.c_str());
     check_spice_errors();
 }
 
-void spyce::remove_kernel(std::string s) {
+void spyce_remove_kernel(std::string s) {
     unload_c(s.c_str());
     check_spice_errors();
 }
-Frame spyce::get_frame_data(int target_id, int observer_id, double e_time) {
+Frame spyce_get_frame_data(int target_id, int observer_id, double e_time) {
     SpiceDouble frame[6] = {0};
     SpiceDouble lt;
 
