@@ -83,6 +83,12 @@ def get_all_objects():
         observer = EARTH
     return jsonify(get_objects(time=time, observer=observer))
 
+@app.route('/api/all_objects', methods=['GET'])
+def handle_get_objects_request():
+    objects = get_all_objects(request.args.get("time"))
+    return jsonify(objects)
+
+
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
     return send_from_directory('dist', filename)
@@ -119,8 +125,7 @@ def get_objects(**kwargs):
         abort(400, 'observer is not an int')
 
     #ret is only returned if all objects are requested.
-    ret = []
-    frame_data_requested = time != None
+    ret = []frame_data_requested = time != None
     all_objects_requested = object_id == None
     for k in kernels:
         spy.main_file = k
@@ -161,6 +166,32 @@ def get_objects(**kwargs):
     if not all_objects_requested:
         abort(404, "Unable to find object.")
     return ret
+
+@app.route('/api/all_coverage_windows')
+def get_coverage_windows():
+    windows = {}
+    objects = get_objects()
+    for k in kernels:
+        spy.main_file = k
+
+        for o in objects:
+            try:
+                print("KERNEL: %s, OBJECT: %s" % (k, o))
+                object_id = o['id']
+                windowsSoFar = windows.get(object_id, [])
+                windowsSoFar += spy.get_coverage_windows(o["id"])
+                windowsSoFar.sort(key=lambda x: x[0])
+                windows[object_id] = windowsSoFar
+            except spyce.InternalError:
+                print("INTERNAL ERROR")
+                #object does not exist in this kernel.
+                pass
+    for o in objects:
+        print("OID: ", o['id'])
+        print("WINDOWS: ", windows)
+        c_ws = windows[o['id']]
+        o['coverage_window'] = (c_ws[0][0], c_ws[-1][1])
+    return jsonify(objects)
 
 @app.route('/api/toJ2000', methods=['GET'])
 def toJ2000():
