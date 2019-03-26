@@ -1,0 +1,24 @@
+.simulation-controls {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #1c1c35;
+  padding: 2em;
+  padding-top: 1em;
+  opacity: 0.99;
+}
+
+//timeline slider container
+.date-picker {
+  width: 60%;
+}
+
+.displayed-date {
+  margin: 5;
+  color: white;
+}
+
+.core-slider {
+  height: 1.5em;
+  color: white;
+}
