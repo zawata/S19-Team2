@@ -1,3 +1,11 @@
+/**
+ * @author qiao / https://github.com/qiao
+ * @author mrdoob / http://mrdoob.com
+ * @author alteredq / http://alteredqualia.com/
+ * @author WestLangley / http://github.com/WestLangley
+ * @author erich666 / http://erichaines.com
+ */
+
 import * as THREE from './three.js'
 
 // This set of controls performs orbiting, dollying (zooming), and panning.
@@ -375,41 +383,6 @@ THREE.OrbitControls = function ( object, domElement ) {
 		};
 
 	}();
-
-	var targetLookAt = function () {
-		this.currentTime = (+new Date()) / 1000.0;
-	    this.stats = showStats ? this.initStats() : false;
-
-	    // Create scene object, add fog to scene: Fog( hex, near, far )
-	    this.scene = new THREE.Scene();
-
-	    // Create camera object: PerspectiveCamera( fov, aspect, near, far )
-	    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-	    this.camera.position.x = 0;
-	    this.camera.position.y = 5;
-	    this.camera.position.z = 5;
-
-	    this.look = new THREE.Vector3(5, 0, -5);
-	    this.camera.lookAt(this.look);
-
-	    cameraControls = new THREE.OrbitAndPanControls(camera,renderer.domElement);
-	    cameraControls.target.set(-2800,360,-1600);
-
-	    this.scene.add(this.camera);
-
-	    // Create ambient light
-	    this.light = new THREE.AmbientLight( 0x444444 );
-	    this.light.intensity = 5;
-	    this.scene.add( this.light );
-
-	    // Create renderer and bind to dom element
-	    this.renderer = new THREE.WebGLRenderer();
-	    this.renderer.setClearColor(0xffffff);
-	    this.renderer.setPixelRatio(window.devicePixelRatio);
-	    this.renderer.setSize(window.innerWidth, window.innerHeight);
-	    document.body.appendChild(this.renderer.domElement);
-	    this.rotationSpeed = .02;
-	}
 
 	function dollyIn( dollyScale ) {
 
