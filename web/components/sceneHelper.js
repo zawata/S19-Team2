@@ -18,13 +18,13 @@ export function buildScene() {
   camera.position.x = 10;
   camera.position.y = 0;
 
-  // Add mouse controls
-  const controls = new OrbitControls(camera);
-
   // Create renderer
   let renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
+
+  // Add mouse controls
+  const controls = new OrbitControls(camera, renderer.domElement);
 
   // Make scene responsive
   window.addEventListener('resize', function() {
