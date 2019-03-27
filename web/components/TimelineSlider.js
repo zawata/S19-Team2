@@ -66,7 +66,7 @@ export default class TimelineSlider extends Component {
 
     return (
       <div className="date-picker">
-        {this.renderDateTime(selected)}
+        {/* {this.renderDateTime(selected)} */}
         {this.renderDateTime(updated)}
         <div className="core-slider">
           <Slider

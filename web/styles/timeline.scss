@@ -1,10 +1,11 @@
-.simulation-controls {
+.simulation-controls-container {
   position: absolute;
   bottom: 0;
   width: 100%;
   background-color: #1c1c35;
   padding: 2em;
   padding-top: 1em;
+  padding-bottom: 3em;
   opacity: 0.99;
 }
 
@@ -14,8 +15,9 @@
 }
 
 .displayed-date {
-  margin: 5;
   color: white;
+  font-size: 2em;
+  margin-bottom: 0.5em;
 }
 
 .core-slider {
