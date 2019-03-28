@@ -1,17 +1,25 @@
 import React, { Component } from 'react'
 import { render } from "react-dom";
+import PropTypes from 'prop-types'
 import { Slider, Rail, Handles, Tracks } from 'react-compound-slider'
-import { SliderRail, Handle, Track } from "./sliderComponents"; // example render components - source below
+import { withStyles } from '@material-ui/core/styles'
+import { SliderRail, Handle, Track } from "./sliderUIMaterialComponents"; // example render components - source below
 
-const sliderStyle = {
-  position: 'relative',
-  width: '100%',
-}
+const style = () => ({
+  root: {
+    height: 120,
+    width: '100%',
+  },
+  slider: {
+    position: 'relative',
+    width: '100%',
+  },
+})
 
 const domain = [100, 500]
 const defaultValues = [150]
 
-export default class SpeedSlider extends Component {
+class SpeedSlider extends Component {
 
   constructor(props) {
     super(props);
@@ -32,16 +40,18 @@ export default class SpeedSlider extends Component {
 
   render() {
     const {
+      props: { classes },
       state: { values, update },
     } = this
 
     return (
-      <div className="speed-slider-core-container" style={{ height: 150, width: '100%' }}>
+      <div className={classes.root}>
+      <div className="speed-slider-core-container" >
         <Slider
           mode={1}
           step={1}
           domain={domain}
-          rootStyle={sliderStyle}
+          className={classes.slider}
           onUpdate={this.onUpdate}
           onChange={this.onChange}
           values={values}
@@ -50,13 +60,14 @@ export default class SpeedSlider extends Component {
             {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
           </Rail>
           <Handles>
-            {({ handles, getHandleProps }) => (
+            {({ activeHandleID, handles, getHandleProps }) => (
               <div className="slider-handles">
                 {handles.map(handle => (
                   <Handle
                     key={handle.id}
                     handle={handle}
                     domain={domain}
+                    activeHandleID={activeHandleID}
                     getHandleProps={getHandleProps}
                   />
                 ))}
@@ -79,6 +90,13 @@ export default class SpeedSlider extends Component {
           </Tracks>
         </Slider>
       </div>
+      </div>
     )
   }
 }
+
+SpeedSlider.propTypes = {
+  classes: PropTypes.object.isRequired,
+}
+
+export default withStyles(style)(SpeedSlider)
