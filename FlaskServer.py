@@ -68,29 +68,8 @@ def get_all_objects():
     return jsonify(jsonResponse)
 
 @app.route('/api/objects/<object_identifier>', methods=['GET'])
-def get_object(object_identifier):
-    jsonResponse = {}
-    given_id = False
-    obj_name = None
-    obj_id = None
-    try:
-        obj_id = int(object_identifier)
-        given_id = True
-    except ValueError:
-        obj_name = object_identifier
-
-    if obj_id == main_subject:
-        jsonResponse = id_and_name_dict(obj_id, main_subject_name)
-    elif obj_name == main_subject_name:
-        jsonResponse = id_and_name_dict(main_subject, obj_name)
-    else:
-        try:
-            if not given_id:
-                obj_id = spyce.str_to_id(obj_name)
-            jsonResponse = id_and_name_dict(obj_id, obj_name)
-        except spyce.InternalError:
-            abort(500)
-    return jsonify(jsonResponse)
+def handle_get_object_request(object_identifier):
+    return jsonify(get_object(object_identifier))
 
 @app.route('/api/objects/<object_identifier>/frame', methods=['GET'])
 def get_frame_data(object_identifier):
@@ -119,6 +98,29 @@ def get_frame_data(object_identifier):
                     pass
     return jsonify(frames)
 
+def get_object(identifier):
+    jsonResponse = {}
+    given_id = False
+    obj_name = None
+    obj_id = None
+    try:
+        obj_id = int(object_identifier)
+        given_id = True
+    except ValueError:
+        obj_name = object_identifier
+
+    if obj_id == main_subject:
+        jsonResponse = id_and_name_dict(obj_id, main_subject_name)
+    elif obj_name == main_subject_name:
+        jsonResponse = id_and_name_dict(main_subject, obj_name)
+    else:
+        try:
+            if not given_id:
+                obj_id = spyce.str_to_id(obj_name)
+            jsonResponse = id_and_name_dict(obj_id, obj_name)
+        except spyce.InternalError:
+            abort(500)
+    return jsonResponse
 def id_and_name_dict(id, name):
     ret = {}
     ret['id'] = id
