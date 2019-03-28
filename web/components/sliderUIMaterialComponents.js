@@ -1,4 +1,3 @@
-//Code used from: https://sghall.github.io/react-compound-slider/#/slider-demos/material-ui
 import React, { Fragment } from 'react'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
@@ -17,9 +16,7 @@ const railStyle = () => ({
   },
   outer: {
     height: 42,
-    borderRadius: 21,
     cursor: 'pointer',
-    border: '1px solid white',
   },
   inner: {
     height: 4,
@@ -53,8 +50,8 @@ export const SliderRail = withStyles(railStyle)(RailComponent)
 // *******************************************************
 const handleStyle = theme => {
   const colors = {
-    primary: theme.palette.primary.main,
-    thumbOutline: fade(theme.palette.primary.main, 0.16),
+    primary: 'rgb(72, 77, 81)',
+    thumbOutline: fade('rgb(72, 77, 81)', 0.20),
   }
 
   return {
@@ -79,7 +76,7 @@ const handleStyle = theme => {
       backgroundColor: colors.primary,
     },
     active: {
-      boxShadow: `0px 0px 0px 16px ${colors.thumbOutline}`,
+      boxShadow: `0px 0px 0px 9px ${colors.thumbOutline}`,
     },
   }
 }
@@ -141,7 +138,6 @@ const trackStyle = theme => ({
     zIndex: 1,
     borderRadius: 2,
     cursor: 'pointer',
-    backgroundColor: theme.palette.primary.main,
   },
 })
 

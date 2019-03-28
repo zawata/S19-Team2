@@ -9,9 +9,7 @@ export default class SpeedSliderContainer extends Component {
   render() {
     return(
       <div className="speed-slider-container">
-        <div class="speed-slider-simulator">
           <SpeedSlider/>
-        </div>
       </div>
     )
   }
