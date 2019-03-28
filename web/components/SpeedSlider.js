@@ -1,23 +1,19 @@
 import React, { Component } from 'react'
 import { render } from "react-dom";
 import PropTypes from 'prop-types'
-import { Slider, Rail, Handles, Tracks } from 'react-compound-slider'
+import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { withStyles } from '@material-ui/core/styles'
-import { SliderRail, Handle, Track } from "./sliderUIMaterialComponents"; // example render components - source below
+import { SliderRail, Handle, Track, Tick } from "./sliderUIMaterialComponents"; // example render components - source below
 
 const style = () => ({
-  root: {
-    height: 120,
-    width: '100%',
-  },
   slider: {
     position: 'relative',
     width: '100%',
   },
 })
 
-const domain = [100, 500]
-const defaultValues = [150]
+const domain = [0.5, 4]
+const defaultValues = [1]
 
 class SpeedSlider extends Component {
 
@@ -49,7 +45,7 @@ class SpeedSlider extends Component {
       <div className="speed-slider-core-container" >
         <Slider
           mode={1}
-          step={1}
+          step={0.5}
           domain={domain}
           className={classes.slider}
           onUpdate={this.onUpdate}
@@ -88,6 +84,15 @@ class SpeedSlider extends Component {
               </div>
             )}
           </Tracks>
+          <Ticks count={5}>
+            {({ ticks }) => (
+              <div>
+                {ticks.map(tick => (
+                  <Tick key={tick.id} tick={tick} count={ticks.length} />
+                ))}
+              </div>
+            )}
+          </Ticks>
         </Slider>
       </div>
       </div>
