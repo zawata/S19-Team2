@@ -22,7 +22,8 @@
     "parcel-bundler": "^1.12.3",
     "react": "^16.8.4",
     "react-compound-slider": "^1.2.1",
-    "react-dom": "^16.8.4"
+    "react-dom": "^16.8.4",
+    "react-transition-group": "^1.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",

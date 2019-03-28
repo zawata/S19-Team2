@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { CSSTransitionGroup } from 'react-transition-group';
 import TimelineSlider from './TimelineSlider';
 
 export default class SimulationControls extends Component {
@@ -15,9 +16,12 @@ export default class SimulationControls extends Component {
   render() {
     return(
       <div className="simulation-controls-container">
-        <button onClick={this.handleClick}>{this.state.controlsVisible ? 'Hide Controls' : 'Show Controls'}</button>
+        <button className="toggleControlsButton"
+          onClick={this.handleClick}>{this.state.controlsVisible ? 'Hide Controls' : 'Show Controls'}</button>
         <div className="simulation-controls">
+          <CSSTransitionGroup transitionName="controls" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
           {this.state.controlsVisible && <TimelineSlider/>}
+          </CSSTransitionGroup>
         </div>
       </div>
     )

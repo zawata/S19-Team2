@@ -51,7 +51,7 @@ export default class TimelineSlider extends Component {
   renderDateTime(date) {
     return (
       <div className="displayed-date">
-        <div className="date">{format(date, "MMM Do YYYY h:mm a")}</div>
+        <div className="date">Date: {format(date, "MMM Do YYYY h:mm a")}</div>
       </div>
     );
   }
