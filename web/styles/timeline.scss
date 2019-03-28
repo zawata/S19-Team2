@@ -1,0 +1,65 @@
+.simulation-controls-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #1c1c35;
+  padding: 2em;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+  opacity: 0.99;
+  overflow: hidden;
+}
+
+.toggleControlsButton {
+  background-color: #324856;
+  border: none;
+  color: white;
+  padding: 0.5em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.toggleControlsButton:focus {
+  outline: 0;
+}
+
+//timeline slider container
+.date-picker {
+  width: 60%;
+  padding-bottom: 1em;
+  height: 7em;
+}
+
+.controls-enter {
+  opacity: 0.01;
+  height: 0em;
+}
+
+.controls-enter.controls-enter-active {
+  opacity: 1;
+  transition: 300ms;
+  height: 7em;
+}
+
+.controls-leave {
+  opacity: 1;
+  height: 7em;
+}
+
+.controls-leave.controls-leave-active {
+  opacity: 0.01;
+  height: 0em;
+  transition: 300ms;
+}
+
+.displayed-date {
+  color: white;
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.core-slider {
+  height: 1.5em;
+  color: white;
+}
