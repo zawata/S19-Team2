@@ -36,7 +36,7 @@ export default class SpeedSlider extends Component {
     } = this
 
     return (
-      <div className="speed-slider-core-container" style={{ height: 120, width: '100%' }}>
+      <div className="speed-slider-core-container" style={{ height: 150, width: '100%' }}>
         <Slider
           mode={1}
           step={1}
