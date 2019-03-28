@@ -32,6 +32,7 @@ WORKDIR /stage2
 #copy web folder contents
 COPY ./web /stage2/web
 COPY ./package.json /stage2/
+COPY ./.babelrc /stage2/
 
 #build
 RUN npm install
