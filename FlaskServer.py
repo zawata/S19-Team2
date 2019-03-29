@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort
+from flask import (Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort,
+                   json)
 import spyce
-import os, json
+import os
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 template_path = os.path.abspath(CURRENT_PATH + "/dist")
@@ -47,19 +48,23 @@ id, required. id of object you want info about
 time, optional. time for which you want frame data about (provides no frame data by default.)
 observer, optional. NAIF id on which to base frame data coordinates (defaults to Earth: 399)
 """
-@app.route('/api/get_object', methods=['GET'])
-def get_object():
-    time = request.args.get('time')
-    observer = request.args.get('observer')
+@app.route('/api/get_object/<object_identifier>', methods=['GET'])
+def get_object(object_identifier):
+    req_json = request.get_json()
+    time = req_json['time']
+    observer = req_json['observer']
     if observer == None:
         observer = EARTH
-    object_id = request.args.get('id')
+    try:
+        object_id = int(object_identifier)
+    object_id = object_identifier
     return jsonify(get_objects(time=time, observer=observer, object_id=object_id))
 
 @app.route('/api/all_objects', methods=['GET'])
 def get_all_objects():
-    time = request.args.get('time')
-    observer = request.args.get('observer')
+    req_json = request.get_json()
+    time = req_json['time']
+    observer = req_json['observer']
     if observer == None:
         observer = EARTH
     return jsonify(get_objects(time=time, observer=observer))
@@ -150,7 +155,7 @@ def get_objects(**kwargs):
             pass
 
     if not all_objects_requested:
-        abort(500, "Error when retrieving frame data.")
+        abort(404, "Unable to find object.")
 
     return ret
 
