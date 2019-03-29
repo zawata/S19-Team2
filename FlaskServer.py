@@ -83,7 +83,7 @@ def get_frame_data(object_identifier):
             try:
                 frame = frame_to_dict(spyce.get_frame_data(kernel, obj['id'], observer, J2000))
                 framedata = {}
-                framedata ['date'] = utc
+                framedata['date'] = utc
                 framedata['frame'] = frame
                 frames.append(framedata)
             except (spyce.InternalError, spyce.InsufficientDataError):
@@ -135,12 +135,12 @@ def frame_to_dict(frame):
     frameDict['dz'] = frame.dz
     return frameDict
 
-@app.route('/api/convert/et', methods=['GET'])
+@app.route('/api/convert/et', methods=['POST'])
 def toJ2000():
     req_json = request.get_json()
-    time = req_json["time"]
+    time = req_json.get("time", None)
     if time == None:
-        abort(400)
+        abort(400, "Must specify time")
     try:
         ret = spy.utc_to_et(time)
         jsonObj = {}
@@ -148,16 +148,16 @@ def toJ2000():
         jsonObj["J2000"] = ret
         return jsonify(jsonObj)
     except spyce.InvalidArgumentError:
-        abort(400)
+        abort(400, "Invalid Time String")
     except spyce.InternalError:
         abort(500)
 
 @app.route('/api/convert/utc', methods=['GET'])
 def toUTC():
     req_json = request.get_json()
-    time = req_json["time"]
+    time = req_json.get("time", None)
     if time == None:
-        abort(400)
+        abort(400, "Must specify time")
     try:
         time = float(time)
         ret = spy.et_to_utc(time, "ISOC")
@@ -166,9 +166,9 @@ def toUTC():
         jsonObj["J2000"] = time
         return jsonify(jsonObj)
     except ValueError:
-        abort(400)
+        abort(400, "Time is not in J2000 format: must be a float")
     except spyce.InvalidArgumentError:
-        abort(400)
+        abort(400, "J2000 value is inappropriate.")
     except spyce.InternalError:
         abort(500)
 
