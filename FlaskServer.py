@@ -51,9 +51,6 @@ def get_all_objects():
         except spyce.InternalError:
             #thrown when kernel does not have objects, like leapseconds
             pass
-        except spyce.InsufficientDataError:
-            #An object does not have frame data for this instant
-            print("[WARN]: object %s does not have data for %s" % (id, time))
     return jsonify(jsonResponse)
 
 @app.route('/api/objects/<object_identifier>', methods=['GET'])
