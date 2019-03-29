@@ -71,31 +71,34 @@ def get_all_objects():
 def handle_get_object_request(object_identifier):
     return jsonify(get_object(object_identifier))
 
-@app.route('/api/objects/<object_identifier>/frame', methods=['GET'])
+@app.route('/api/objects/<object_identifier>/frames', methods=['GET'])
 def get_frame_data(object_identifier):
     obj = get_object(object_identifier)
     req_json = request.get_json()
     utc_times = req_json['times']
-    times = []
+    times_in_J2000 = {}
     for t in utc_times:
         try:
-            times.append(spyce.utc_to_ec(t))
+            times_in_J2000[t] = spyce.utc_to_ec(t)
         except spyce.InternalError:
             abort(500)
-        except:
+        except spyce.InvalidDateString:
             abort(400)
     observer = req_json['observer']
-    frames = {}
+    frames = []
     if observer == None:
         observer = EARTH
 
-    for k in kernels:
-            for t in times:
-                try:
-                    frame = frame_to_dict(spyce.get_frame_data(k, obj['id'], observer, t))
-                    frames[t] = frame
-                except (spyce.InternalError, spyce.InsufficientDataError):
-                    pass
+    for kernel in kernels:
+        for utc, J2000 in range(len(times_in_J2000)):
+            try:
+                frame = frame_to_dict(spyce.get_frame_data(kernel, obj['id'], observer, J2000))
+                framedata = {}
+                framedata ['date'] = utc
+                framedata['frame'] = frame
+                frames.append(framedata)
+            except (spyce.InternalError, spyce.InsufficientDataError):
+                pass
     return jsonify(frames)
 
 def get_object(identifier):
@@ -104,10 +107,10 @@ def get_object(identifier):
     obj_name = None
     obj_id = None
     try:
-        obj_id = int(object_identifier)
+        obj_id = int(identifier)
         given_id = True
     except ValueError:
-        obj_name = object_identifier
+        obj_name = identifier
 
     if obj_id == main_subject:
         jsonResponse = id_and_name_dict(obj_id, main_subject_name)
@@ -121,6 +124,7 @@ def get_object(identifier):
         except spyce.InternalError:
             abort(500)
     return jsonResponse
+
 def id_and_name_dict(id, name):
     ret = {}
     ret['id'] = id
