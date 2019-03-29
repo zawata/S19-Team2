@@ -4,13 +4,17 @@ import SpaceScene from './components/SpaceScene';
 import SceneSwitchButton from './components/SceneSwitchButton';
 import './styles/styles.scss';
 import SimulationControls from "./components/SimulationControls";
+import { Provider } from 'react-redux';
+import store from './store';
 
 const App = () =>{
   return (
     <div>
-      <SpaceScene/>
-      <SceneSwitchButton/>
-      <SimulationControls/>
+      <Provider store={store}>
+        <SpaceScene/>
+        <SceneSwitchButton/>
+        <SimulationControls/>
+      </Provider>
     </div>
   )
 };
