@@ -68,9 +68,9 @@ def get_object(object_identifier):
             NAIF_id = main_subject
         else:
             try:
-                NAIF_id = spy.str_to_id(object_identifier)
-            except spyce.IDNotFound:
-                abort(404, "id not found")
+                NAIF_id = spyce.str_to_id(object_identifier)
+            except spyce.IDNotFoundError:
+                abort(404, "could not find object with given name")
 
     return jsonify(get_objects(time=time, observer=observer, object_id=NAIF_id))
 
