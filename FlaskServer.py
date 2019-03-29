@@ -35,20 +35,12 @@ def get_main_id():
 @app.route('/api/objects', methods=['GET'])
 def get_all_objects():
     jsonResponse = []
-    time = request.args.get('time')
-    frame_data_requested = time != None
     id = None
-    if (frame_data_requested):
-        time = float(time)
     for k in kernels:
         try:
             for id in spyce.get_objects(k):
                 celestialObj = {}
                 celestialObj['id'] = id
-                if (frame_data_requested):
-                    frame = spyce.get_frame_data(k, id, 399, time)
-                    frame_as_dict = frame_to_dict(frame)
-                    celestialObj['frame'] = frame_as_dict
                 name = ""
                 if id == main_subject:
                     name = main_subject_name
@@ -83,7 +75,7 @@ def get_frame_data(object_identifier):
         except spyce.InternalError:
             abort(500)
         except spyce.InvalidDateString:
-            abort(400)
+            abort(400, "Date Invalid")
     observer = req_json['observer']
     frames = []
     if observer == None:
@@ -98,6 +90,7 @@ def get_frame_data(object_identifier):
                 framedata['frame'] = frame
                 frames.append(framedata)
             except (spyce.InternalError, spyce.InsufficientDataError):
+                #object not found in this kernel or at this time.
                 pass
     return jsonify(frames)
 
@@ -122,7 +115,7 @@ def get_object(identifier):
                 obj_id = spyce.str_to_id(obj_name)
             jsonResponse = id_and_name_dict(obj_id, obj_name)
         except spyce.InternalError:
-            abort(500)
+            abort(404, "SPICE object not found.")
     return jsonResponse
 
 def id_and_name_dict(id, name):
