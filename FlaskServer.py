@@ -195,7 +195,7 @@ def toUTC():
     except spyce.InvalidArgumentError:
         abort(400)
     except spyce.InternalError:
-        abort(500, "Error when retrieving frame data.")
+        abort(500)
 
     return ret
 
