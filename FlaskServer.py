@@ -52,13 +52,26 @@ observer, optional. NAIF id on which to base frame data coordinates (defaults to
 @app.route('/api/objects/<object_identifier>', methods=['POST'])
 def get_object(object_identifier):
     req_json = request.get_json()
+    NAIF_id = None
+    name = None
     time = req_json.get('time', None)
     observer = req_json.get('observer', EARTH)
     try:
-        object_id = int(object_identifier)
+        NAIF_id = int(object_identifier)
+        if NAIF_id == main_subject:
+            name = main_subject_name
     except ValueError:
-        abort(400, "object_identifier is not an int")
-    return jsonify(get_objects(time=time, observer=observer, object_id=object_id))
+        #object_identifier is not an int, try a name.
+    if NAIF_id == None:
+        if object_identifier == main_subject_name:
+            NAIF_id = main_subject
+        else:
+            try:
+                NAIF_id = spy.str_to_id(object_identifier)
+            except spyce.IDNotFound:
+                abort(404, "id not found")
+    
+    return jsonify(get_objects(time=time, observer=observer, object_id=NAIF_id))
 
 @app.route('/api/all_objects', methods=['POST'])
 def get_all_objects():
