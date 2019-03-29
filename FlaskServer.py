@@ -64,19 +64,22 @@ def handle_get_object_request(object_identifier):
 def get_frame_data(object_identifier):
     obj = get_object(object_identifier)
     req_json = request.get_json()
-    utc_times = req_json['times']
+    utc_times = req_json.get('times', None)
+    if utc_times == None:
+        abort(400, "Times argument missing.")
+    elif not isinstance(utc_times, list):
+        abort(400, "Times is not a list.")
     times_in_J2000 = {}
     for t in utc_times:
         try:
-            times_in_J2000[t] = spyce.utc_to_ec(t)
+            J2000time = spyce.utc_to_ec(t)
+            times_in_J2000[t] = J2000time
         except spyce.InternalError:
-            abort(500)
+            print("[WARN]: unknown error parsing date: ", t)
         except spyce.InvalidDateString:
-            abort(400, "Date Invalid")
-    observer = req_json['observer']
+            print("[WARN]: Recieved invalid date string; ", t)
+    observer = req_json.get('observer', EARTH)
     frames = []
-    if observer == None:
-        observer = EARTH
 
     for kernel in kernels:
         for utc, J2000 in range(len(times_in_J2000)):
