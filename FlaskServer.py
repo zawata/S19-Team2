@@ -108,10 +108,14 @@ def get_object(identifier):
         jsonResponse = id_and_name_dict(main_subject, obj_name)
     else:
         try:
-            if not given_id:
+            if given_id:
+                obj_name = spyce.id_to_str(obj_id)
+            else:
                 obj_id = spyce.str_to_id(obj_name)
             jsonResponse = id_and_name_dict(obj_id, obj_name)
         except spyce.InternalError:
+            abort(404, "SPICE object not found.")
+        except spyce.IDNotFoundError:
             abort(404, "SPICE object not found.")
     return jsonResponse
 
