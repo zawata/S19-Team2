@@ -58,6 +58,9 @@ def get_object(object_identifier):
         observer = EARTH
     try:
         object_id = int(object_identifier)
+    except ValueError:
+        abort(400, "object_identifier is not an int")
+
     object_id = object_identifier
     return jsonify(get_objects(time=time, observer=observer, object_id=object_id))
 
