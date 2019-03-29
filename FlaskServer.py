@@ -60,6 +60,7 @@ def get_object(object_identifier):
         if NAIF_id == main_subject:
             name = main_subject_name
     except ValueError:
+        pass
         #object_identifier is not an int, try a name.
     if NAIF_id == None:
         if object_identifier == main_subject_name:
@@ -69,7 +70,7 @@ def get_object(object_identifier):
                 NAIF_id = spy.str_to_id(object_identifier)
             except spyce.IDNotFound:
                 abort(404, "id not found")
-    
+
     return jsonify(get_objects(time=time, observer=observer, object_id=NAIF_id))
 
 @app.route('/api/all_objects', methods=['POST'])
