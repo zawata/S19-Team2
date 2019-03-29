@@ -25,12 +25,9 @@ def load_config():
 def root():
     return redirect("/index.html")
 
-@app.route('/api/main_object', methods=['GET'])
+@app.route('/api/main', methods=['GET'])
 def get_main_id():
-    jsonResponse = {}
-    jsonResponse['id'] = main_subject
-    jsonResponse['name'] = main_subject_name
-    return jsonify(jsonResponse)
+    return jsonify(id_and_name_dict(main_subject, main_subject_name))
 
 @app.route('/api/objects', methods=['GET'])
 def get_all_objects():
@@ -63,7 +60,7 @@ def get_all_objects():
 def handle_get_object_request(object_identifier):
     return jsonify(get_object(object_identifier))
 
-@app.route('/api/objects/<object_identifier>/frames', methods=['GET'])
+@app.route('/api/objects/<object_identifier>/frames', methods=['POST'])
 def get_frame_data(object_identifier):
     obj = get_object(object_identifier)
     req_json = request.get_json()
