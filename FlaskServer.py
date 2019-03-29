@@ -49,22 +49,18 @@ id, required. id of object you want info about
 time, optional. time for which you want frame data about (provides no frame data by default.)
 observer, optional. NAIF id on which to base frame data coordinates (defaults to Earth: 399)
 """
-@app.route('/api/objects/<object_identifier>', methods=['GET'])
+@app.route('/api/objects/<object_identifier>', methods=['POST'])
 def get_object(object_identifier):
     req_json = request.get_json()
-    time = req_json['time']
-    observer = req_json['observer']
-    if observer == None:
-        observer = EARTH
+    time = req_json.get('time', None)
+    observer = req_json.get('observer', EARTH)
     try:
         object_id = int(object_identifier)
     except ValueError:
         abort(400, "object_identifier is not an int")
-
-    object_id = object_identifier
     return jsonify(get_objects(time=time, observer=observer, object_id=object_id))
 
-@app.route('/api/all_objects', methods=['GET'])
+@app.route('/api/all_objects', methods=['POST'])
 def get_all_objects():
     req_json = request.get_json()
     time = req_json['time']
@@ -112,9 +108,6 @@ def get_objects(**kwargs):
     ret = []
     frame_data_requested = time != None
     all_objects_requested = object_id == None
-    print("AOR: ", all_objects_requested)
-    print("FDR: ", frame_data_requested)
-    print("ID: ", object_id)
     for k in kernels:
         spy.main_file = k
         try:
