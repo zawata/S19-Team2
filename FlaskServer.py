@@ -167,31 +167,43 @@ def get_objects(**kwargs):
         abort(404, "Unable to find object.")
     return ret
 
-@app.route('/api/all_coverage_windows')
-def get_coverage_windows():
-    windows = {}
-    objects = get_objects()
+
+@app.route('/api/objects/<object_identifier>/coverage', methods=['GET'])
+def get_coverage_window(object_identifier):
+    coverage_window = {}
+    NAIF_id = None
+    try:
+        NAIF_id = int(object_identifier)
+        if NAIF_id != main_subject:
+            try:
+                spyce.id_to_str(NAIF_id)
+            except spyce.IDNotFoundError:
+                abort(404, "Invalid object id")
+    except ValueError:
+        #object_identifier is name.
+        pass
+    if NAIF_id == None:
+        name = object_identifier
+        if name == main_subject_name:
+            NAIF_id = main_subject
+        else:
+            try:
+                NAIF_id = spyce.str_to_id(name)
+            except spyce.IDNotFoundError:
+                abort(404, "Invalid object name")
+
+    windows_piecewise = []
     for k in kernels:
         spy.main_file = k
-
-        for o in objects:
-            try:
-                print("KERNEL: %s, OBJECT: %s" % (k, o))
-                object_id = o['id']
-                windowsSoFar = windows.get(object_id, [])
-                windowsSoFar += spy.get_coverage_windows(o["id"])
-                windowsSoFar.sort(key=lambda x: x[0])
-                windows[object_id] = windowsSoFar
-            except spyce.InternalError:
-                print("INTERNAL ERROR")
-                #object does not exist in this kernel.
-                pass
-    for o in objects:
-        print("OID: ", o['id'])
-        print("WINDOWS: ", windows)
-        c_ws = windows[o['id']]
-        o['coverage_window'] = (c_ws[0][0], c_ws[-1][1])
-    return jsonify(objects)
+        try:
+            windows_piecewise += spy.get_coverage_windows(NAIF_id)
+            windows_piecewise.sort(key=lambda x: x[0])
+        except spyce.InternalError:
+            #object does not exist in this kernel.
+            pass
+    coverage_window['start'] = windows_piecewise[0][0]
+    coverage_window['end'] = windows_piecewise[-1][1]
+    return jsonify(coverage_window)
 
 @app.route('/api/toJ2000', methods=['GET'])
 def toJ2000():
