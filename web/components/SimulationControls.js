@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TimelineSlider from './TimelineSlider';
+import SpeedSlider from './SpeedSlider';
 
 export default class SimulationControls extends Component {
   constructor(props) {
@@ -18,6 +19,9 @@ export default class SimulationControls extends Component {
         <button onClick={this.handleClick}>{this.state.controlsVisible ? 'Hide Controls' : 'Show Controls'}</button>
         <div className="simulation-controls">
           {this.state.controlsVisible && <TimelineSlider/>}
+        </div>
+        <div className="speed-slider">
+          {this.state.controlsVisible && <SpeedSlider/>}
         </div>
       </div>
     )

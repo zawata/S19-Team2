@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import PropTypes from 'prop-types'
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { withStyles } from '@material-ui/core/styles'
-import { SliderRail, Handle, Track, Tick } from "./sliderUIMaterialComponents"; // example render components - source below
+import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source below
 
 const style = () => ({
   slider: {
@@ -34,6 +34,14 @@ class SpeedSlider extends Component {
     this.setState({ values })
   }
 
+  renderSpeedHeading(speed){
+    return (
+      <div className="speed-heading">
+        Speed: {speed}x
+      </div>
+    )
+  }
+
   render() {
     const {
       props: { classes },
@@ -42,6 +50,7 @@ class SpeedSlider extends Component {
 
     return (
       <div className={classes.root}>
+      {this.renderSpeedHeading(update)}
       <div className="speed-slider-core-container" >
         <Slider
           mode={1}
@@ -88,7 +97,11 @@ class SpeedSlider extends Component {
             {({ ticks }) => (
               <div>
                 {ticks.map(tick => (
-                  <Tick key={tick.id} tick={tick} count={ticks.length} />
+                  <Tick
+                    key={tick.id}
+                    tick={tick}
+                    count={ticks.length}
+                  />
                 ))}
               </div>
             )}
