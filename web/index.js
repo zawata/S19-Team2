@@ -4,7 +4,6 @@ import SpaceScene from './components/SpaceScene';
 import SceneSwitchButton from './components/SceneSwitchButton';
 import './styles/styles.scss';
 import SimulationControls from "./components/SimulationControls";
-import SpeedSliderContainer from "./components/SpeedSliderContainer";
 
 const App = () =>{
   return (
@@ -12,7 +11,6 @@ const App = () =>{
       <SpaceScene/>
       <SceneSwitchButton/>
       <SimulationControls/>
-      <SpeedSliderContainer/>
     </div>
   )
 };
