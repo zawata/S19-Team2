@@ -4,7 +4,8 @@ import {
   addLighting,
   buildScene, 
   addObjects,
-  addAxisHelper
+  addAxisHelper,
+  switchCamera
 } from './sceneHelper';
 
 const earthScale = 4;
@@ -12,6 +13,7 @@ const moonScale = 3.5;
 const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
+const switchCam = false;
 
 export default class SpaceScene extends Component {
 
@@ -81,6 +83,10 @@ export default class SpaceScene extends Component {
     addAxisHelper(scene);
 
     animate();
+
+    if(switchCam){
+        switchCamera();
+    }
   }
 
   render() {

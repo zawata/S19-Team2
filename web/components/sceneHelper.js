@@ -17,7 +17,7 @@ export function buildScene() {
   camera.position.z = 10;
   camera.position.x = 10;
   camera.position.y = 0;
-
+  
   // Add mouse controls
   const controls = new OrbitControls(camera);
 
@@ -43,6 +43,62 @@ export function buildScene() {
     renderer
   }
 }
+
+export function switchCamera(){
+  let earthCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  var randomPoints = [];
+  for ( var i = 0; i < 100; i ++ ) {
+      randomPoints.push(
+          new THREE.Vector3(Math.random() * 200 - 100, Math.random() * 200 - 100, Math.random() * 200 - 100)
+      );
+  }
+  var spline = new THREE.SplineCurve3(randomPoints);
+
+  var camPosIndex = 0;
+
+  function update() {
+    renderer.render(scene, camera);
+    requestAnimationFrame(update);
+    
+    camPosIndex++;
+    if (camPosIndex > 10000) {
+      camPosIndex = 0;
+    }
+    var camPos = spline.getPoint(camPosIndex / 10000);
+    var camRot = spline.getTangent(camPosIndex / 10000);
+  
+    earthCamera.position.x = camPos.x;
+    earthCamera.position.y = camPos.y;
+    earthCamera.position.z = camPos.z;
+    
+    earthCamera.rotation.x = camRot.x;
+    earthCamera.rotation.y = camRot.y;
+    earthCamera.rotation.z = camRot.z;
+    
+    earthCamera.lookAt(spline.getPoint((camPosIndex+1) / 10000));
+  }
+  update();
+  
+  for (var i = 0; i < 400; i++) {
+    var b = new THREE.Mesh(
+      new THREE.BoxGeometry(1,1,1),
+      new THREE.MeshBasicMaterial({color: "#EEEDDD"})
+    );
+    
+    b.position.x = -300 + Math.random() * 600;
+    b.position.y = -300 + Math.random() * 600;  
+    b.position.z = -300 + Math.random() * 600;
+    
+    scene.add(b);
+  }
+  
+  var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  var cube = new THREE.Mesh( geometry, material );
+  scene.add( cube );
+  
+  earthCamera.position.z = 5;
+} 
 
 /**
  * addObjects
