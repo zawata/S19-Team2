@@ -43,9 +43,25 @@ export function buildScene() {
     renderer
   }
 }
+export function addMoonCamera(scene, earth, renderer){
+  let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  
+  camera.position.set(0,-10,-10);
+  // camera.Translate(0,0,-10);
+  
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  scene.add(renderer);
+
+  earth.add(camera);
+
+  function animate(){
+    requestAnimationFrame(animate);
+    camera.lookAt(earth.position);
+    renderer.render(camera,scene);
+  }
+}
 
 export function switchCamera(){
-
   let container, stats;
 
 	let camera, scene, renderer, splineCamera, cameraHelper, cameraEye;
@@ -205,47 +221,6 @@ export function switchCamera(){
     // stats
     stats = new Stats();
     container.appendChild( stats.dom );
-
-    // dat.GUI
-    var gui = new dat.GUI( { width: 300 } );
-
-    var folderGeometry = gui.addFolder( 'Geometry' );
-
-    folderGeometry.add( params, 'spline', Object.keys( splines ) ).onChange( function () {
-      addTube();
-    } );
-
-    folderGeometry.add( params, 'scale', 2, 10 ).step( 2 ).onChange( function () {
-      setScale();
-    } );
-
-    folderGeometry.add( params, 'extrusionSegments', 50, 500 ).step( 50 ).onChange( function () {
-      addTube();
-    } );
-
-    folderGeometry.add( params, 'radiusSegments', 2, 12 ).step( 1 ).onChange( function () {
-      addTube();
-    } );
-
-    folderGeometry.add( params, 'closed' ).onChange( function () {
-      addTube();
-    } );
-    folderGeometry.open();
-
-    var folderCamera = gui.addFolder( 'Camera' );
-    folderCamera.add( params, 'animationView' ).onChange( function () {
-      animateCamera();
-    } );
-
-    folderCamera.add( params, 'lookAhead' ).onChange( function () {
-      animateCamera();
-    } );
-
-    folderCamera.add( params, 'cameraHelper' ).onChange( function () {
-      animateCamera();
-    } );
-    folderCamera.open();
-
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     window.addEventListener( 'resize', onWindowResize, false );
   }

@@ -5,7 +5,7 @@ import {
   buildScene, 
   addObjects,
   addAxisHelper,
-  switchCamera
+  addMoonCamera,
 } from './sceneHelper';
 
 const earthScale = 4;
@@ -85,7 +85,7 @@ export default class SpaceScene extends Component {
     animate();
 
     if(switchCam){
-        switchCamera();
+        addMoonCamera();
     }
   }
 
