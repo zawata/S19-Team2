@@ -22,10 +22,8 @@ export default class SimulationControls extends Component {
         <div className="simulation-controls">
           <CSSTransitionGroup transitionName="controls" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
           {this.state.controlsVisible && <TimelineSlider/>}
+           {this.state.controlsVisible && <SpeedSlider/>}
           </CSSTransitionGroup>
-        </div>
-        <div className="speed-slider">
-          {this.state.controlsVisible && <SpeedSlider/>}
         </div>
       </div>
     )

@@ -49,7 +49,7 @@ class SpeedSlider extends Component {
     } = this
 
     return (
-      <div className={classes.root}>
+      <div className="speed-slider">
       {this.renderSpeedHeading(update)}
       <div className="speed-slider-core-container" >
         <Slider
