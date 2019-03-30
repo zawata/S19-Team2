@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import PropTypes from 'prop-types'
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { withStyles } from '@material-ui/core/styles'
-import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source below
+import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
 
 const style = () => ({
   slider: {
