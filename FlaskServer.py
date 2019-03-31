@@ -109,27 +109,25 @@ def get_objects(**kwargs):
             time = float(time)
         except ValueError:
             #time is in UTC
-            pass
-        try:
-            time = spy.utc_to_et(time)
-        except spyce.InvalidArgumentError:
-            abort(400, "invalid time value.")
+            try:
+                time = spy.utc_to_et(time)
+            except spyce.InvalidArgumentError:
+                abort(400, "invalid time value.")
 
     object_id = kwargs.get('object_id', None)
     if object_id != None:
         try:
             object_id = int(object_id)
-        except:
+        except ValueError:
             abort(400, 'id is not an int')
     observer = kwargs.get('observer', EARTH)
     try:
         observer = int(observer)
-    except:
+    except ValueError:
         abort(400, 'observer is not an int')
 
     #ret is only returned if all objects are requested.
     ret = []
-
     frame_data_requested = time != None
     all_objects_requested = object_id == None
     for k in kernels:
@@ -146,7 +144,7 @@ def get_objects(**kwargs):
                         frame_as_dict = frame_to_dict(frame)
                         celestialObj['frame'] = frame_as_dict
                     except spyce.InsufficientDataError:
-                        #this kernel does not have coverage for this object
+                        # this kernel does not have coverage for this object
                         continue
                 name = ""
                 if id == main_subject:
@@ -162,16 +160,15 @@ def get_objects(**kwargs):
                 else:
                     return celestialObj
         except spyce.InsufficientDataError:
-            #An object does not have frame data for this instant in this kernel.
+            # An object does not have frame data for this instant in this kernel.
             print("[WARN]: object %s does not have data for %s" % (id, time))
         except spyce.InternalError:
-            #can occur when calling get_objects on the leapseconds kernel.
+            # can occur when calling get_objects on the leapseconds kernel.
             pass
 
     if not all_objects_requested:
-        abort(404, "Object not found")
+        abort(404, "Object not found (or not found for that time.)")
     return ret
-
 
 @app.route('/api/objects/<object_identifier>/coverage', methods=['GET'])
 def get_coverage_window(object_identifier):
