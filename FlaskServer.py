@@ -54,25 +54,20 @@ def get_coverage_window(object_identifier):
     coverage_window = {}
     NAIF_id = None
     try:
-        NAIF_id = int(object_identifier)
-        if NAIF_id != main_subject:
-            try:
-                spyce.id_to_str(NAIF_id)
-            except spyce.IDNotFoundError:
-                abort(404, "Invalid object id")
-    except ValueError:
-        #object_identifier is name.
-        pass
+        #check if arg is ID or name.
+        try:
+            NAIF_id = int(object_identifier)
+        except ValueError:
+            if object_identifier == main_subject_name:
+                NAIF_id = main_subject
+            else:
+                NAIF_id = spyce.str_to_id(object_identifier)
 
-    if NAIF_id == None:
-        name = object_identifier
-        if name == main_subject_name:
-            NAIF_id = main_subject
-        else:
-            try:
-                NAIF_id = spyce.str_to_id(name)
-            except spyce.IDNotFoundError:
-                abort(404, "Invalid object name")
+        #check if the id exists
+        if NAIF_id != main_subject:
+            spyce.id_to_str(NAIF_id)
+    except spyce.IDNotFoundError:
+        abort(404, "Object not found.")
 
     windows_piecewise = []
     for k in kernels:
@@ -83,9 +78,12 @@ def get_coverage_window(object_identifier):
         except spyce.InternalError:
             #object does not exist in this kernel.
             pass
-    coverage_window['start'] = windows_piecewise[0][0]
-    coverage_window['end'] = windows_piecewise[-1][1]
-    return jsonify(coverage_window)
+    if len(windows_piecewise) > 0:
+        coverage_window['start'] = windows_piecewise[0][0]
+        coverage_window['end'] = windows_piecewise[-1][1]
+        return jsonify(coverage_window)
+    else:
+        abort(404, "No Coverage found")
 
 def get_all_objects(time=None):
     objects = []
