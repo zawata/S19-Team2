@@ -4,12 +4,12 @@ import spyce
 import os
 app = Flask(__name__, static_url_path='', static_folder=None)
 kernels = []
-main_subject = None
+main_subject_id = None
 main_subject_name = ""
 EARTH = 399
 
 def load_config():
-    global main_subject
+    global main_subject_id
     global main_subject_name
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
@@ -17,8 +17,8 @@ def load_config():
             kernel_filepath = "config/kernels/" + kern
             spyce.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
-        main_subject = conf_data['main_subject']
-        main_subject_name = conf_data['subject_name']
+        main_subject_id = conf_data['main_subject_id']
+        main_subject_name = conf_data['main_subject_name']
 
 @app.route('/')
 def root():
@@ -26,7 +26,7 @@ def root():
 
 @app.route('/api/main', methods=['GET'])
 def get_main_id():
-    return jsonify(id_and_name_dict(main_subject, main_subject_name))
+    return jsonify(id_and_name_dict(main_subject_id, main_subject_name))
 
 @app.route('/api/objects', methods=['GET'])
 def get_all_objects():
@@ -38,7 +38,7 @@ def get_all_objects():
                 celestialObj = {}
                 celestialObj['id'] = id
                 name = ""
-                if id == main_subject:
+                if id == main_subject_id:
                     name = main_subject_name
                 else:
                     try:
@@ -101,10 +101,10 @@ def get_object(identifier):
     except ValueError:
         obj_name = identifier
 
-    if obj_id == main_subject:
+    if obj_id == main_subject_id:
         jsonResponse = id_and_name_dict(obj_id, main_subject_name)
     elif obj_name == main_subject_name:
-        jsonResponse = id_and_name_dict(main_subject, obj_name)
+        jsonResponse = id_and_name_dict(main_subject_id, obj_name)
     else:
         try:
             if given_id:
