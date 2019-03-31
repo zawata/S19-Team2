@@ -42,9 +42,52 @@ def get_main_id():
     return jsonify(jsonResponse)
 
 @app.route('/api/all_objects', methods=['GET'])
-def get_all_objects():
-    jsonResponse = []
-    time = request.args.get('time')
+def handle_get_objects_request():
+    objects = get_all_objects(request.args.get("time"))
+    return jsonify(objects)
+
+@app.route('/<path:filename>', methods=['GET'])
+def get_file(filename):
+    return send_from_directory('dist', filename)
+
+@app.route('/api/objects/<object_identifier>/coverage', methods=['GET'])
+def get_coverage_window(object_identifier):
+    coverage_window = {}
+    NAIF_id = None
+    try:
+        #check if arg is ID or name.
+        try:
+            NAIF_id = int(object_identifier)
+        except ValueError:
+            if object_identifier == main_subject_name:
+                NAIF_id = main_subject
+            else:
+                NAIF_id = spyce.str_to_id(object_identifier)
+
+        #check if the id exists
+        if NAIF_id != main_subject:
+            spyce.id_to_str(NAIF_id)
+    except spyce.IDNotFoundError:
+        abort(404, "Object not found.")
+
+    windows_piecewise = []
+    for k in kernels:
+        spy.main_file = k
+        try:
+            windows_piecewise += spy.get_coverage_windows(NAIF_id)
+            windows_piecewise.sort(key=lambda x: x[0])
+        except spyce.InternalError:
+            #object does not exist in this kernel.
+            pass
+    if len(windows_piecewise) > 0:
+        coverage_window['start'] = windows_piecewise[0][0]
+        coverage_window['end'] = windows_piecewise[-1][1]
+        return jsonify(coverage_window)
+    else:
+        abort(404, "No Coverage found")
+
+def get_all_objects(time=None):
+    objects = []
     frame_data_requested = time != None
     id = None
     if (frame_data_requested):
@@ -68,18 +111,14 @@ def get_all_objects():
                     except:
                         print("[ERROR]: NAIF not found")
                 celestialObj['name'] = name
-                jsonResponse.append(celestialObj)
+                objects.append(celestialObj)
         except spyce.InternalError:
-            #thrown when kernel does not have objects, like leapseconds
+            # thrown when kernel does not have objects, like leapseconds
             pass
         except spyce.InsufficientDataError:
-            #An object does not have frame data for this instant
+            # An object does not have frame data for this instant
             print("[WARN]: object %s does not have data for %s" % (id, time))
-    return jsonify(jsonResponse)
-
-@app.route('/<path:filename>', methods=['GET'])
-def get_file(filename):
-    return send_from_directory('dist', filename)
+    return objects
 
 def frame_to_dict(frame):
     frameDict = {}
