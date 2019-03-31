@@ -169,7 +169,7 @@ def get_objects(**kwargs):
             pass
 
     if not all_objects_requested:
-        abort(404, "Unable to find object.")
+        abort(404, "Object not found")
     return ret
 
 
