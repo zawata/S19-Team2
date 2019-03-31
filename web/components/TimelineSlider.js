@@ -1,9 +1,12 @@
 import React, { Component, Fragment } from "react";
+import { connect } from 'react-redux';
 import { render } from "react-dom";
 import { Slider, Rail, Handles, Tracks, Ticks } from "react-compound-slider";
-import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source below
+import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
 import { subDays, startOfToday, format, getTime } from "date-fns";
 import { scaleTime } from "d3-scale";
+import { updateSimulationTime } from '../actions/spaceSceneActions';
+import { selectSimulationTime } from '../reducers';
 
 const sliderStyle = {
   position: "relative",
@@ -19,7 +22,7 @@ function formatTick(ms) {
 const halfHour = 1000 * 60 * 30;
 const month = 1000 * 60 * 60 * 24 * 7 * 4;
 
-export default class TimelineSlider extends Component {
+class TimelineSlider extends Component {
   constructor(props) {
     super(props);
 
@@ -29,17 +32,14 @@ export default class TimelineSlider extends Component {
     const missionEnd = getTime(new Date(2020, 8, 21, 0, 0, 0, 0));
 
     this.state = {
-      selected: today,
-      updated: today,
+      updated: this.props.simulationTime,
       min: missionStart,
       max: missionEnd
     };
   }
 
   onChange = ([ms]) => {
-    this.setState({
-      selected: new Date(ms)
-    });
+    this.props.updateSimulationTime(ms);
   };
 
   onUpdate = ([ms]) => {
@@ -57,7 +57,7 @@ export default class TimelineSlider extends Component {
   }
 
   render() {
-    const { min, max, selected, updated } = this.state;
+    const { min, max, updated } = this.state;
 
     const dateTicks = scaleTime()
       .domain([min, max])
@@ -66,7 +66,6 @@ export default class TimelineSlider extends Component {
 
     return (
       <div className="date-picker">
-        {/* {this.renderDateTime(selected)} */}
         {this.renderDateTime(updated)}
         <div className="core-slider">
           <Slider
@@ -76,7 +75,7 @@ export default class TimelineSlider extends Component {
             rootStyle={sliderStyle}
             onUpdate={this.onUpdate}
             onChange={this.onChange}
-            values={[+selected]}
+            values={[+this.props.simulationTime]}
           >
             <Rail>
               {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
@@ -129,3 +128,9 @@ export default class TimelineSlider extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  simulationTime: selectSimulationTime(state)
+});
+
+export default connect(mapStateToProps, { updateSimulationTime })(TimelineSlider)

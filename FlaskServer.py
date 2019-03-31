@@ -31,6 +31,35 @@ def get_main_id():
 @app.route('/api/objects', methods=['GET'])
 def get_all_objects():
     jsonResponse = []
+    for k in kernels:
+        for id in spyce.get_objects(k):
+            jsonResponse.append(get_object(id))
+    return jsonify(jsonResponse)
+
+@app.route('/<path:filename>', methods=['GET'])
+def get_file(filename):
+    return send_from_directory('dist', filename)
+
+@app.route('/api/objects/<object_identifier>/coverage', methods=['GET'])
+def get_coverage_window(object_identifier):
+    coverage_window = {}
+    NAIF_id = get_object(object_identifier)['id']
+    windows_piecewise = []
+    for k in kernels:
+        spy.main_file = k
+        try:
+            windows_piecewise += spy.get_coverage_windows(NAIF_id)
+            windows_piecewise.sort(key=lambda x: x[0])
+        except spyce.InternalError:
+            #object does not exist in this kernel.
+            pass
+    if len(windows_piecewise) > 0:
+        coverage_window['start'] = windows_piecewise[0][0]
+        coverage_window['end'] = windows_piecewise[-1][1]
+        return jsonify(coverage_window)
+    else:
+        abort(404, "No Coverage found")
+
     id = None
     for k in kernels:
         try:
@@ -46,9 +75,9 @@ def get_all_objects():
                     except:
                         print("[ERROR]: NAIF not found")
                 celestialObj['name'] = name
-                jsonResponse.append(celestialObj)
+                objects.append(celestialObj)
         except spyce.InternalError:
-            #thrown when kernel does not have objects, like leapseconds
+            # thrown when kernel does not have objects, like leapseconds
             pass
     return jsonify(jsonResponse)
 
