@@ -136,8 +136,6 @@ def get_objects(**kwargs):
         spy.main_file = k
         try:
             for id in spy.get_objects():
-                if not all_objects_requested and id != object_id:
-                    continue
                 celestialObj = {}
                 celestialObj['id'] = id
                 if (frame_data_requested):
@@ -251,7 +249,6 @@ if __name__ == '__main__':
         load_config()
     except:
         print ("[ERROR]: Unable to load config")
-    print (kernels)
     port = os.getenv('PORT', 5000)
     host = '0.0.0.0'
 
