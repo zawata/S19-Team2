@@ -46,9 +46,8 @@ def get_coverage_window(object_identifier):
     NAIF_id = get_object(object_identifier)['id']
     windows_piecewise = []
     for k in kernels:
-        spy.main_file = k
         try:
-            windows_piecewise += spy.get_coverage_windows(NAIF_id)
+            windows_piecewise += spy.get_coverage_windows(k, NAIF_id)
             windows_piecewise.sort(key=lambda x: x[0])
         except spyce.InternalError:
             #object does not exist in this kernel.
@@ -59,27 +58,6 @@ def get_coverage_window(object_identifier):
         return jsonify(coverage_window)
     else:
         abort(404, "No Coverage found")
-
-    id = None
-    for k in kernels:
-        try:
-            for id in spyce.get_objects(k):
-                celestialObj = {}
-                celestialObj['id'] = id
-                name = ""
-                if id == main_subject_id:
-                    name = main_subject_name
-                else:
-                    try:
-                        name = spyce.id_to_str(id)
-                    except:
-                        print("[ERROR]: NAIF not found")
-                celestialObj['name'] = name
-                objects.append(celestialObj)
-        except spyce.InternalError:
-            # thrown when kernel does not have objects, like leapseconds
-            pass
-    return jsonify(jsonResponse)
 
 @app.route('/api/objects/<object_identifier>', methods=['GET'])
 def handle_get_object_request(object_identifier):
