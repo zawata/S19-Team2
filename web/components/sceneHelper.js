@@ -43,21 +43,12 @@ export function buildScene() {
     renderer
   }
 }
-export function addMoonCamera(scene, earth, renderer){
+export function addMoonCamera(){
   let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  
   camera.position.set(0,-10,-10);
-  // camera.Translate(0,0,-10);
   
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  scene.add(renderer);
-
-  earth.add(camera);
-
-  function animate(){
-    requestAnimationFrame(animate);
-    camera.lookAt(earth.position);
-    renderer.render(camera,scene);
+  return {
+    camera
   }
 }
 

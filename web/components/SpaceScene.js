@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as THREE from '../three/three';
 import { 
   addLighting,
-  buildScene, 
+  buildScene,
   addObjects,
   addAxisHelper,
   addMoonCamera,
@@ -13,7 +13,6 @@ const moonScale = 3.5;
 const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
-const switchCam = false;
 
 export default class SpaceScene extends Component {
 
@@ -83,9 +82,18 @@ export default class SpaceScene extends Component {
     addAxisHelper(scene);
 
     animate();
-
+    
+    // renderer.render( scene, params.animationView === true ? splineCamera : camera );
     if(switchCam){
-        addMoonCamera();
+        let camera = addMoonCamera();
+        scene.add(renderer);
+        moon.add(camera);
+
+        function animate(){
+          requestAnimationFrame(animate);
+          camera.lookAt(moon.position);
+          renderer.render(camera,scene);
+        }
     }
   }
 
