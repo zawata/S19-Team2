@@ -2,8 +2,7 @@ from flask import (Flask, render_template, request, Response, send_from_director
                    json)
 import spyce
 import os
-
-app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
+app = Flask(__name__, static_url_path='', static_folder=None)
 kernels = []
 main_subject = None
 main_subject_name = ""
@@ -156,7 +155,7 @@ def toJ2000():
     except spyce.InternalError:
         abort(500)
 
-@app.route('/api/convert/utc', methods=['GET'])
+@app.route('/api/convert/utc', methods=['POST'])
 def toUTC():
     req_json = request.get_json()
     time = req_json.get("time", None)
