@@ -65,7 +65,7 @@ def handle_get_object_request(object_identifier):
 
 @app.route('/api/objects/<object_identifier>/frames', methods=['POST'])
 def get_frame_data(object_identifier):
-    obj = get_object(object_identifier)
+    obj_id = get_object(object_identifier)['id']
     req_json = request.get_json()
     utc_times = req_json.get('times', None)
     if utc_times == None:
@@ -87,7 +87,7 @@ def get_frame_data(object_identifier):
     for kernel in kernels:
         for utc, J2000 in range(len(times_in_J2000)):
             try:
-                frame = frame_to_dict(spyce.get_frame_data(kernel, obj['id'], observer, J2000))
+                frame = frame_to_dict(spyce.get_frame_data(kernel, obj_id, observer, J2000))
                 framedata = {}
                 framedata['date'] = utc
                 framedata['frame'] = frame
