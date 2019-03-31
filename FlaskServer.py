@@ -51,11 +51,14 @@ observer, optional. NAIF id on which to base frame data coordinates (defaults to
 """
 @app.route('/api/objects/<object_identifier>', methods=['POST'])
 def get_object(object_identifier):
-    req_json = request.get_json()
     NAIF_id = None
     name = None
-    time = req_json.get('time', None)
-    observer = req_json.get('observer', EARTH)
+    req_json = request.get_json()
+    time = None
+    observer = EARTH
+    if req_json != None:
+        time = req_json.get('time', None)
+        observer = req_json.get('observer', EARTH)
     try:
         NAIF_id = int(object_identifier)
         if NAIF_id == main_subject:
@@ -77,17 +80,12 @@ def get_object(object_identifier):
 @app.route('/api/all_objects', methods=['POST'])
 def get_all_objects():
     req_json = request.get_json()
-    time = req_json['time']
-    observer = req_json['observer']
-    if observer == None:
-        observer = EARTH
+    time = None
+    observer = EARTH
+    if req_json != None:
+        time = req_json.get('time', None)
+        observer = req_json.get('observer', EARTH)
     return jsonify(get_objects(time=time, observer=observer))
-
-@app.route('/api/all_objects', methods=['GET'])
-def handle_get_objects_request():
-    objects = get_all_objects(request.args.get("time"))
-    return jsonify(objects)
-
 
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
@@ -109,9 +107,14 @@ def get_objects(**kwargs):
     if time != None:
         try:
             time = float(time)
-        except:
-            abort(400, "time is not a number.")
-            return
+        except ValueError:
+            #time is in UTC
+            pass
+        try:
+            time = spy.utc_to_et(time)
+        except spyce.InvalidArgumentError:
+            abort(400, "invalid time value.")
+
     object_id = kwargs.get('object_id', None)
     if object_id != None:
         try:
@@ -125,7 +128,9 @@ def get_objects(**kwargs):
         abort(400, 'observer is not an int')
 
     #ret is only returned if all objects are requested.
-    ret = []frame_data_requested = time != None
+    ret = []
+
+    frame_data_requested = time != None
     all_objects_requested = object_id == None
     for k in kernels:
         spy.main_file = k
