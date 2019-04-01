@@ -1,50 +1,44 @@
-from flask import Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort
+from flask import (Flask, render_template, request, Response, send_from_directory, redirect, url_for, jsonify, abort,
+                   json)
 import spyce
-import os, json
-
-CURRENT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-template_path = os.path.abspath(CURRENT_PATH + "/dist")
-app = Flask(__name__, template_folder=template_path, static_url_path='', static_folder=None)
-spy = spyce.spyce()
-BSP_FILENAME = "spacecraft.bsp"
-TRAJECTORY_FOLDER = CURRENT_PATH + "/data/trajectory/"
-spy_loaded = False
+import os
+app = Flask(__name__, static_url_path='', static_folder=None)
 kernels = []
-main_subject = None
+main_subject_id = None
 main_subject_name = ""
+EARTH = 399
 
 def load_config():
+    global main_subject_id
+    global main_subject_name
     with open('config/config.json') as conf_file:
         conf_data = json.load(conf_file)
         for kern in conf_data['kernels']:
             kernel_filepath = "config/kernels/" + kern
-            spy.add_kernel(kernel_filepath)
+            spyce.add_kernel(kernel_filepath)
             kernels.append(kernel_filepath)
-        global main_subject
-        global main_subject_name
-        main_subject = conf_data['main_subject']
-        main_subject_name = conf_data['subject_name']
+        main_subject_id = conf_data['main_subject_id']
+        main_subject_name = conf_data['main_subject_name']
 
 @app.route('/')
 def root():
     return redirect("/index.html")
 
-
-@app.route('/api/spacecraft/pos', methods=['GET'])
-def get_spacecraft_pos():
-    return "TODO"
-
-@app.route('/api/main_object', methods=['GET'])
+@app.route('/api/main', methods=['GET'])
 def get_main_id():
-    jsonResponse = {}
-    jsonResponse['id'] = main_subject
-    jsonResponse['name'] = main_subject_name
-    return jsonify(jsonResponse)
+    return jsonify(id_and_name_dict(main_subject_id, main_subject_name))
 
-@app.route('/api/all_objects', methods=['GET'])
-def handle_get_objects_request():
-    objects = get_all_objects(request.args.get("time"))
-    return jsonify(objects)
+@app.route('/api/objects', methods=['GET'])
+def get_all_objects():
+    jsonResponse = []
+    for k in kernels:
+        try:
+            for id in spyce.get_objects(k):
+                jsonResponse.append(get_object(id))
+        except spyce.InternalError:
+            #Happens when trying get_objects on kernels that don't have objects: leapseconds for example
+            pass
+    return jsonify(jsonResponse)
 
 @app.route('/<path:filename>', methods=['GET'])
 def get_file(filename):
@@ -53,28 +47,11 @@ def get_file(filename):
 @app.route('/api/objects/<object_identifier>/coverage', methods=['GET'])
 def get_coverage_window(object_identifier):
     coverage_window = {}
-    NAIF_id = None
-    try:
-        #check if arg is ID or name.
-        try:
-            NAIF_id = int(object_identifier)
-        except ValueError:
-            if object_identifier == main_subject_name:
-                NAIF_id = main_subject
-            else:
-                NAIF_id = spyce.str_to_id(object_identifier)
-
-        #check if the id exists
-        if NAIF_id != main_subject:
-            spyce.id_to_str(NAIF_id)
-    except spyce.IDNotFoundError:
-        abort(404, "Object not found.")
-
+    NAIF_id = get_object(object_identifier)['id']
     windows_piecewise = []
     for k in kernels:
-        spy.main_file = k
         try:
-            windows_piecewise += spy.get_coverage_windows(NAIF_id)
+            windows_piecewise += spyce.get_coverage_windows(k, NAIF_id)
             windows_piecewise.sort(key=lambda x: x[0])
         except spyce.InternalError:
             #object does not exist in this kernel.
@@ -86,39 +63,78 @@ def get_coverage_window(object_identifier):
     else:
         abort(404, "No Coverage found")
 
-def get_all_objects(time=None):
-    objects = []
-    frame_data_requested = time != None
-    id = None
-    if (frame_data_requested):
-        time = float(time)
-    for k in kernels:
-        spy.main_file = k
+@app.route('/api/objects/<object_identifier>', methods=['GET'])
+def handle_get_object_request(object_identifier):
+    return jsonify(get_object(object_identifier))
+
+@app.route('/api/objects/<object_identifier>/frames', methods=['POST'])
+def get_frame_data(object_identifier):
+    obj_id = get_object(object_identifier)['id']
+    req_json = request.get_json()
+    utc_times = req_json.get('times', None)
+    if utc_times == None:
+        abort(400, "Times argument missing.")
+    elif not isinstance(utc_times, list):
+        abort(400, "Times is not a list.")
+    times_in_J2000 = {}
+    for t in utc_times:
         try:
-            for id in spy.get_objects():
-                celestialObj = {}
-                celestialObj['id'] = id
-                if (frame_data_requested):
-                    frame = spy.get_frame_data(id, 399, time)
-                    frame_as_dict = frame_to_dict(frame)
-                    celestialObj['frame'] = frame_as_dict
-                name = ""
-                if id == main_subject:
-                    name = main_subject_name
-                else:
-                    try:
-                        name = spyce.id_to_str(id)
-                    except:
-                        print("[ERROR]: NAIF not found")
-                celestialObj['name'] = name
-                objects.append(celestialObj)
+            J2000time = spyce.utc_to_et(t)
+            times_in_J2000[t] = J2000time
         except spyce.InternalError:
-            # thrown when kernel does not have objects, like leapseconds
+            print("[WARN]: unknown error parsing date: ", t)
+        """
+        except (spyce.InvalidTimeString, spyce.InvalidFormat):
+            print("[WARN]: Recieved invalid date string; ", t)
+        """
+    observer = req_json.get('observer', EARTH)
+    frames = []
+
+    for utc, J2000 in times_in_J2000.items():
+        try:
+            frame = frame_to_dict(spyce.get_frame_data(obj_id, observer, J2000))
+            framedata = {}
+            framedata['date'] = utc
+            framedata['frame'] = frame
+            frames.append(framedata)
+        except (spyce.InternalError, spyce.InsufficientDataError):
+            #object not found in this kernel or at this time.
             pass
-        except spyce.InsufficientDataError:
-            # An object does not have frame data for this instant
-            print("[WARN]: object %s does not have data for %s" % (id, time))
-    return objects
+    return jsonify(frames)
+
+def get_object(identifier):
+    jsonResponse = {}
+    given_id = False
+    obj_name = None
+    obj_id = None
+    try:
+        obj_id = int(identifier)
+        given_id = True
+    except ValueError:
+        obj_name = identifier
+
+    if obj_id == main_subject_id:
+        jsonResponse = id_and_name_dict(obj_id, main_subject_name)
+    elif obj_name == main_subject_name:
+        jsonResponse = id_and_name_dict(main_subject_id, obj_name)
+    else:
+        try:
+            if given_id:
+                obj_name = spyce.id_to_str(obj_id)
+            else:
+                obj_id = spyce.str_to_id(obj_name)
+            jsonResponse = id_and_name_dict(obj_id, obj_name)
+        except spyce.InternalError:
+            abort(404, "SPICE object not found.")
+        except spyce.IDNotFoundError:
+            abort(404, "SPICE object not found.")
+    return jsonResponse
+
+def id_and_name_dict(id, name):
+    ret = {}
+    ret['id'] = id
+    ret['name'] = name
+    return ret
 
 def frame_to_dict(frame):
     frameDict = {}
@@ -130,38 +146,44 @@ def frame_to_dict(frame):
     frameDict['dz'] = frame.dz
     return frameDict
 
-@app.route('/api/toJ2000', methods=['GET'])
+@app.route('/api/convert/et', methods=['POST'])
 def toJ2000():
-    time = request.args.get("time")
+    req_json = request.get_json()
+    if req_json == None:
+        abort(400, "Missing json request body")
+    time = req_json.get("utc_time", None)
     if time == None:
-        abort(400)
+        abort(400, "utc_time param missing")
     try:
-        ret = spy.utc_to_et(time)
+        ret = spyce.utc_to_et(time)
         jsonObj = {}
         jsonObj["UTC"] = time
         jsonObj["J2000"] = ret
         return jsonify(jsonObj)
     except spyce.InvalidArgumentError:
-        abort(400)
+        abort(400, "Invalid Time String")
     except spyce.InternalError:
         abort(500)
 
-@app.route('/api/toUTC', methods=['GET'])
+@app.route('/api/convert/utc', methods=['POST'])
 def toUTC():
-    time = request.args.get("time")
+    req_json = request.get_json()
+    if req_json == None:
+        abort(400, "missing json request body")
+    time = req_json.get("et_time", None)
     if time == None:
-        abort(400)
+        abort(400, "et_time field missing")
     try:
         time = float(time)
-        ret = spy.et_to_utc(time, "ISOC")
+        ret = spyce.et_to_utc(time, "ISOC")
         jsonObj = {}
         jsonObj["UTC"] = ret
         jsonObj["J2000"] = time
         return jsonify(jsonObj)
     except ValueError:
-        abort(400)
+        abort(400, "Time is not in J2000 format: must be a float")
     except spyce.InvalidArgumentError:
-        abort(400)
+        abort(400, "J2000 value is inappropriate.")
     except spyce.InternalError:
         abort(500)
 
