@@ -23,11 +23,20 @@ def load_config():
 @app.route('/')
 def root():
     return redirect("/index.html")
-
+"""
+    returns: <SPICE_object>
+    {
+        name: <string>,
+        id: <int>
+    }
+"""
 @app.route('/api/main', methods=['GET'])
 def get_main_id():
     return jsonify(id_and_name_dict(main_subject_id, main_subject_name))
 
+"""
+    returns an array of <SPICE_object>s
+"""
 @app.route('/api/objects', methods=['GET'])
 def get_all_objects():
     jsonResponse = []
@@ -44,6 +53,13 @@ def get_all_objects():
 def get_file(filename):
     return send_from_directory('dist', filename)
 
+"""
+    returns <coverage_window>:
+    {
+        start: <ISO_8601 string>
+        end: <ISO_8601 string>
+    }
+"""
 @app.route('/api/objects/<object_identifier>/coverage', methods=['GET'])
 def get_coverage_window(object_identifier):
     coverage_window = {}
@@ -63,10 +79,37 @@ def get_coverage_window(object_identifier):
     else:
         abort(404, "No Coverage found")
 
+"""
+    returns: <SPICE_object>
+"""
 @app.route('/api/objects/<object_identifier>', methods=['GET'])
 def handle_get_object_request(object_identifier):
     return jsonify(get_object(object_identifier))
 
+"""
+    input: 
+    {
+        times: array of <ISO_8601 strings>
+    }
+
+    returns: array of <frame_data_object>s
+    [
+        {
+            date: <ISO_8601 string>,
+            frame: <frame_object>
+        }
+    ]
+    
+    frame_object:
+    {
+        x: float
+        y: float
+        z: float
+        dx: float
+        dy: float
+        dz: float
+    }
+"""
 @app.route('/api/objects/<object_identifier>/frames', methods=['POST'])
 def get_frame_data(object_identifier):
     obj_id = get_object(object_identifier)['id']
@@ -146,6 +189,18 @@ def frame_to_dict(frame):
     frameDict['dz'] = frame.dz
     return frameDict
 
+"""
+    input: 
+    {
+        utc_time: <ISO_8601 string>
+    }
+    returns: <time_convert_obj>
+    
+    time_conver_obj: {
+        UTC: <ISO_8601 string>
+        J2000: <float>
+    }
+"""
 @app.route('/api/convert/et', methods=['POST'])
 def toJ2000():
     req_json = request.get_json()
@@ -165,6 +220,19 @@ def toJ2000():
     except spyce.InternalError:
         abort(500)
 
+
+"""
+    input: 
+    {
+        et_time: <float>
+    }
+    returns: <time_convert_obj>
+
+    time_conver_obj: {
+        UTC: <ISO_8601 string>
+        J2000: <float>
+    }
+"""
 @app.route('/api/convert/utc', methods=['POST'])
 def toUTC():
     req_json = request.get_json()
