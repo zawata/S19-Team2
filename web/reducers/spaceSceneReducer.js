@@ -1,7 +1,11 @@
-import { UPDATE_SIMULATION_TIME } from '../actions/spaceSceneActions';
+import { 
+  UPDATE_SIMULATION_TIME,
+  UPDATE_ANIMATION_SPEED
+} from '../actions/spaceSceneActions';
 
 const initialState = {
-  simulationStartTime: new Date()
+  simulationStartTime: new Date(),
+  animationSpeed: 1
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -10,6 +14,11 @@ const spaceSceneReducer = (state = {}, action) => {
       return {
         ...state,
         simulationStartTime: action.payload
+      }
+    case UPDATE_ANIMATION_SPEED:
+      return {
+        ...state,
+        animationSpeed: action.payload
       }
     default:
       return {
@@ -21,6 +30,10 @@ const spaceSceneReducer = (state = {}, action) => {
 
 export const selectSimulationTime = (state) => {
   return state.simulationStartTime;
+}
+
+export const selectAnimationSpeed = (state) => {
+  return state.animationSpeed;
 }
 
 export default spaceSceneReducer

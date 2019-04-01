@@ -1,19 +1,18 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { render } from "react-dom";
-import PropTypes from 'prop-types'
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
-import { withStyles } from '@material-ui/core/styles'
 import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
+import { selectAnimationSpeed } from '../reducers';
+import { updateAnimationSpeed } from '../actions/spaceSceneActions';
 
-const style = () => ({
-  slider: {
-    position: 'relative',
-    width: '100%',
-  },
-})
+const sliderStyle = {
+  position: "relative",
+  width: "100%"
+};
 
-const domain = [0.5, 4]
-const defaultValues = [1]
+const domain = [0.5, 4];
+const stepSize = 0.5;
 
 class SpeedSlider extends Component {
 
@@ -21,17 +20,16 @@ class SpeedSlider extends Component {
     super(props);
 
     this.state = {
-      values: defaultValues.slice(),
-      update: defaultValues.slice(),
+      update: this.props.animationSpeed,
     };
   }
 
-  onUpdate = update => {
+  onUpdate = (update) => {
     this.setState({ update })
   }
 
-  onChange = values => {
-    this.setState({ values })
+  onChange = ([newSpeed]) => {
+    this.props.updateAnimationSpeed(newSpeed);
   }
 
   renderSpeedHeading(speed){
@@ -43,10 +41,7 @@ class SpeedSlider extends Component {
   }
 
   render() {
-    const {
-      props: { classes },
-      state: { values, update },
-    } = this
+    const{ update } = this.state;
 
     return (
       <div className="speed-slider">
@@ -54,12 +49,12 @@ class SpeedSlider extends Component {
       <div className="speed-slider-core-container" >
         <Slider
           mode={1}
-          step={0.5}
+          step={stepSize}
           domain={domain}
-          className={classes.slider}
+          rootStyle={sliderStyle}
           onUpdate={this.onUpdate}
           onChange={this.onChange}
-          values={values}
+          values={[+this.props.animationSpeed]}
         >
           <Rail>
             {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
@@ -113,8 +108,8 @@ class SpeedSlider extends Component {
   }
 }
 
-SpeedSlider.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
+const mapStateToProps = state => ({
+  animationSpeed: selectAnimationSpeed(state)
+});
 
-export default withStyles(style)(SpeedSlider)
+export default connect(mapStateToProps, { updateAnimationSpeed })(SpeedSlider)

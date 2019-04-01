@@ -6,3 +6,4 @@ export default combineReducers({
 });
 
 export const selectSimulationTime = (state) => fromSpaceScene.selectSimulationTime(state.app);
+export const selectAnimationSpeed = (state) => fromSpaceScene.selectAnimationSpeed(state.app);
