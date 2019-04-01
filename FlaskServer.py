@@ -126,10 +126,8 @@ def get_frame_data(object_identifier):
             times_in_J2000[t] = J2000time
         except spyce.InternalError:
             print("[WARN]: unknown error parsing date: ", t)
-        """
-        except (spyce.InvalidTimeString, spyce.InvalidFormat):
+        except (spyce.InvalidArgumentError):
             print("[WARN]: Recieved invalid date string; ", t)
-        """
     observer = req_json.get('observer', EARTH)
     frames = []
 
