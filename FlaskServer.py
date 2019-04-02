@@ -130,7 +130,8 @@ def get_frame_data(object_identifier):
     """
         input:
         {
-            times: array of <ISO_8601 strings>
+            times: array of <ISO_8601 strings>,
+            observer: <int> or <string> : NAIF ID or NAIF name.
         }
 
         returns: array of <frame_data_object>
@@ -166,9 +167,11 @@ def get_frame_data(object_identifier):
         try:
             J2000time = spyce.utc_to_et(t)
             times_in_J2000[t] = J2000time
+        except spyce.InvalidArgumentError:
+            abort(400, "Invalid time strinet")
         except spyce.InternalError:
             print("[WARN]: unknown error parsing date: ", t)
-    observer = req_json.get('observer', EARTH)
+    observer = get_object(req_json.get('observer', EARTH))['id']
     frames = []
 
     for utc, J2000 in times_in_J2000.items():
