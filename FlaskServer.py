@@ -159,6 +159,10 @@ def get_frame_data(object_identifier):
 
     times_in_J2000 = {}
     for t in utc_times:
+        #to handle empty strings
+        if not len(t):
+            continue
+
         try:
             J2000time = spyce.utc_to_et(t)
             times_in_J2000[t] = J2000time
@@ -203,7 +207,7 @@ def toJ2000():
     try:
         return jsonify({
             'UTC': time,
-            'J2000': spyce.utc_to_et(time)
+            'J2000': spyce.utc_to_et(str(time))
         })
     except spyce.InvalidArgumentError:
         abort(400, "Invalid Time String")
@@ -230,6 +234,12 @@ def toUTC():
     time = req_json.get("et_time", None)
     if time == None:
         abort(400, "et_time field missing")
+
+    try:
+        float(time)
+    except ValueError:
+        abort(400, "et_time param malformed")
+
     try:
         return jsonify({
             'UTC': spyce.et_to_utc(time, "ISOC"),
