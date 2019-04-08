@@ -1,11 +1,17 @@
 #pragma once
 
+/**
+ * Simplified Exception Class Declaration Macros
+ **/
 #define build_exception_msg(NAME, MSG) struct NAME ## Exception : public SpyceException { \
     explicit NAME ## Exception() : SpyceException(MSG) {}}
 
 #define build_exception(NAME) struct NAME ## Exception : public SpyceException { \
     explicit NAME ## Exception(std::string err) : SpyceException(err) {}}
 
+/**
+ * SpyceException Base Class
+ **/
 class SpyceException {
     std::string str;
 public:
@@ -14,6 +20,9 @@ public:
     const std::string& what() const {return str;};
 };
 
+/**
+ * Exception Class Declarations
+ **/
 build_exception_msg(FileNotFound, "File Not Found");
 build_exception(InvalidFile);
 build_exception(InvalidArgument);

@@ -3,6 +3,9 @@
 #include "spyce_exceptions.hpp"
 #include "spyce.hpp"
 
+/**
+ * Simplified exception declaration function
+ **/
 namespace py = boost::python;
 template <class E> void exception_(const char *name) {
     //check that class type E inherits from SpyceException(to Ensure it has a `what` call)
@@ -25,11 +28,23 @@ template <class E> void exception_(const char *name) {
             PyErr_SetString(exc, e.what().c_str());
         });
 }
+
+/**
+ * Further simplified Exception Macro
+ **/
 #define exception(NAME) exception_<NAME ## Exception>(#NAME"Error")
 
 BOOST_PYTHON_MODULE(spyce) {
     using namespace boost::python;
 
+    /**
+     * Initialization
+     **/
+    spyce_init();
+
+    /**
+     * Declarations
+     **/
     exception(FileNotFound);
     exception(InvalidFile);
     exception(InvalidArgument);
@@ -37,21 +52,25 @@ BOOST_PYTHON_MODULE(spyce) {
     exception(IDNotFound);
     exception(InsufficientData);
 
-    def("str_to_id", &spyce::str_to_id);
-    def("id_to_str", &spyce::id_to_str);
+    def("str_to_id", &spyce_str_to_id);
+    def("id_to_str", &spyce_id_to_str);
 
-    class_<spyce>("spyce")
-        .add_property("main_file",&spyce::_get_file, &spyce::_set_file)
-        .def("add_kernel", &spyce::add_kernel)
-        .def("remove_kernel", &spyce::remove_kernel)
-        .def("get_objects", &spyce::get_objects)
-        .def("get_frame_data", &spyce::get_frame_data);
+    def("utc_to_et", &spyce_utc_to_et);
+    def("et_to_utc", &spyce_et_to_utc);
+
+    def("add_kernel", &spyce_add_kernel);
+    def("remove_kernel", &spyce_remove_kernel);
+
+    def("get_objects", &spyce_get_objects);
+    def("get_coverage_windows", &spyce_get_coverage_windows);
+
+    def("get_frame_data", &spyce_get_frame_data);
 
     class_<Frame>("Frame")
-        .def_readwrite("x",  &Frame::x)
-        .def_readwrite("y",  &Frame::y)
-        .def_readwrite("z",  &Frame::z)
-        .def_readwrite("dx", &Frame::dx)
-        .def_readwrite("dy", &Frame::dy)
-        .def_readwrite("dz", &Frame::dz);
+        .def_readonly("x",  &Frame::x)
+        .def_readonly("y",  &Frame::y)
+        .def_readonly("z",  &Frame::z)
+        .def_readonly("dx", &Frame::dx)
+        .def_readonly("dy", &Frame::dy)
+        .def_readonly("dz", &Frame::dz);
 }
