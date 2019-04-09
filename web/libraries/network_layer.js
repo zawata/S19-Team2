@@ -1,7 +1,7 @@
-import 'axios';
+import axios from 'axios';
 import math from 'mathjs';
 
-// axios.defaults.baseURL = "localhost:5000/api" //TODO
+axios.defaults.baseURL = "http://localhost:5000/api" //TODO
 
 // kilometers to Astronomical Units
 const km_p_au = math.number(149597870.7);
@@ -29,13 +29,16 @@ function to_au(km) {
  */
 exports.get_main_object =
 async function() {
-    let response = await axios.get("/objects/main");
+    try {
+        let response = await axios.get("/objects/main");
 
-    if(response.status != 200) {
-        return undefined;
-    } else {
-        return response.data;
+        if(response.status == 200) {
+            return response.data;
+        }
+    } catch(error) {
+        console.log(error);
     }
+    return undefined;
 }
 
 /**
@@ -45,16 +48,16 @@ async function() {
  */
 exports.get_object =
 async function(object) {
-    let response = await axios.get(`/objects/${object}`);
+    try {
+        let response = await axios.get(`/objects/${object}`);
 
-    if(response.status != 200) {
-        return undefined;
-    } else {
-        return {
-            name: response.data["name"],
-            id: response.data["id"]
-        };
+        if(response.status == 200) {
+            return response.data;
+        }
+    } catch(error) {
+        console.log(error);
     }
+    return undefined;
 }
 
 /**
@@ -63,20 +66,23 @@ async function(object) {
  */
 exports.get_all_objects =
 async function() {
-    let response = await axios.get("/objects");
+    try {
+        let response = await axios.get("/objects");
 
-    if(response.status != 200) {
-        return undefined;
-    } else {
-        let ret_arr = [];
-        for(let entry of response.data) {
-            ret_arr.push({
-                name: entry["name"],
-                id: entry["name"]
-            });
+        if(response.status == 200) {
+            let ret_arr = [];
+            for(let entry of response.data) {
+                ret_arr.push({
+                    name: entry["name"],
+                    id: entry["id"]
+                });
+            }
+            return ret_arr;
         }
-        return ret_array;
+    } catch(error) {
+        console.log(error);
     }
+    return undefined;
 }
 
 /**
@@ -87,30 +93,31 @@ async function() {
  * @param date: any type convertable to a Date object
  */
 exports.get_frame =
-async function(observer, date) {
-    let response = await axios.get(`/objects/${object}/frames`, {
-        data: {
+async function(object, observer, date) {
+    try {
+        let response = await axios.post(`/objects/${object}/frames`, {
             observer: observer,
             times: [to_iso(date)]
-        }
-    });
+        });
 
-    if(response.status != 200) {
-        return undefined;
-    } else {
-        let frame = response.data[0]
-        return {
-            date: frame["date"],
-            frame: {
-                x: to_au(frame["frame"]["x"]),
-                y: to_au(frame["frame"]["y"]),
-                z: to_au(frame["frame"]["z"]),
-                dx: to_au(frame["frame"]["dx"]),
-                dy: to_au(frame["frame"]["dy"]),
-                dz: to_au(frame["frame"]["dz"])
-            }
-        };
+        if(response.status == 200) {
+            let frame = response.data[0]
+            return {
+                date: new Date(frame["date"]),
+                frame: {
+                    x: to_au(frame["frame"]["x"]),
+                    y: to_au(frame["frame"]["y"]),
+                    z: to_au(frame["frame"]["z"]),
+                    dx: to_au(frame["frame"]["dx"]),
+                    dy: to_au(frame["frame"]["dy"]),
+                    dz: to_au(frame["frame"]["dz"])
+                }
+            };
+        }
+    } catch(error) {
+        console.log(error);
     }
+    return undefined;
 }
 
 /**
@@ -126,33 +133,35 @@ async function(object, observer, date_list) {
     for(let entry of date_list) {
         data_arr.push(to_iso(entry));
     }
-    let response = await axios.get(`/objects/${object}/frames`, {
-        data: {
+
+    try {
+        let response = await axios.post(`/objects/${object}/frames`, {
             observer: observer,
-            times: [ to_iso(date) ]
-        }
-    });
+            times: data_arr
+        });
 
-    if(response.status != 200) {
-        return undefined;
-    } else {
-        let return_arr;
-        for(let frame of response.data) {
-            return_arr.push({
-                date: frame["date"],
-                frame: {
-                    x: to_au(frame["frame"]["x"]),
-                    y: to_au(frame["frame"]["y"]),
-                    z: to_au(frame["frame"]["z"]),
-                    dx: to_au(frame["frame"]["dx"]),
-                    dy: to_au(frame["frame"]["dy"]),
-                    dz: to_au(frame["frame"]["dz"])
-                }
-            });
-        }
+        if(response.status == 200) {
+            let return_arr = [];
+            for(let frame of response.data) {
+                return_arr.push({
+                    date: new Date(frame["date"]),
+                    frame: {
+                        x: to_au(frame["frame"]["x"]),
+                        y: to_au(frame["frame"]["y"]),
+                        z: to_au(frame["frame"]["z"]),
+                        dx: to_au(frame["frame"]["dx"]),
+                        dy: to_au(frame["frame"]["dy"]),
+                        dz: to_au(frame["frame"]["dz"])
+                    }
+                });
+            }
 
-        return return_arr;
+            return return_arr;
+        }
+    } catch(error) {
+        console.log(error);
     }
+    return undefined;
 }
 
 /**
@@ -162,14 +171,18 @@ async function(object, observer, date_list) {
  */
 exports.get_coverage =
 async function(object) {
-    let response = await axios.get(`/objects/${object}/coverage`);
+    try {
+        let response = await axios.get(`/objects/${object}/coverage`);
 
-    if(response.status != 200) {
-        return undefined;
-    } else {
-        return {
-            start: new Date(data.response["start"]),
-            end: new Date(data.response["end"])
-        };
+        if(response.status == 200) {
+            return {
+                start: new Date(response.data["start"]),
+                end: new Date(response.data["end"])
+            };
+        }
     }
+    catch(error) {
+        console.log(error);
+    }
+    return undefined;
 }
