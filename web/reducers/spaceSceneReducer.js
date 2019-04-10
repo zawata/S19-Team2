@@ -16,6 +16,9 @@ const initialState = {
   mainObject: {},
   allObjects: [],
   frameRunway: [],
+  objectCoverage: {},
+  objectFrames: [],
+  frameData: {}
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -45,19 +48,19 @@ const spaceSceneReducer = (state = {}, action) => {
       // and edit that object in the state
       return {
         ...state,
-        ...initialState
+        objectCoverage: action.payload
       }
     case GET_FRAME:
       // TODO, determine where frame should go
       return {
         ...state,
-        ...initialState
+        frameData: action.payload
       }
     case GET_FRAMES:
       // TODO, determine where frames should go
       return {
         ...state,
-        ...initialState
+        objectFrames: action.payload
       }
     default:
       return {

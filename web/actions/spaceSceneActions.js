@@ -32,17 +32,20 @@ export const updateAnimationSpeed = (newSpeed) => dispatch => {
   dispatch({type: UPDATE_ANIMATION_SPEED, payload: newSpeed});
 }
 
-export const updateMainObject = () => dispatch => {
+/**
+ * Spyce Library calls (using network_library)
+ */
+export const getMainObject = () => dispatch => {
   get_main_object()
     .then((mainObject) => dispatch({type: GET_MAIN_OBJECT, payload: mainObject}));
 }
 
-export const updateObjectList = () => dispatch => {
+export const getObjectList = () => dispatch => {
   get_all_objects()
     .then((objectList) => dispatch({type: GET_OBJECT_LIST, payload: objectList}));
 }
 
-export const updateObjectFrame = (object, observer, date) => dispatch => {
+export const getObjectFrame = (object, observer, date) => dispatch => {
   get_frame(object, observer, date)
     .then((dateFrame) => dispatch({type: GET_FRAME, payload: dateFrame}));
 }
@@ -56,7 +59,7 @@ export const getObjectFrames = (object, observer, dateList) => dispatch => {
     .then((dateFrames) => dispatch({type: GET_FRAMES, payload: dateFrames}));
 }
 
-export const updateObjectCoverage = (object) => dispatch => {
+export const getObjectCoverage = (object) => dispatch => {
   get_coverage(object)
     .then((objectCoverage) => dispatch({type: GET_COVERAGE, payload: objectCoverage}));
 }

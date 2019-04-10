@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import * as THREE from '../three/three';
 import { 
   addLighting,
@@ -6,6 +7,18 @@ import {
   addObjects,
   addAxisHelper
 } from './sceneHelper';
+import {
+  getObjectList,
+  getMainObject,
+  getObjectFrame,
+  getObject,
+  getObjectFrames,
+  getObjectCoverage
+} from '../actions/spaceSceneActions';
+import {
+  selectAllObjects,
+  selectMainObject
+} from '../reducers';
 
 const earthScale = 4;
 const moonScale = 3.5;
@@ -13,7 +26,7 @@ const moonOrbitRadius = 10;
 const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
-export default class SpaceScene extends Component {
+class SpaceScene extends Component {
 
   constructor(props) {
     super(props);
@@ -30,6 +43,16 @@ export default class SpaceScene extends Component {
    * Gets called everytime the component (page) loads
    */
   async componentDidMount() {
+    this.props.getMainObject();
+    this.props.getObjectList();
+    this.props.getObjectCoverage('earth');
+    this.props.getObjectFrame('LMAP', 'earth', new Date());
+    this.props.getObjectFrames('LMAP', 'earth', [
+      new Date(),                       //today
+      new Date("2018-10-10T00:00:00Z"), //date shortly after launch
+      new Date("2020-04-25T00:00:00Z")  //date shortly before mission end
+    ]);
+    this.props.getObjectCoverage('earth');
 
     /**
      * Update function
@@ -91,3 +114,22 @@ export default class SpaceScene extends Component {
     )
   }
 }
+
+/**
+ * mapStateToProps
+ * maps state in redux store (right)
+ * to component props property (left)
+ */
+const mapStateToProps = state => ({
+  mainObject: selectMainObject(state),
+  objectList: selectAllObjects(state)
+});
+
+export default connect(mapStateToProps, {
+  getObjectList,
+  getMainObject,
+  getObjectFrame,
+  getObject,
+  getObjectFrames,
+  getObjectCoverage
+})(SpaceScene)
