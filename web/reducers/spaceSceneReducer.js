@@ -24,10 +24,10 @@ const initialState = {
   objectCoverage: {},
   objectFrames: [],
   frameData: {},
-  earth: {},
-  moon: {},
-  sun: {},
-  lmap: {}
+  earth: { position: { frame: { x: 0, y: 0, z: 0} } },
+  moon: { position: { frame: { x: 0, y: 0, z: 0} } },
+  sun: { position: { frame: { x: 0, y: 0, z: 0} } },
+  lmap: { position: { frame: { x: 0, y: 0, z: 0} } }
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -100,6 +100,18 @@ const spaceSceneReducer = (state = {}, action) => {
         ...initialState
       }
   }
+}
+
+export const selectMoonPosition = (state) => {
+  return state.moon.position.frame;
+}
+
+export const selectLMAPPosition = (state) => {
+  return state.lmap.position.frame;
+}
+
+export const selectSunPosition = (state) => {
+  return state.sun.position.frame;
 }
 
 export const selectSimulationTime = (state) => {

@@ -18,13 +18,16 @@ import {
 } from '../actions/spaceSceneActions';
 import {
   selectAllObjects,
-  selectMainObject
+  selectMainObject,
+  selectMoonPosition,
+  selectLMAPPosition,
+  selectSunPosition
 } from '../reducers';
 
-const earthScale = 4;
-const moonScale = 3.5;
-const moonOrbitRadius = 10;
-const earthOrbitRadius = 930;
+const earthScale = 0.0085270424;
+const moonScale = 0.0023228;
+// const moonOrbitRadius = 10;
+// const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
 class SpaceScene extends Component {
@@ -64,13 +67,21 @@ class SpaceScene extends Component {
      * Runs every frame to animate the scene
      */
     const update = () => {
-      let date = Date.now() * 0.00001;
+      // let date = Date.now() * 0.00001;
 
-      this.state.pointLight.position.x = this.state.earth.position.x + Math.sin(date) * earthOrbitRadius;
-      this.state.pointLight.position.z = this.state.earth.position.z + Math.cos(date) * earthOrbitRadius;
+      // this.state.pointLight.position.x = this.state.earth.position.x + Math.sin(date) * earthOrbitRadius;
+      // this.state.pointLight.position.z = this.state.earth.position.z + Math.cos(date) * earthOrbitRadius;
 
-      this.state.moon.position.x = this.state.earth.position.x + Math.sin(date * 3) * moonOrbitRadius;
-      this.state.moon.position.z = this.state.earth.position.z + Math.cos(date * 3) * moonOrbitRadius;
+      // this.state.moon.position.x = this.state.earth.position.x + Math.sin(date * 3) * moonOrbitRadius;
+      // this.state.moon.position.z = this.state.earth.position.z + Math.cos(date * 3) * moonOrbitRadius;
+
+      this.state.pointLight.position.x = this.props.sunPosition.x;
+      this.state.pointLight.position.y = this.props.sunPosition.y;
+      this.state.pointLight.position.z = this.props.sunPosition.z;
+
+      this.state.moon.position.x = this.props.moonPosition.x;
+      this.state.moon.position.y = this.props.moonPosition.y;
+      this.state.moon.position.z = this.props.moonPosition.z;
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
@@ -134,7 +145,10 @@ class SpaceScene extends Component {
  */
 const mapStateToProps = state => ({
   mainObject: selectMainObject(state),
-  objectList: selectAllObjects(state)
+  objectList: selectAllObjects(state),
+  moonPosition: selectMoonPosition(state),
+  lmapPosition: selectLMAPPosition(state),
+  sunPosition: selectSunPosition(state)
 });
 
 export default connect(mapStateToProps, {
