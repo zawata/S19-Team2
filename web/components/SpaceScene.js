@@ -13,7 +13,8 @@ import {
   getObjectFrame,
   getObject,
   getObjectFrames,
-  getObjectCoverage
+  getObjectCoverage,
+  updateObjectPositions
 } from '../actions/spaceSceneActions';
 import {
   selectAllObjects,
@@ -35,6 +36,8 @@ class SpaceScene extends Component {
       moon: {},
       pointLight: {}
     };
+
+    this.updatePositions = this.updatePositions.bind(this);
   }
 
   /**
@@ -45,14 +48,16 @@ class SpaceScene extends Component {
   async componentDidMount() {
     this.props.getMainObject();
     this.props.getObjectList();
-    this.props.getObjectCoverage('earth');
-    this.props.getObjectFrame('LMAP', 'earth', new Date());
-    this.props.getObjectFrames('LMAP', 'earth', [
-      new Date(),                       //today
-      new Date("2018-10-10T00:00:00Z"), //date shortly after launch
-      new Date("2020-04-25T00:00:00Z")  //date shortly before mission end
-    ]);
-    this.props.getObjectCoverage('earth');
+    // this.props.getObjectCoverage('earth');
+    // this.props.getObjectFrame('LMAP', 'earth', new Date());
+    // this.props.getObjectFrames('LMAP', 'earth', [
+    //   new Date(),                       //today
+    //   new Date("2018-10-10T00:00:00Z"), //date shortly after launch
+    //   new Date("2020-04-25T00:00:00Z")  //date shortly before mission end
+    // ]);
+    // this.props.getObjectCoverage('earth');
+
+    setInterval(this.updatePositions, 3000);
 
     /**
      * Update function
@@ -106,6 +111,13 @@ class SpaceScene extends Component {
     animate();
   }
 
+  updatePositions() {
+    const bodiesToUpdate = ['moon', 'LMAP', 'sun'];
+    const observer = 'earth';
+    const currentDate = new Date();
+    this.props.updateObjectPositions(bodiesToUpdate, observer, currentDate);
+  }
+
   render() {
     return(
       <div className="space-scene"
@@ -131,5 +143,6 @@ export default connect(mapStateToProps, {
   getObjectFrame,
   getObject,
   getObjectFrames,
-  getObjectCoverage
+  getObjectCoverage,
+  updateObjectPositions
 })(SpaceScene)

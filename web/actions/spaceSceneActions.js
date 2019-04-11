@@ -17,6 +17,13 @@ export const GET_OBJECT_LIST = 'GET_OBJECT_LIST';
 export const GET_FRAME = 'GET_FRAME';
 export const GET_FRAMES = 'GET_FRAMES';
 export const GET_COVERAGE = 'GET_COVERAGE';
+export const UPDATE_BODY_POSITION = 'UPDATE_BODY_POSITION';
+
+/** Object Types */
+export const EARTH = 'earth';
+export const MOON = 'moon';
+export const LMAP = 'LMAP';
+export const SUN = 'sun';
 
 /** 
  * Thunks (actions that return a function that calls dispatch after async request(s))
@@ -30,6 +37,20 @@ export const updateSimulationTime = (newTime) => dispatch => {
 
 export const updateAnimationSpeed = (newSpeed) => dispatch => {
   dispatch({type: UPDATE_ANIMATION_SPEED, payload: newSpeed});
+}
+
+export const updateObjectPositions = (bodiesToUpdate, observer, date) => async(dispatch) => {
+  // For every body to update, get frame data 
+  bodiesToUpdate.forEach( async(spaceBody) => {
+    try {
+      console.log('gettting positional data for: ', spaceBody);
+      const bodyPosition = await get_frame(spaceBody, observer, date);
+      const bodyData = { name: spaceBody, position: bodyPosition };
+      dispatch({type: UPDATE_BODY_POSITION, payload: bodyData});
+    } catch (error) {
+      console.error(error);
+    }
+  });
 }
 
 /**
@@ -50,7 +71,7 @@ export const getObjectFrame = (object, observer, date) => async(dispatch) => {
   dispatch({type: GET_FRAME, payload: dateFrame});
 }
 
-export const getObject = (objectToGet) => {
+export const getObject = async(objectToGet) => {
   const planetaryObject = await get_object(objectToGet);
   return planetaryObject;
 }

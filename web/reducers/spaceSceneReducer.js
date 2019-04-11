@@ -7,7 +7,12 @@ import {
   GET_OBJECT_LIST,
   GET_FRAME,
   GET_FRAMES,
-  GET_COVERAGE
+  GET_COVERAGE,
+  UPDATE_BODY_POSITION,
+  EARTH,
+  MOON,
+  LMAP,
+  SUN
 } from '../actions/spaceSceneActions';
 
 const initialState = {
@@ -18,7 +23,11 @@ const initialState = {
   frameRunway: [],
   objectCoverage: {},
   objectFrames: [],
-  frameData: {}
+  frameData: {},
+  earth: {},
+  moon: {},
+  sun: {},
+  lmap: {}
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -32,6 +41,29 @@ const spaceSceneReducer = (state = {}, action) => {
       return {
         ...state,
         animationSpeed: action.payload
+      }
+    case UPDATE_BODY_POSITION:
+      switch(action.payload.name) {
+        case EARTH:
+          return {
+            ...state,
+            earth: action.payload
+          }
+        case MOON:
+          return {
+            ...state,
+            moon: action.payload
+          }
+        case SUN:
+          return {
+            ...state,
+            sun: action.payload
+          }
+        case LMAP:
+          return {
+            ...state,
+            lmap: action.payload
+          }
       }
     case GET_MAIN_OBJECT:
       return {
