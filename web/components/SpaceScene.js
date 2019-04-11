@@ -9,7 +9,7 @@ import {
 
 const earthScale = 4;
 const moonScale = 3.5;
-const moonOrbitRadius = 2.389;
+const moonOrbitRadius = 2.38;
 const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
