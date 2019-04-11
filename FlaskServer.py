@@ -119,8 +119,8 @@ def get_coverage_window(object_identifier):
             pass
     if len(windows_piecewise) > 0:
         return jsonify({
-            'start': windows_piecewise[0][0],
-            'end': windows_piecewise[-1][1]
+            'start': spyce.et_to_utc(windows_piecewise[0][0], "ISOC"),
+            'end': spyce.et_to_utc(windows_piecewise[-1][1], "ISOC")
         })
     else:
         abort(404, "No Coverage found")
@@ -164,6 +164,10 @@ def get_frame_data(object_identifier):
         if not len(t):
             continue
 
+        #utc_to_et requires UTC strings but will not accept them if they
+        # are appended with the letter 'Z'(indicating UTC) despite this being part of the ISO 8601 spec
+        # we remove the letter if it exists
+        t = t[:-1] if t[-1] == 'Z' else t
         try:
             J2000time = spyce.utc_to_et(t)
             times_in_J2000[t] = J2000time
