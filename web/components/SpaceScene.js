@@ -14,14 +14,17 @@ import {
   getObject,
   getObjectFrames,
   getObjectCoverage,
-  updateObjectPositions
+  updateObjectPositions,
+  SOLAR_CAMERA,
+  MOON_CAMERA
 } from '../actions/spaceSceneActions';
 import {
   selectAllObjects,
   selectMainObject,
   selectMoonPosition,
   selectLMAPPosition,
-  selectSunPosition
+  selectSunPosition,
+  selectCurrentCamera
 } from '../reducers';
 
 const earthScale = 0.0085270424;
@@ -63,6 +66,8 @@ class SpaceScene extends Component {
       this.state.moon.position.y = this.props.moonPosition.y;
       this.state.moon.position.z = this.props.moonPosition.z;
 
+      moonCamera.lookAt(this.state.moon.position);
+
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
     };
@@ -72,7 +77,16 @@ class SpaceScene extends Component {
      * sends scene and camera props to renderer
      */
     const render = () => {
-      renderer.render(scene, camera);
+      switch(this.props.selectedCamera) {
+        case 'solar':
+          renderer.render(scene, solarCamera);
+          break;
+        case 'moon':
+          renderer.render(scene, moonCamera);
+          break;
+        default:
+          renderer.render(scene, solarCamera);
+      }
     };
 
     /**
@@ -86,7 +100,7 @@ class SpaceScene extends Component {
     };
 
     // Build base scene objects
-    let { scene, camera, controls, renderer } = buildScene();
+    let { scene, solarCamera, moonCamera, controls, renderer } = buildScene();
 
     // Add lighting (sun flare)
     let lighting = await addLighting(scene);
@@ -128,7 +142,8 @@ const mapStateToProps = state => ({
   objectList: selectAllObjects(state),
   moonPosition: selectMoonPosition(state),
   lmapPosition: selectLMAPPosition(state),
-  sunPosition: selectSunPosition(state)
+  sunPosition: selectSunPosition(state),
+  selectedCamera: selectCurrentCamera(state)
 });
 
 export default connect(mapStateToProps, {

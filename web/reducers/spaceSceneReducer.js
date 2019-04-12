@@ -4,6 +4,9 @@ import {
   GET_MAIN_OBJECT,
   GET_OBJECT_LIST,
   UPDATE_BODY_POSITION,
+  SOLAR_CAMERA,
+  MOON_CAMERA,
+  UPDATE_CAMERA
 } from '../actions/spaceSceneActions';
 
 const initialState = {
@@ -18,7 +21,8 @@ const initialState = {
   earth: { position: { x: 0, y: 0, z: 0 } },
   moon: { position: { x: 0, y: 0, z: 0 } },
   sun: { position: { x: 0, y: 0, z: 0 } },
-  LMAP: { position: { x: 0, y: 0, z: 0 } }
+  LMAP: { position: { x: 0, y: 0, z: 0 } },
+  camera: 'solar'
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -32,6 +36,11 @@ const spaceSceneReducer = (state = {}, action) => {
       return {
         ...state,
         animationSpeed: action.payload
+      }
+    case UPDATE_CAMERA:
+      return {
+        ...state,
+        camera: action.payload
       }
     case UPDATE_BODY_POSITION:
       /*
@@ -100,6 +109,10 @@ export const selectMainObject = (state) => {
 
 export const selectAllObjects = (state) => {
   return state.allObjects;
+}
+
+export const selectCurrentCamera = (state) => {
+  return state.camera;
 }
 
 export default spaceSceneReducer

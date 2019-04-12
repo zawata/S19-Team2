@@ -13,32 +13,44 @@ import Moon from '../models/moon'
 export function buildScene() {
   let scene = new THREE.Scene();
 
-  let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
-  camera.position.z = 0.05;
-  camera.position.x = 0.05;
-  camera.position.y = 0;
-
   // Create renderer
   let renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Add mouse controls
-  const controls = new OrbitControls(camera, renderer.domElement);
+  // Create solar camera
+  let solarCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
+  solarCamera.position.z = 0.05;
+  solarCamera.position.x = 0.05;
+  solarCamera.position.y = 0;
+  // Add solar camera mouse controls
+  const controls = new OrbitControls(solarCamera, renderer.domElement);
+
+  // Create moon view camera
+  let moonCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
+  moonCamera.position.z = 0;
+  moonCamera.position.x = 0;
+  moonCamera.position.y = 0;
+  moonCamera.zoom = 25;
+  moonCamera.updateProjectionMatrix();
+  // const moonCameraControls = new OrbitControls(moonCamera, renderer.domElement);
+  // moonCameraControls.enableRotate = false;
+  // moonCameraControls.enablePan = false;
 
   // Make scene responsive
   window.addEventListener('resize', function() {
     let widthWindow = window.innerWidth;
     let heightWindow = window.innerHeight;
     renderer.setSize(widthWindow, heightWindow);
-    camera.aspect = widthWindow / heightWindow;
-    camera.updateProjectionMatrix();
+    solarCamera.aspect = widthWindow / heightWindow;
+    solarCamera.updateProjectionMatrix();
   });
 
   // Return created objects to the scene
   return {
     scene,
-    camera,
+    solarCamera,
+    moonCamera,
     controls,
     renderer
   }
