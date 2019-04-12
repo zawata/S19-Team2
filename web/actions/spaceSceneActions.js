@@ -19,12 +19,17 @@ export const GET_FRAMES = 'GET_FRAMES';
 export const GET_COVERAGE = 'GET_COVERAGE';
 export const UPDATE_BODY_POSITION = 'UPDATE_BODY_POSITION';
 export const UPDATE_TRAIL_TYPE = 'UPDATE_TRAIL_TYPE';
+export const UPDATE_CAMERA = 'UPDATE_CAMERA';
 
 /** Object Types */
 export const EARTH = 'earth';
 export const MOON = 'moon';
 export const LMAP = 'LMAP';
 export const SUN = 'sun';
+
+/** Camera Types */
+const SOLAR_CAMERA = 'solar';
+const MOON_CAMERA = 'moon';
 
 /** 
  * Thunks (actions that return a function that calls dispatch after async request(s))
@@ -40,9 +45,17 @@ export const updateAnimationSpeed = (newSpeed) => dispatch => {
   dispatch({type: UPDATE_ANIMATION_SPEED, payload: newSpeed});
 }
 
+export const updateCamera = (newCamera) => dispatch => {
+  dispatch({type: UPDATE_CAMERA, payload: newCamera})
+}
+
 export const updateTrailType = (newTrailType) => dispatch => {
   dispatch({type: UPDATE_TRAIL_TYPE, payload: newTrailType})
 }
+
+/**
+ * Spyce Library calls (using network_library)
+ */
 
 export const updateObjectPositions = (bodiesToUpdate, observer, date) => async(dispatch) => {
   // For every body to update, get frame data 
@@ -58,9 +71,6 @@ export const updateObjectPositions = (bodiesToUpdate, observer, date) => async(d
   });
 }
 
-/**
- * Spyce Library calls (using network_library)
- */
 export const getMainObject = () => async(dispatch) => {
   const mainObject = await get_main_object()
   dispatch({type: GET_MAIN_OBJECT, payload: mainObject});
