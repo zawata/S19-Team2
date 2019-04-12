@@ -10,7 +10,7 @@ export default class Moon {
 
     async load() {
         const moonTexture = await loadTexture(moonTextureImg, new THREE.TextureLoader());
-        let geometry = new THREE.SphereGeometry(this.size, 15, 15);
+        let geometry = new THREE.SphereGeometry(this.size, 64, 64);
         let material = new THREE.MeshPhongMaterial({
             map:    moonTexture,
         });

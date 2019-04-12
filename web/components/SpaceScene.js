@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as THREE from '../three/three';
-import { 
+import {
   addLighting,
-  buildScene, 
+  buildScene,
   addObjects,
   addAxisHelper
 } from './sceneHelper';
@@ -26,8 +26,6 @@ import {
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
-// const moonOrbitRadius = 10;
-// const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
 class SpaceScene extends Component {
@@ -49,16 +47,6 @@ class SpaceScene extends Component {
    * Gets called everytime the component (page) loads
    */
   async componentDidMount() {
-    this.props.getMainObject();
-    this.props.getObjectList();
-    // this.props.getObjectCoverage('earth');
-    // this.props.getObjectFrame('LMAP', 'earth', new Date());
-    // this.props.getObjectFrames('LMAP', 'earth', [
-    //   new Date(),                       //today
-    //   new Date("2018-10-10T00:00:00Z"), //date shortly after launch
-    //   new Date("2020-04-25T00:00:00Z")  //date shortly before mission end
-    // ]);
-    // this.props.getObjectCoverage('earth');
 
     setInterval(this.updatePositions, 3000);
 
@@ -67,14 +55,6 @@ class SpaceScene extends Component {
      * Runs every frame to animate the scene
      */
     const update = () => {
-      // let date = Date.now() * 0.00001;
-
-      // this.state.pointLight.position.x = this.state.earth.position.x + Math.sin(date) * earthOrbitRadius;
-      // this.state.pointLight.position.z = this.state.earth.position.z + Math.cos(date) * earthOrbitRadius;
-
-      // this.state.moon.position.x = this.state.earth.position.x + Math.sin(date * 3) * moonOrbitRadius;
-      // this.state.moon.position.z = this.state.earth.position.z + Math.cos(date * 3) * moonOrbitRadius;
-
       this.state.pointLight.position.x = this.props.sunPosition.x;
       this.state.pointLight.position.y = this.props.sunPosition.y;
       this.state.pointLight.position.z = this.props.sunPosition.z;
@@ -104,7 +84,7 @@ class SpaceScene extends Component {
       update();
       render();
     };
-    
+
     // Build base scene objects
     let { scene, camera, controls, renderer } = buildScene();
 
