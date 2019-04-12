@@ -1,18 +1,9 @@
-import { 
+import {
   UPDATE_SIMULATION_TIME,
   UPDATE_ANIMATION_SPEED,
-  GET_ALL_BODY_POSITIONS,
   GET_MAIN_OBJECT,
-  GET_OBJECT,
   GET_OBJECT_LIST,
-  GET_FRAME,
-  GET_FRAMES,
-  GET_COVERAGE,
   UPDATE_BODY_POSITION,
-  EARTH,
-  MOON,
-  LMAP,
-  SUN
 } from '../actions/spaceSceneActions';
 
 const initialState = {
@@ -24,10 +15,10 @@ const initialState = {
   objectCoverage: {},
   objectFrames: [],
   frameData: {},
-  earth: { position: { frame: { x: 0, y: 0, z: 0} } },
-  moon: { position: { frame: { x: 0, y: 0, z: 0} } },
-  sun: { position: { frame: { x: 0, y: 0, z: 0} } },
-  lmap: { position: { frame: { x: 0, y: 0, z: 0} } }
+  earth: { position: { x: 0, y: 0, z: 0 } },
+  moon: { position: { x: 0, y: 0, z: 0 } },
+  sun: { position: { x: 0, y: 0, z: 0 } },
+  LMAP: { position: { x: 0, y: 0, z: 0 } }
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -43,28 +34,28 @@ const spaceSceneReducer = (state = {}, action) => {
         animationSpeed: action.payload
       }
     case UPDATE_BODY_POSITION:
-      switch(action.payload.name) {
-        case EARTH:
-          return {
-            ...state,
-            earth: action.payload
+      /*
+       * Coordinate frames:
+       *
+       *    ThreeJS           SPICE
+       *      |Y                |Z
+       *      |                 |
+       *      |                 |
+       *      |________         |________
+       *     /        X        /        Y
+       *    /                 /
+       *   /Z                /X
+       */
+      const objectPosition = action.payload.position.frame;
+      let newState = { ...state };
+      newState[action.payload.name] = {
+            position: {
+              x: objectPosition.y,
+              y: objectPosition.z,
+              z: objectPosition.x
           }
-        case MOON:
-          return {
-            ...state,
-            moon: action.payload
-          }
-        case SUN:
-          return {
-            ...state,
-            sun: action.payload
-          }
-        case LMAP:
-          return {
-            ...state,
-            lmap: action.payload
-          }
-      }
+        };
+      return newState;
     case GET_MAIN_OBJECT:
       return {
         ...state,
@@ -75,25 +66,6 @@ const spaceSceneReducer = (state = {}, action) => {
         ...state,
         allObjects: action.payload
       }
-    case GET_COVERAGE:
-      // TODO detect which object coverage was for
-      // and edit that object in the state
-      return {
-        ...state,
-        objectCoverage: action.payload
-      }
-    case GET_FRAME:
-      // TODO, determine where frame should go
-      return {
-        ...state,
-        frameData: action.payload
-      }
-    case GET_FRAMES:
-      // TODO, determine where frames should go
-      return {
-        ...state,
-        objectFrames: action.payload
-      }
     default:
       return {
         ...state,
@@ -103,15 +75,15 @@ const spaceSceneReducer = (state = {}, action) => {
 }
 
 export const selectMoonPosition = (state) => {
-  return state.moon.position.frame;
+  return state.moon.position;
 }
 
 export const selectLMAPPosition = (state) => {
-  return state.lmap.position.frame;
+  return state.LMAP.position;
 }
 
 export const selectSunPosition = (state) => {
-  return state.sun.position.frame;
+  return state.sun.position;
 }
 
 export const selectSimulationTime = (state) => {
