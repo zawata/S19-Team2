@@ -17,6 +17,13 @@ export const GET_OBJECT_LIST = 'GET_OBJECT_LIST';
 export const GET_FRAME = 'GET_FRAME';
 export const GET_FRAMES = 'GET_FRAMES';
 export const GET_COVERAGE = 'GET_COVERAGE';
+export const UPDATE_BODY_POSITION = 'UPDATE_BODY_POSITION';
+
+/** Object Types */
+export const EARTH = 'earth';
+export const MOON = 'moon';
+export const LMAP = 'LMAP';
+export const SUN = 'sun';
 
 /** 
  * Thunks (actions that return a function that calls dispatch after async request(s))
@@ -32,35 +39,50 @@ export const updateAnimationSpeed = (newSpeed) => dispatch => {
   dispatch({type: UPDATE_ANIMATION_SPEED, payload: newSpeed});
 }
 
+export const updateObjectPositions = (bodiesToUpdate, observer, date) => async(dispatch) => {
+  // For every body to update, get frame data 
+  bodiesToUpdate.forEach( async(spaceBody) => {
+    try {
+      console.log('gettting positional data for: ', spaceBody);
+      const bodyPosition = await get_frame(spaceBody, observer, date);
+      const bodyData = { name: spaceBody, position: bodyPosition };
+      dispatch({type: UPDATE_BODY_POSITION, payload: bodyData});
+    } catch (error) {
+      console.error(error);
+    }
+  });
+}
+
 /**
  * Spyce Library calls (using network_library)
  */
-export const getMainObject = () => dispatch => {
-  get_main_object()
-    .then((mainObject) => dispatch({type: GET_MAIN_OBJECT, payload: mainObject}));
+export const getMainObject = () => async(dispatch) => {
+  const mainObject = await get_main_object()
+  dispatch({type: GET_MAIN_OBJECT, payload: mainObject});
 }
 
-export const getObjectList = () => dispatch => {
-  get_all_objects()
-    .then((objectList) => dispatch({type: GET_OBJECT_LIST, payload: objectList}));
+export const getObjectList = () => async(dispatch) => {
+  const objectList = await get_all_objects();
+  dispatch({type: GET_OBJECT_LIST, payload: objectList});
 }
 
-export const getObjectFrame = (object, observer, date) => dispatch => {
-  get_frame(object, observer, date)
-    .then((dateFrame) => dispatch({type: GET_FRAME, payload: dateFrame}));
+export const getObjectFrame = (object, observer, date) => async(dispatch) => {
+  const dateFrame = await get_frame(object, observer, date);
+  dispatch({type: GET_FRAME, payload: dateFrame});
 }
 
-export const getObject = (objectToGet) => {
-  return get_object(objectToGet);
+export const getObject = async(objectToGet) => {
+  const planetaryObject = await get_object(objectToGet);
+  return planetaryObject;
 }
 
-export const getObjectFrames = (object, observer, dateList) => dispatch => {
-  get_frames(object, observer, dateList)
-    .then((dateFrames) => dispatch({type: GET_FRAMES, payload: dateFrames}));
+export const getObjectFrames = (object, observer, dateList) => async(dispatch) => {
+  const dateFrames = await get_frames(object, observer, dateList);
+  dispatch({type: GET_FRAMES, payload: dateFrames});
 }
 
-export const getObjectCoverage = (object) => dispatch => {
-  get_coverage(object)
-    .then((objectCoverage) => dispatch({type: GET_COVERAGE, payload: objectCoverage}));
+export const getObjectCoverage = (object) => async(dispatch) => {
+  const objectCoverage = await get_coverage(object);
+  dispatch({type: GET_COVERAGE, payload: objectCoverage});
 }
 

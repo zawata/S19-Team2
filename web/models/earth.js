@@ -11,13 +11,13 @@ export default class Earth {
 
     async load() {
         const earthTexture = await loadTexture(earthTextureImg, new THREE.TextureLoader());
-        let earthGeo = new THREE.SphereGeometry(this.size, 32, 32);
+        let earthGeo = new THREE.SphereGeometry(this.size, 64, 64);
         let earthMaterial = new THREE.MeshPhongMaterial({
             map:    earthTexture,
         });
         const earthBumpMap = await loadTexture(earthBumpImg, new THREE.TextureLoader());
         earthMaterial.bumpMap = earthBumpMap;
-        earthMaterial.bumpScale = 0.05;
+        earthMaterial.bumpScale = 0.0001;
         let earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
         earthMesh.scale.set(this.earthScale, this.earthScale, this.earthScale);
         return earthMesh;

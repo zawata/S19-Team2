@@ -20,7 +20,7 @@ function to_iso(date) {
 
 function to_au(km) {
     let d_au = math.eval(`${km} / ${km_p_au}`);
-    return math.eval(`${d_au} / ${gl_p_au}`);
+    return math.eval(`${d_au} / ${au_p_gl}`);
 }
 
 /**
