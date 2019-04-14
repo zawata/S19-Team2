@@ -26,9 +26,9 @@ class SceneSwitchButton extends Component {
 
   render() {
     return(
-      <div className="toggleControlsButton">
+      <div className="changeSceneButton">
         <button onClick={this.handleToggle}>{
-          this.state.viewingMoon ? 'Earth View' : 'Moon View' 
+          this.state.viewingMoon ? 'View Earth' : 'View Moon' 
           }
         </button>
       </div>
