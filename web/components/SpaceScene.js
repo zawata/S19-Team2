@@ -7,10 +7,15 @@ import {
   addAxisHelper
 } from './sceneHelper';
 
-const earthScale = 4;
-const moonScale = 3.5;
-const moonOrbitRadius = 2.38;
-const earthOrbitRadius = 930;
+const earthScale = 0.0085;
+const moonScale = 0.00232;
+// const earthScale = 
+
+// Moon Orbit Radius to be calculated in real-time using spyce data
+// const moonOrbitRadius = 2.38;
+
+// Earth Orbit Radius to be calculated in real-time using spyce data
+// const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
 export default class SpaceScene extends Component {
