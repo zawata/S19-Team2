@@ -2,7 +2,7 @@ import config from '../config/config';
 import axios from 'axios';
 import math from 'mathjs';
 
-axios.defaults.baseURL = `http://${config.backendURL}api`
+axios.defaults.baseURL = `http://${config.backendURL}/api`
 
 // kilometers to Astronomical Units
 const km_p_au = math.number(149597870.7);
