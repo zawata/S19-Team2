@@ -1,28 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as THREE from '../three/three';
+
+import * as pos_store from '../libraries/position_store'
 import {
   addLighting,
   buildScene,
   addObjects,
   addAxisHelper
 } from './sceneHelper';
-import {
-  getObjectList,
-  getMainObject,
-  getObjectFrame,
-  getObject,
-  getObjectFrames,
-  getObjectCoverage,
-  updateObjectPositions
-} from '../actions/spaceSceneActions';
-import {
-  selectAllObjects,
-  selectMainObject,
-  selectMoonPosition,
-  selectLMAPPosition,
-  selectSunPosition
-} from '../reducers';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
@@ -38,7 +24,8 @@ class SpaceScene extends Component {
       pointLight: {}
     };
 
-    this.updatePositions = this.updatePositions.bind(this);
+    //starts the update loop
+    pos_store.init_store();
   }
 
   /**
@@ -48,20 +35,22 @@ class SpaceScene extends Component {
    */
   async componentDidMount() {
 
-    setInterval(this.updatePositions, 3000);
-
     /**
      * Update function
      * Runs every frame to animate the scene
      */
     const update = () => {
-      this.state.pointLight.position.x = this.props.sunPosition.x;
-      this.state.pointLight.position.y = this.props.sunPosition.y;
-      this.state.pointLight.position.z = this.props.sunPosition.z;
+      let sun_pos = pos_store.get_object_position("sun");
+      this.state.pointLight.position.x = sun_pos.x;
+      this.state.pointLight.position.y = sun_pos.y;
+      this.state.pointLight.position.z = sun_pos.z;
+      //console.log(sun_pos);
 
-      this.state.moon.position.x = this.props.moonPosition.x;
-      this.state.moon.position.y = this.props.moonPosition.y;
-      this.state.moon.position.z = this.props.moonPosition.z;
+      let moon_pos = pos_store.get_object_position("moon");
+      this.state.moon.position.x = moon_pos.x;
+      this.state.moon.position.y = moon_pos.y;
+      this.state.moon.position.z = moon_pos.z;
+      //console.log(moon_pos);
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
@@ -102,13 +91,6 @@ class SpaceScene extends Component {
     animate();
   }
 
-  updatePositions() {
-    const bodiesToUpdate = ['moon', 'LMAP', 'sun'];
-    const observer = 'earth';
-    const currentDate = new Date();
-    this.props.updateObjectPositions(bodiesToUpdate, observer, currentDate);
-  }
-
   render() {
     return(
       <div className="space-scene"
@@ -123,20 +105,6 @@ class SpaceScene extends Component {
  * maps state in redux store (right)
  * to component props property (left)
  */
-const mapStateToProps = state => ({
-  mainObject: selectMainObject(state),
-  objectList: selectAllObjects(state),
-  moonPosition: selectMoonPosition(state),
-  lmapPosition: selectLMAPPosition(state),
-  sunPosition: selectSunPosition(state)
-});
+const mapStateToProps = state => ({});
 
-export default connect(mapStateToProps, {
-  getObjectList,
-  getMainObject,
-  getObjectFrame,
-  getObject,
-  getObjectFrames,
-  getObjectCoverage,
-  updateObjectPositions
-})(SpaceScene)
+export default connect(mapStateToProps, {})(SpaceScene)
