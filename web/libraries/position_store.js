@@ -1,77 +1,98 @@
-import config from './config/config'
-import net from './libraries/network_layer';
+import config from '../config/config'
+import net from './network_layer';
 
 const base_objects = [
   "sun",
   "moon",
-  config.main_spacecraft_name
+  config.mainSpacecraftName
 ]
 
 let app_store = {}
 let timeout_ref = undefined;
 let will_refresh_loop = false;
 
-export
+
 async function init_object(obj) {
   let obj_data = await net.get_object(obj);
-  let obj_pos = await net.get_frame(obj, "earth", app_store.working_date);
   let obj_cov = await net.get_coverage(obj);
+
   app_store.objects[obj] = {
     name: obj_data.name,
     id: obj_data.id,
-    position: {
-      x: obj_pos.y,
-      y: obj_pos.z,
-      z: obj_pos.x
-    },
+    position: {},
     coverage: obj_cov
+  }
+}
+
+async function update_objects() {
+  for(let key of Object.keys(app_store.objects)) {
+    let spice_pos = await net.get_frame(key, "earth", app_store.working_date);
+
+    /*
+      * Coordinate frames:
+      *
+      *    ThreeJS           SPICE
+      *      |Y                |Z
+      *      |                 |
+      *      |                 |
+      *      |________         |________
+      *     /        X        /        Y
+      *    /                 /
+      *   /Z                /X
+      */
+    app_store.objects[key].position = {
+      x: spice_pos.frame.y,
+      y: spice_pos.frame.z,
+      z: spice_pos.frame.x
+    }
   }
 }
 
 export
 async function init_store() {
-  app_store = {
-    working_date: new Date(),
-    update_frequency: 1,
-  }
-
   app_store.coverage = await net.get_coverage("main");
+  app_store.working_date = new Date(app_store.coverage.start);
+  app_store.update_frequency = 1;
 
+  app_store.objects = {};
   for(let obj of base_objects) {
-    init_object(obj);
+    await init_object(obj);
   }
+  await update_objects();
 
-  timeout_ref = setTimeout(config.updatePeriod, request_loop);
+  will_refresh_loop = true;
+  start_loop();
+}
+
+export
+function start_loop() {
+  timeout_ref = setTimeout(request_loop, config.updatePeriod);
 }
 
 export
 function restart_loop() {
-  timeout_ref.refresh();
+  stop_loop();
+  start_loop();
 }
 
 export
 function stop_loop() {
-  will_refresh_loop = false;
+  clearTimeout(timeout_ref);
 }
 
-function request_loop() {
+async function request_loop() {
   app_store.working_date.setTime(app_store.working_date.getTime() + (config.updatePeriod * app_store.update_frequency));
 
   if(app_store.working_date < app_store.coverage.end) {
-    for(let key in app_store.objects) {
-      let spice_pos = net.get_frame(key, "earth", app_store.working_date);
-      app_store.objects[key].position = {
-        x: spice_pos.frame.y,
-        y: spice_pos.frame.z,
-        z: spice_pos.frame.x
-      }
-    }
+    update_objects();
 
     //reissue timeout;
     if(will_refresh_loop){
       restart_loop();
+      return;
     }
   }
+  stop_loop();
 }
 
 export
