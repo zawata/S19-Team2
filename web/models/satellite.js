@@ -4,9 +4,8 @@ import point_texture_img from '../textures/point.png';
 
 export default
 class Satellite {
-    constructor(size, satelliteScale) {
+    constructor(size) {
         this.size = size;
-        this.satelliteScale = satelliteScale;
     }
 
     async load() {
@@ -14,7 +13,7 @@ class Satellite {
         var dotGeometry = new THREE.Geometry();
         dotGeometry.vertices.push(new THREE.Vector3());
         var dotMaterial = new THREE.PointsMaterial({
-            size: 5,
+            size: this.size,
             sizeAttenuation: false,
             map: satelliteTexture,
             alphaTest: 0.5,
