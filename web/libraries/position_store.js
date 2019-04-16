@@ -51,7 +51,11 @@ async function update_objects() {
 export
 async function init_store() {
   app_store.coverage = await net.get_coverage("main");
-  app_store.working_date = new Date(app_store.coverage.start);
+  if(new Date() > app_store.coverage.start && new Date() < app_store.coverage.end) {
+    app_store.working_date = new Date();
+  } else {
+    app_store.working_date = new Date(app_store.coverage.start);
+  }
   app_store.update_frequency = 1;
 
   app_store.objects = {};
