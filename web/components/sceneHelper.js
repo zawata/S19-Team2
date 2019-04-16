@@ -5,6 +5,7 @@ import LensFlare from '../three/LensFlare'
 import solarFlare from '../textures/lensflare0.png';
 import Earth from '../models/earth'
 import Moon from '../models/moon'
+import Satellite from '../models/satellite'
 
 /**
  * buildScene
@@ -53,6 +54,7 @@ export async function addObjects(scene, earthScale, moonScale) {
     // Create base objects
     let earth = new Earth(1, earthScale);
     let moon = new Moon(1, moonScale);
+    let satellite = new Satellite();
 
     // Load earth texture, and add to the scene
     const earthMesh = await earth.load();
@@ -67,10 +69,16 @@ export async function addObjects(scene, earthScale, moonScale) {
     moon = moonMesh;
     scene.add(moon);
 
+    // Load Satellite, and add to scene
+    const satMesh = await satellite.load();
+    satellite = satMesh;
+    scene.add(satellite);
+
     // Return loaded earth and moon objects
     return {
         earthObj: earth,
-        moonObj: moon
+        moonObj: moon,
+        satelliteObj: satellite,
     };
 }
 
