@@ -9,7 +9,6 @@ import {
 
 const earthScale = 0.0085;
 const moonScale = 0.00232;
-// const earthScale = 
 
 // Moon Orbit Radius to be calculated in real-time using spyce data
 // const moonOrbitRadius = 2.38;
@@ -18,7 +17,7 @@ const moonScale = 0.00232;
 // const earthOrbitRadius = 930;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
-export default class SpaceScene extends Component {
+class SpaceScene extends Component {
 
   constructor(props) {
     super(props);
@@ -27,6 +26,8 @@ export default class SpaceScene extends Component {
       moon: {},
       pointLight: {}
     };
+
+    this.updatePositions = this.updatePositions.bind(this);
   }
 
   /**
@@ -41,7 +42,7 @@ export default class SpaceScene extends Component {
      * Runs every frame to animate the scene
      */
     const update = () => {
-      let date = Date.now() * 0.00001;
+      // let date = Date.now() * 0.00001;
 
       this.state.pointLight.position.x = this.state.earth.position.x + Math.sin(date) * earthOrbitRadius;
       this.state.pointLight.position.z = this.state.earth.position.z + Math.cos(date) * earthOrbitRadius;
@@ -88,6 +89,13 @@ export default class SpaceScene extends Component {
     animate();
   }
 
+  updatePositions() {
+    const bodiesToUpdate = ['moon', 'LMAP', 'sun'];
+    const observer = 'earth';
+    const currentDate = new Date();
+    this.props.updateObjectPositions(bodiesToUpdate, observer, currentDate);
+  }
+
   render() {
     return(
       <div className="space-scene"
@@ -95,6 +103,7 @@ export default class SpaceScene extends Component {
       />
     )
   }
+}
 
 
 const mapStateToProps = state => ({
