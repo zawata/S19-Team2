@@ -60,6 +60,8 @@ class SpaceScene extends Component {
       this.state.satellite.position.y = sat_pos.y;
       this.state.satellite.position.z = sat_pos.z;
 
+      this.state.moon.lookAt(0,0,0);
+
       moonCamera.lookAt(this.state.moon.position);
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
