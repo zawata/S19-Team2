@@ -95,4 +95,22 @@ export default class SpaceScene extends Component {
       />
     )
   }
-}
+
+
+const mapStateToProps = state => ({
+  mainObject: selectMainObject(state),
+  objectList: selectAllObjects(state),
+  moonPosition: selectMoonPosition(state),
+  lmapPosition: selectLMAPPosition(state),
+  sunPosition: selectSunPosition(state)
+});
+
+export default connect(mapStateToProps, {
+  getObjectList,
+  getMainObject,
+  getObjectFrame,
+  getObject,
+  getObjectFrames,
+  getObjectCoverage,
+  updateObjectPositions
+})}(SpaceScene)
