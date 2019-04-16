@@ -21,6 +21,7 @@ class SpaceScene extends Component {
     this.state = {
       earth: {},
       moon: {},
+      satellite: {},
       pointLight: {}
     };
 
@@ -52,6 +53,10 @@ class SpaceScene extends Component {
       this.state.moon.position.z = moon_pos.z;
       //console.log(moon_pos);
 
+      this.state.satellite.position.x = this.props.lmapPosition.x;
+      this.state.satellite.position.y = this.props.lmapPosition.y;
+      this.state.satellite.position.z = this.props.lmapPosition.z;
+
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
     };
@@ -82,9 +87,10 @@ class SpaceScene extends Component {
     this.setState({ pointLight: lighting });
 
     // Load mesh objects for earth and moon
-    let { earthObj, moonObj } = await addObjects(scene, earthScale, moonScale);
+    let { earthObj, moonObj, satelliteObj } = await addObjects(scene, earthScale, moonScale);
     this.setState({ earth: earthObj });
     this.setState({ moon: moonObj });
+    this.setState({ satellite: satelliteObj });
 
     addAxisHelper(scene);
 
