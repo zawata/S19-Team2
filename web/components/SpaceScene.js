@@ -9,6 +9,7 @@ import {
   addObjects,
   addAxisHelper
 } from './sceneHelper';
+import config from '../config/config';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
@@ -45,17 +46,16 @@ class SpaceScene extends Component {
       this.state.pointLight.position.x = sun_pos.x;
       this.state.pointLight.position.y = sun_pos.y;
       this.state.pointLight.position.z = sun_pos.z;
-      //console.log(sun_pos);
 
       let moon_pos = pos_store.get_object_position("moon");
       this.state.moon.position.x = moon_pos.x;
       this.state.moon.position.y = moon_pos.y;
       this.state.moon.position.z = moon_pos.z;
-      //console.log(moon_pos);
 
-      this.state.satellite.position.x = this.props.lmapPosition.x;
-      this.state.satellite.position.y = this.props.lmapPosition.y;
-      this.state.satellite.position.z = this.props.lmapPosition.z;
+      let sat_pos = pos_store.get_object_position(config.mainSpacecraftName);
+      this.state.satellite.position.x = sat_pos.x;
+      this.state.satellite.position.y = sat_pos.y;
+      this.state.satellite.position.z = sat_pos.z;
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
