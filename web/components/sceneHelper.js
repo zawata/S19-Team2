@@ -14,8 +14,8 @@ export function buildScene() {
   let scene = new THREE.Scene();
 
   let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 10;
-  camera.position.x = 10;
+  camera.position.z = 0.05;
+  camera.position.x = 0.05;
   camera.position.y = 0;
 
   // Create renderer
@@ -51,8 +51,8 @@ export function buildScene() {
 export async function addObjects(scene, earthScale, moonScale) {
 
     // Create base objects
-    let earth = new Earth(0.5, earthScale);
-    let moon = new Moon(0.1, moonScale);
+    let earth = new Earth(1, earthScale);
+    let moon = new Moon(1, moonScale);
 
     // Load earth texture, and add to the scene
     const earthMesh = await earth.load();
