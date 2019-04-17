@@ -85,6 +85,10 @@ class SpaceScene extends Component {
 
       earthObj.rotateOnAxis(axis, 0.0009);
       moonObj.rotateOnAxis(axis, 0.001);
+
+      labelList.forEach(label => {
+        label.updatePosition();
+      });
     };
 
     /**

@@ -8,6 +8,9 @@ import Earth from '../models/earth'
 import Moon from '../models/moon'
 import Satellite from '../models/satellite'
 import SatelliteTrail from '../models/satelliteTrail'
+import ObjectLabel from '../models/objectLabel';
+
+import config from '../config/config'
 
 /**
  * buildScene
@@ -23,9 +26,9 @@ export function buildScene() {
 
   // Create solar camera
   let solarCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
-  solarCamera.position.z = 0.05;
-  solarCamera.position.x = 0.05;
-  solarCamera.position.y = 0;
+  solarCamera.position.set(0.05, 0.05, 0);
+  solarCamera.updateWorldMatrix();
+  solarCamera.updateProjectionMatrix();
   // Add solar camera mouse controls
   const controls = new OrbitControls(solarCamera, renderer.domElement);
 
@@ -49,10 +52,14 @@ export function buildScene() {
     renderer.setSize(widthWindow, heightWindow);
     solarCamera.aspect = widthWindow / heightWindow;
     solarCamera.updateProjectionMatrix();
+    solarCamera.updateWorldMatrix()
     moonCamera.aspect = solarCamera.aspect;
     moonCamera.updateProjectionMatrix();
+    moonCamera.updateWorldMatrix()
     spacecraftCamera.aspect = solarCamera.aspect;
     spacecraftCamera.updateProjectionMatrix();
+    spacecraftCamera.updateWorldMatrix()
+
   });
 
   // Return created objects to the scene
@@ -70,7 +77,7 @@ export function buildScene() {
  * addObjects
  * Adds earth and moon to the scene
  */
-export async function addObjects(scene, earthScale, moonScale) {
+export async function addObjects(scene, camera, renderer, earthScale, moonScale) {
 
     // Create base objects
     let earth = new Earth(1, earthScale);
@@ -104,6 +111,11 @@ export async function addObjects(scene, earthScale, moonScale) {
         moonObj: moon,
         satelliteObj: satellite,
         trailObj: trailObj,
+        labelList: [
+          new ObjectLabel(renderer, camera, earth, "Earth"),
+          new ObjectLabel(renderer, camera, moon, "Moon"),
+          new ObjectLabel(renderer, camera, satellite, config.mainSpacecraftName)
+        ]
     };
 }
 
