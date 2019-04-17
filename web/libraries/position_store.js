@@ -13,8 +13,6 @@ let will_refresh_loop = false;
 
 
 async function init_object(obj) {
-  console.log("INITIALIZED, BITCHES!: ");
-  console.log(obj);
   let obj_data = await net.get_object(obj);
   let obj_cov = await net.get_coverage(obj);
 
@@ -24,8 +22,6 @@ async function init_object(obj) {
     position: {},
     coverage: obj_cov
   }
-  console.log("ONCE MORE");
-  console.log(app_store.objects[obj]);
 }
 
 async function update_objects() {

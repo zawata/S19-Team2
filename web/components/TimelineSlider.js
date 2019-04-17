@@ -40,7 +40,6 @@ class TimelineSlider extends Component {
   }
 
   onChange = ([ms]) => {
-    //this.props.updateSimulationTime(ms);
     set_working_date(new Date(ms));
   };
 
