@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as THREE from '../three/three';
+import config from '../config/config';
 import { 
   addLighting,
   buildScene, 
@@ -27,7 +28,7 @@ class SpaceScene extends Component {
       pointLight: {}
     };
 
-    this.updatePositions = this.updatePositions.bind(this);
+    pos_store.init_store();
   }
 
   /**
@@ -42,13 +43,20 @@ class SpaceScene extends Component {
      * Runs every frame to animate the scene
      */
     const update = () => {
-      // let date = Date.now() * 0.00001;
+      let sun_pos = pos_store.get_object_position("sun");
+      this.state.pointLight.position.x = sun_pos.x;
+      this.state.pointLight.position.y = sun_pos.y;
+      this.state.pointLight.position.z = sun_pos.z;
 
-      this.state.pointLight.position.x = this.state.earth.position.x + Math.sin(date) * earthOrbitRadius;
-      this.state.pointLight.position.z = this.state.earth.position.z + Math.cos(date) * earthOrbitRadius;
+      let moon_pos = pos_store.get_object_position("moon");
+      this.state.moon.position.x = moon_pos.x;
+      this.state.moon.position.y = moon_pos.y;
+      this.state.moon.position.z = moon_pos.z;
 
-      this.state.moon.position.x = this.state.earth.position.x + Math.sin(date * 3) * moonOrbitRadius;
-      this.state.moon.position.z = this.state.earth.position.z + Math.cos(date * 3) * moonOrbitRadius;
+      let sat_pos = pos_store.get_object_position(config.mainSpacecraftName);
+      this.state.satellite.position.x = sat_pos.x;
+      this.state.satellite.position.y = sat_pos.y;
+      this.state.satellite.position.z = sat_pos.z;
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
