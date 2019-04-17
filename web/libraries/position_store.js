@@ -107,6 +107,7 @@ function get_working_date() {
 export
 function set_working_date(date) {
     app_store.working_date = date;
+    update_objects();
 }
 
 export
