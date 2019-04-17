@@ -7,6 +7,7 @@ import { subDays, startOfToday, format, getTime } from "date-fns";
 import { scaleTime } from "d3-scale";
 import { updateSimulationTime } from '../actions/spaceSceneActions';
 import { selectSimulationTime } from '../reducers';
+import { set_working_date } from '../libraries/position_store';
 
 const sliderStyle = {
   position: "relative",
@@ -39,7 +40,8 @@ class TimelineSlider extends Component {
   }
 
   onChange = ([ms]) => {
-    this.props.updateSimulationTime(ms);
+    //this.props.updateSimulationTime(ms);
+    set_working_date(new Date(ms));
   };
 
   onUpdate = ([ms]) => {

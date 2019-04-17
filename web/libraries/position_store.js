@@ -13,6 +13,8 @@ let will_refresh_loop = false;
 
 
 async function init_object(obj) {
+  console.log("INITIALIZED, BITCHES!: ");
+  console.log(obj);
   let obj_data = await net.get_object(obj);
   let obj_cov = await net.get_coverage(obj);
 
@@ -22,6 +24,8 @@ async function init_object(obj) {
     position: {},
     coverage: obj_cov
   }
+  console.log("ONCE MORE");
+  console.log(app_store.objects[obj]);
 }
 
 async function update_objects() {
@@ -131,6 +135,11 @@ function get_object_id(object) {
 
 export
 function get_object_position(object) {
+  if (app_store.objects[object] === undefined){
+    //This case is encountered sometimes if the slider component is loaded before the store is initialized.
+    //If left to throw an error, the component will break, hence the false position data.
+    return {x: 0, y: 0, z: 0}
+  }
   return app_store.objects[object].position;
 }
 
