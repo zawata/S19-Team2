@@ -10,6 +10,7 @@ import {
   addAxisHelper
 } from './sceneHelper';
 import config from '../config/config';
+import { selectCurrentTrailType } from '../reducers/spaceSceneReducer';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
@@ -23,7 +24,9 @@ class SpaceScene extends Component {
       earth: {},
       moon: {},
       satellite: {},
-      pointLight: {}
+      pointLight: {},
+      fullTrail: {},
+      partialTrail: {}
     };
 
     //starts the update loop
@@ -111,6 +114,8 @@ class SpaceScene extends Component {
  * maps state in redux store (right)
  * to component props property (left)
  */
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  currentTrailType: selectCurrentTrailType(state)
+});
 
 export default connect(mapStateToProps, {})(SpaceScene)

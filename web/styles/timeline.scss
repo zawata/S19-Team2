@@ -18,10 +18,31 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
+
+  &:hover {
+    background-color: #2a3c49;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &.selected {
+    background-color: #212f39;
+  }
 }
 
-.toggleControlsButton:focus {
-  outline: 0;
+.multi-toggle-controls {
+  color: white;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  background-color: #121a21;
+  display: inline-block;
+  padding: 0.5em;
+
+  span {
+    padding-right: 0.5em;
+  }
 }
 
 //timeline slider container

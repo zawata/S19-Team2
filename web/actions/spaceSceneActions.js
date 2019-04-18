@@ -18,6 +18,7 @@ export const GET_FRAME = 'GET_FRAME';
 export const GET_FRAMES = 'GET_FRAMES';
 export const GET_COVERAGE = 'GET_COVERAGE';
 export const UPDATE_BODY_POSITION = 'UPDATE_BODY_POSITION';
+export const UPDATE_TRAIL_TYPE = 'UPDATE_TRAIL_TYPE';
 
 /** Object Types */
 export const EARTH = 'earth';
@@ -37,6 +38,10 @@ export const updateSimulationTime = (newTime) => dispatch => {
 
 export const updateAnimationSpeed = (newSpeed) => dispatch => {
   dispatch({type: UPDATE_ANIMATION_SPEED, payload: newSpeed});
+}
+
+export const updateTrailType = (newTrailType) => dispatch => {
+  dispatch({type: UPDATE_TRAIL_TYPE, payload: newTrailType})
 }
 
 export const updateObjectPositions = (bodiesToUpdate, observer, date) => async(dispatch) => {

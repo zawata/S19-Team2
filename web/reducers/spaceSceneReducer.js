@@ -4,6 +4,7 @@ import {
   GET_MAIN_OBJECT,
   GET_OBJECT_LIST,
   UPDATE_BODY_POSITION,
+  UPDATE_TRAIL_TYPE,
 } from '../actions/spaceSceneActions';
 
 const initialState = {
@@ -15,6 +16,7 @@ const initialState = {
   objectCoverage: {},
   objectFrames: [],
   frameData: {},
+  trailType: 'partial',
   earth: { position: { x: 0, y: 0, z: 0 } },
   moon: { position: { x: 0, y: 0, z: 0 } },
   sun: { position: { x: 0, y: 0, z: 0 } },
@@ -32,6 +34,11 @@ const spaceSceneReducer = (state = {}, action) => {
       return {
         ...state,
         animationSpeed: action.payload
+      }
+    case UPDATE_TRAIL_TYPE:
+      return {
+        ...state,
+        trailType: action.payload
       }
     case UPDATE_BODY_POSITION:
       /*
@@ -100,6 +107,10 @@ export const selectMainObject = (state) => {
 
 export const selectAllObjects = (state) => {
   return state.allObjects;
+}
+
+export const selectCurrentTrailType = (state) => {
+  return state.trailType;
 }
 
 export default spaceSceneReducer
