@@ -7,7 +7,7 @@ import { subDays, startOfToday, format, getTime } from "date-fns";
 import { scaleTime } from "d3-scale";
 import { updateSimulationTime } from '../actions/spaceSceneActions';
 import { selectSimulationTime } from '../reducers';
-import { set_working_date } from '../libraries/position_store';
+import { set_working_date, get_coverage } from '../libraries/position_store';
 
 const sliderStyle = {
   position: "relative",
@@ -28,9 +28,9 @@ class TimelineSlider extends Component {
     super(props);
 
     // Setting min and max of slider
-    const today = startOfToday();
-    const missionStart = getTime(new Date(2019, 1, 5, 0, 0, 0, 0));
-    const missionEnd = getTime(new Date(2020, 8, 21, 0, 0, 0, 0));
+    let coverage = get_coverage();
+    const missionStart = getTime(coverage.start);
+    const missionEnd = getTime(coverage.end);
 
     this.state = {
       updated: this.props.simulationTime,

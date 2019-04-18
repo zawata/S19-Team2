@@ -132,15 +132,15 @@ function get_object_id(object) {
 
 export
 function get_object_position(object) {
-  if (app_store.objects[object] === undefined){
-    //This case is encountered sometimes if the slider component is loaded before the store is initialized.
-    //If left to throw an error, the component will break, hence the false position data.
-    return {x: 0, y: 0, z: 0}
-  }
   return app_store.objects[object].position;
 }
 
 export
 function get_object_coverage(object) {
   return app_store.objects[object].coverage;
+}
+
+export 
+function get_coverage() {
+  return app_store.coverage;
 }
