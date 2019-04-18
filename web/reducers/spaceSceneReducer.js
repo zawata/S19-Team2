@@ -6,8 +6,8 @@ import {
   UPDATE_BODY_POSITION,
   SOLAR_CAMERA,
   MOON_CAMERA,
-  UPDATE_CAMERA
-  UPDATE_TRAIL_TYPE,
+  UPDATE_CAMERA,
+  UPDATE_TRAIL_TYPE
 } from '../actions/spaceSceneActions';
 
 const initialState = {

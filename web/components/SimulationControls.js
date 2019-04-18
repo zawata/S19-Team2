@@ -3,6 +3,7 @@ import { CSSTransitionGroup } from 'react-transition-group';
 import TimelineSlider from './TimelineSlider';
 import SpeedSlider from './SpeedSlider';
 import TrailControls from './TrailControls';
+import CameraControls from './CameraControls';
 
 export default class SimulationControls extends Component {
   constructor(props) {
@@ -22,7 +23,12 @@ export default class SimulationControls extends Component {
           onClick={this.handleClick}>{this.state.controlsVisible ? 'Hide Controls' : 'Show Controls'}</button>
         <div className="simulation-controls">
           <CSSTransitionGroup transitionName="controls" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-            {this.state.controlsVisible && <TrailControls/>}
+            {this.state.controlsVisible && (
+              <div className="toggleControls">
+                <CameraControls/>
+                <TrailControls/>
+              </div>
+            )}
             {this.state.controlsVisible && <TimelineSlider/>}
             {this.state.controlsVisible && <SpeedSlider/>}
           </CSSTransitionGroup>

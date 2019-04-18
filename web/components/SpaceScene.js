@@ -10,7 +10,7 @@ import {
   addAxisHelper
 } from './sceneHelper';
 import config from '../config/config';
-import { selectCurrentTrailType, selectCurrentCamera } from '../reducers/spaceSceneReducer';
+import { selectCurrentTrailType, selectCurrentCamera } from '../reducers';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
