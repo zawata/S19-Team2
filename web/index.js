@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import SpaceScene from './components/SpaceScene';
 import SceneSwitchButton from './components/SceneSwitchButton';
+import ShowTagButton from './components/ShowTagButton';
 import './styles/styles.scss';
 import SimulationControls from "./components/SimulationControls";
 import { Provider } from 'react-redux';
@@ -13,6 +14,7 @@ const App = () =>{
       <Provider store={store}>
         <SpaceScene/>
         <SceneSwitchButton/>
+        <ShowTagButton/>
         <SimulationControls/>
       </Provider>
     </div>
