@@ -76,8 +76,6 @@ class SpaceScene extends Component {
       spacecraftCamera.position.y = sat_pos.y - normalizedSatelliteVelocityVector.y*.001;
       spacecraftCamera.position.z = sat_pos.z - normalizedSatelliteVelocityVector.z*.001;
       spacecraftCamera.lookAt(this.state.satellite.position);
-      console.log("spacecraft camera pos: ");
-      console.log(spacecraftCamera.position);
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
