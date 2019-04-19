@@ -20,14 +20,7 @@ class SpaceScene extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      earth: {},
-      moon: {},
-      satellite: {},
-      pointLight: {},
-      fullTrail: {},
-      partialTrail: {}
-    };
+    this.state = {};
 
     //starts the update loop
     pos_store.init_store();
@@ -46,23 +39,23 @@ class SpaceScene extends Component {
      */
     const update = () => {
       let sun_pos = pos_store.get_object_position("sun");
-      this.state.pointLight.position.x = sun_pos.x;
-      this.state.pointLight.position.y = sun_pos.y;
-      this.state.pointLight.position.z = sun_pos.z;
+      pointLight.position.x = sun_pos.x;
+      pointLight.position.y = sun_pos.y;
+      pointLight.position.z = sun_pos.z;
 
       let moon_pos = pos_store.get_object_position("moon");
-      this.state.moon.position.x = moon_pos.x;
-      this.state.moon.position.y = moon_pos.y;
-      this.state.moon.position.z = moon_pos.z;
+      moonObj.position.x = moon_pos.x;
+      moonObj.position.y = moon_pos.y;
+      moonObj.position.z = moon_pos.z;
 
       let sat_pos = pos_store.get_object_position(config.mainSpacecraftName);
-      this.state.satellite.position.x = sat_pos.x;
-      this.state.satellite.position.y = sat_pos.y;
-      this.state.satellite.position.z = sat_pos.z;
+      satelliteObj.position.x = sat_pos.x;
+      satelliteObj.position.y = sat_pos.y;
+      satelliteObj.position.z = sat_pos.z;
 
-      this.state.moon.lookAt(0,0,0);
+      moonObj.lookAt(0,0,0);
 
-      moonCamera.lookAt(this.state.moon.position);
+      moonCamera.lookAt(moonObj.position);
 
       let satVelocityMagnitude = Math.sqrt(
         Math.pow(sat_pos.dx, 2) + Math.pow(sat_pos.dy, 2) + Math.pow(sat_pos.dz, 2)
@@ -75,10 +68,23 @@ class SpaceScene extends Component {
       spacecraftCamera.position.x = sat_pos.x - normalizedSatelliteVelocityVector.x*.001;
       spacecraftCamera.position.y = sat_pos.y - normalizedSatelliteVelocityVector.y*.001;
       spacecraftCamera.position.z = sat_pos.z - normalizedSatelliteVelocityVector.z*.001;
-      spacecraftCamera.lookAt(this.state.satellite.position);
+      spacecraftCamera.lookAt(satelliteObj.position);
 
-      this.state.earth.rotateOnAxis(axis, 0.0009);
-      this.state.moon.rotateOnAxis(axis, 0.001);
+      scene.remove(currentTrailObj);
+      if(this.props.currentTrailType == "full") {
+        currentTrailObj = trailObj.getFullPath();
+      } else if(this.props.currentTrailType == "partial") {
+        currentTrailObj = trailObj.getPartialPath(pos_store.get_working_date());
+      } else {
+        currentTrailObj = null;
+      }
+
+      if(currentTrailObj) {
+        scene.add(currentTrailObj);
+      }
+
+      earthObj.rotateOnAxis(axis, 0.0009);
+      moonObj.rotateOnAxis(axis, 0.001);
     };
 
     /**
@@ -115,14 +121,15 @@ class SpaceScene extends Component {
     let { scene, solarCamera, moonCamera, spacecraftCamera, controls, renderer } = buildScene();
 
     // Add lighting (sun flare)
-    let lighting = await addLighting(scene);
-    this.setState({ pointLight: lighting });
+    let pointLight = await addLighting(scene);
 
-    // Load mesh objects for earth and moon
-    let { earthObj, moonObj, satelliteObj } = await addObjects(scene, earthScale, moonScale);
-    this.setState({ earth: earthObj });
-    this.setState({ moon: moonObj });
-    this.setState({ satellite: satelliteObj });
+    // Load mesh objects
+    let {
+      earthObj,
+      moonObj,
+      satelliteObj,
+      trailObj } = await addObjects(scene, earthScale, moonScale);
+    let currentTrailObj;
 
     addAxisHelper(scene);
 
