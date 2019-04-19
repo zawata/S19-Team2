@@ -107,6 +107,7 @@ function get_working_date() {
 export
 function set_working_date(date) {
     app_store.working_date = date;
+    update_objects();
 }
 
 export
@@ -137,4 +138,9 @@ function get_object_position(object) {
 export
 function get_object_coverage(object) {
   return app_store.objects[object].coverage;
+}
+
+export 
+function get_coverage() {
+  return app_store.coverage;
 }
