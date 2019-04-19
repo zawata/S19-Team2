@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import {
   updateCamera,
   SOLAR_CAMERA,
-  MOON_CAMERA
+  MOON_CAMERA,
+  SPACECRACFT_CAMERA
 } from '../actions/spaceSceneActions';
 
 class SceneSwitchButton extends Component {

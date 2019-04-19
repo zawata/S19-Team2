@@ -38,6 +38,8 @@ export function buildScene() {
   // moonCameraControls.enableRotate = false;
   // moonCameraControls.enablePan = false;
 
+  let spacecraftCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
+
   // Make scene responsive
   window.addEventListener('resize', function() {
     let widthWindow = window.innerWidth;
@@ -45,6 +47,10 @@ export function buildScene() {
     renderer.setSize(widthWindow, heightWindow);
     solarCamera.aspect = widthWindow / heightWindow;
     solarCamera.updateProjectionMatrix();
+    moonCamera.aspect = solarCamera.aspect;
+    moonCamera.updateProjectionMatrix();
+    spacecraftCamera.aspect = solarCamera.aspect;
+    spacecraftCamera.updateProjectionMatrix();
   });
 
   // Return created objects to the scene
@@ -52,6 +58,7 @@ export function buildScene() {
     scene,
     solarCamera,
     moonCamera,
+    spacecraftCamera,
     controls,
     renderer
   }

@@ -24,12 +24,13 @@ export const UPDATE_CAMERA = 'UPDATE_CAMERA';
 /** Object Types */
 export const EARTH = 'earth';
 export const MOON = 'moon';
-export const LMAP = 'LMAP';
+export const LMAP = 'LMAP'; //LMAP shouldn't be referred to directly if we want this to be extensible to other missions.
 export const SUN = 'sun';
 
 /** Camera Types */
 const SOLAR_CAMERA = 'solar';
 const MOON_CAMERA = 'moon';
+const SATELLITE_CAMERA = 'satellite';
 
 /** 
  * Thunks (actions that return a function that calls dispatch after async request(s))

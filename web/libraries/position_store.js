@@ -43,7 +43,10 @@ async function update_objects() {
     app_store.objects[key].position = {
       x: spice_pos.frame.y,
       y: spice_pos.frame.z,
-      z: spice_pos.frame.x
+      z: spice_pos.frame.x,
+      dx: spice_pos.frame.dy,
+      dy: spice_pos.frame.dz,
+      dz: spice_pos.frame.dx
     }
   }
 }

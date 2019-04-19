@@ -64,6 +64,21 @@ class SpaceScene extends Component {
 
       moonCamera.lookAt(this.state.moon.position);
 
+      let satVelocityMagnitude = Math.sqrt(
+        Math.pow(sat_pos.dx, 2) + Math.pow(sat_pos.dy, 2) + Math.pow(sat_pos.dz, 2)
+      );
+      let normalizedSatelliteVelocityVector = {
+        x: sat_pos.dx/satVelocityMagnitude,
+        y: sat_pos.dy/satVelocityMagnitude,
+        z: sat_pos.dz/satVelocityMagnitude
+      }
+      spacecraftCamera.position.x = sat_pos.x - normalizedSatelliteVelocityVector.x*.001;
+      spacecraftCamera.position.y = sat_pos.y - normalizedSatelliteVelocityVector.y*.001;
+      spacecraftCamera.position.z = sat_pos.z - normalizedSatelliteVelocityVector.z*.001;
+      spacecraftCamera.lookAt(this.state.satellite.position);
+      console.log("spacecraft camera pos: ");
+      console.log(spacecraftCamera.position);
+
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
     };
@@ -79,6 +94,9 @@ class SpaceScene extends Component {
           break;
         case 'moon':
           renderer.render(scene, moonCamera);
+          break;
+        case 'spacecraft':
+          renderer.render(scene, spacecraftCamera);
           break;
         default:
           renderer.render(scene, solarCamera);
@@ -96,7 +114,7 @@ class SpaceScene extends Component {
     };
 
     // Build base scene objects
-    let { scene, solarCamera, moonCamera, controls, renderer } = buildScene();
+    let { scene, solarCamera, moonCamera, spacecraftCamera, controls, renderer } = buildScene();
 
     // Add lighting (sun flare)
     let lighting = await addLighting(scene);
