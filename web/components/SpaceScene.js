@@ -10,6 +10,7 @@ import {
   addAxisHelper
 } from './sceneHelper';
 import config from '../config/config';
+import { selectCurrentTrailType, selectCurrentCamera } from '../reducers';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
@@ -23,7 +24,9 @@ class SpaceScene extends Component {
       earth: {},
       moon: {},
       satellite: {},
-      pointLight: {}
+      pointLight: {},
+      fullTrail: {},
+      partialTrail: {}
     };
 
     //starts the update loop
@@ -57,6 +60,10 @@ class SpaceScene extends Component {
       this.state.satellite.position.y = sat_pos.y;
       this.state.satellite.position.z = sat_pos.z;
 
+      this.state.moon.lookAt(0,0,0);
+
+      moonCamera.lookAt(this.state.moon.position);
+
       this.state.earth.rotateOnAxis(axis, 0.0009);
       this.state.moon.rotateOnAxis(axis, 0.001);
     };
@@ -66,7 +73,16 @@ class SpaceScene extends Component {
      * sends scene and camera props to renderer
      */
     const render = () => {
-      renderer.render(scene, camera);
+      switch(this.props.selectedCamera) {
+        case 'solar':
+          renderer.render(scene, solarCamera);
+          break;
+        case 'moon':
+          renderer.render(scene, moonCamera);
+          break;
+        default:
+          renderer.render(scene, solarCamera);
+      }
     };
 
     /**
@@ -80,7 +96,7 @@ class SpaceScene extends Component {
     };
 
     // Build base scene objects
-    let { scene, camera, controls, renderer } = buildScene();
+    let { scene, solarCamera, moonCamera, controls, renderer } = buildScene();
 
     // Add lighting (sun flare)
     let lighting = await addLighting(scene);
@@ -111,6 +127,9 @@ class SpaceScene extends Component {
  * maps state in redux store (right)
  * to component props property (left)
  */
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  currentTrailType: selectCurrentTrailType(state),
+  selectedCamera: selectCurrentCamera(state)
+});
 
 export default connect(mapStateToProps, {})(SpaceScene)

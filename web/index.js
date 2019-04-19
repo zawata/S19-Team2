@@ -12,7 +12,6 @@ const App = () =>{
     <div>
       <Provider store={store}>
         <SpaceScene/>
-        <SceneSwitchButton/>
         <SimulationControls/>
       </Provider>
     </div>
