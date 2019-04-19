@@ -15,7 +15,6 @@ class ObjectLabel {
     this.renderer = renderer;
     this.camera = camera;
     this.object = object;
-    //this.string = string;
 
     let html_label = document.createElement("div");
     html_label.className = "text-label",
@@ -35,14 +34,14 @@ class ObjectLabel {
   }
 
   hide() {
-    this.hide = true;
+    this.visible = false;
   }
 
   show() {
-    this.hide = false;
+    this.visible = true;
   }
 
-  updatePosition() {
+  updatePosition(showLabel) {
     //get world position of object
     let screen_position = new THREE.Vector3()
     screen_position.setFromMatrixPosition( this.object.matrixWorld );
@@ -71,7 +70,7 @@ class ObjectLabel {
 
     //check if the parent object intersects the frustum
     // this allows us to check is in front of, or behind the screen.
-    if(frustum.intersectsObject(this.object) && !this.hide) {
+    if(frustum.intersectsObject(this.object) && showLabel) {
       //if intresection, show the label
       this.html_label.style.display = "block";
     } else {

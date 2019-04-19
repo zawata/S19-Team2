@@ -7,7 +7,8 @@ import {
   SOLAR_CAMERA,
   MOON_CAMERA,
   UPDATE_CAMERA,
-  UPDATE_TRAIL_TYPE
+  UPDATE_TRAIL_TYPE,
+  TOGGLE_LABELS
 } from '../actions/spaceSceneActions';
 
 const initialState = {
@@ -24,7 +25,8 @@ const initialState = {
   moon: { position: { x: 0, y: 0, z: 0 } },
   sun: { position: { x: 0, y: 0, z: 0 } },
   LMAP: { position: { x: 0, y: 0, z: 0 } },
-  camera: 'solar'
+  camera: 'solar',
+  showLabels: false
 }
 
 const spaceSceneReducer = (state = {}, action) => {
@@ -82,6 +84,11 @@ const spaceSceneReducer = (state = {}, action) => {
         ...state,
         allObjects: action.payload
       }
+    case TOGGLE_LABELS:
+      return {
+        ...state,
+        showLabels: action.payload
+      }
     default:
       return {
         ...state,
@@ -124,6 +131,10 @@ export const selectCurrentCamera = (state) => {
 
 export const selectCurrentTrailType = (state) => {
   return state.trailType;
+}
+
+export const selectShowLabels = (state) => {
+  return state.showLabels;
 }
 
 export default spaceSceneReducer

@@ -20,6 +20,7 @@ export const GET_COVERAGE = 'GET_COVERAGE';
 export const UPDATE_BODY_POSITION = 'UPDATE_BODY_POSITION';
 export const UPDATE_TRAIL_TYPE = 'UPDATE_TRAIL_TYPE';
 export const UPDATE_CAMERA = 'UPDATE_CAMERA';
+export const TOGGLE_LABELS = 'TOGGLE_LABELS';
 
 /** Object Types */
 export const EARTH = 'earth';
@@ -100,5 +101,9 @@ export const getObjectFrames = (object, observer, dateList) => async(dispatch) =
 export const getObjectCoverage = (object) => async(dispatch) => {
   const objectCoverage = await get_coverage(object);
   dispatch({type: GET_COVERAGE, payload: objectCoverage});
+}
+
+export const toggleLabels = (showLabels) => dispatch => {
+  dispatch({type: TOGGLE_LABELS, payload: showLabels});
 }
 

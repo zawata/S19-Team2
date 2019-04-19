@@ -10,7 +10,7 @@ import {
   addAxisHelper
 } from './sceneHelper';
 import config from '../config/config';
-import { selectCurrentTrailType, selectCurrentCamera } from '../reducers';
+import { selectCurrentTrailType, selectCurrentCamera, selectShowLabels } from '../reducers';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
@@ -87,7 +87,7 @@ class SpaceScene extends Component {
       moonObj.rotateOnAxis(axis, 0.001);
 
       labelList.forEach(label => {
-        label.updatePosition();
+        label.updatePosition(this.props.showLabels);
       });
     };
 
@@ -132,7 +132,9 @@ class SpaceScene extends Component {
       earthObj,
       moonObj,
       satelliteObj,
-      trailObj } = await addObjects(scene, earthScale, moonScale);
+      trailObj,
+      labelList
+    } = await addObjects(scene, earthScale, moonScale);
     let currentTrailObj;
 
     addAxisHelper(scene);
@@ -156,7 +158,8 @@ class SpaceScene extends Component {
  */
 const mapStateToProps = state => ({
   currentTrailType: selectCurrentTrailType(state),
-  selectedCamera: selectCurrentCamera(state)
+  selectedCamera: selectCurrentCamera(state),
+  showLabels: selectShowLabels(state)
 });
 
 export default connect(mapStateToProps, {})(SpaceScene)

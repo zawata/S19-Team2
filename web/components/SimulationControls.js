@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { CSSTransitionGroup } from 'react-transition-group';
 import TimelineSlider from './TimelineSlider';
 import SpeedSlider from './SpeedSlider';
-import TrailControls from './TrailControls';
-import CameraControls from './CameraControls';
+import TrailControls from './toggleControls/TrailControls';
+import CameraControls from './toggleControls/CameraControls';
+import LabelControls from './toggleControls/LabelControls';
 
 export default class SimulationControls extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ export default class SimulationControls extends Component {
               <div className="toggleControls">
                 <CameraControls/>
                 <TrailControls/>
+                <LabelControls/>
               </div>
             )}
             {this.state.controlsVisible && <TimelineSlider/>}

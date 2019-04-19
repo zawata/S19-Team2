@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { updateCamera } from '../actions/spaceSceneActions';
-import { selectCurrentCamera } from '../reducers';
+import { updateCamera } from '../../actions/spaceSceneActions';
+import { selectCurrentCamera } from '../../reducers';
 
 class CameraControls extends Component {
   constructor(props) {
