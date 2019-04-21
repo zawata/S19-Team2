@@ -75,8 +75,7 @@ export async function addObjects(scene, earthScale, moonScale) {
     // Create base objects
     let earth = new Earth(1, earthScale);
     let moon = new Moon(1, moonScale);
-    let satellite = new Satellite(5);
-    let trailObj = new SatelliteTrail();
+    let satellite = new Satellite(6);
 
     // Load earth texture, and add to the scene
     const earthMesh = await earth.load();
@@ -96,6 +95,7 @@ export async function addObjects(scene, earthScale, moonScale) {
     satellite = satMesh;
     scene.add(satellite);
 
+    let trailObj = new SatelliteTrail(satellite);
     trailObj.preload();
 
     // Return loaded earth and moon objects
