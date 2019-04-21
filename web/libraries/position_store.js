@@ -1,5 +1,6 @@
 import config from '../config/config'
 import net from './network_layer';
+import { updateSimulationTime } from '../actions/spaceSceneActions';
 
 const base_objects = [
   "sun",
@@ -59,6 +60,7 @@ async function init_store() {
   } else {
     app_store.working_date = new Date(app_store.coverage.start);
   }
+  updateSimulationTime(app_store.working_date);
   app_store.update_frequency = 1;
 
   app_store.objects = {};
@@ -88,9 +90,11 @@ function stop_loop() {
 }
 
 async function request_loop() {
+  console.log("LOOOPIN");
   app_store.working_date.setTime(app_store.working_date.getTime() + (config.updatePeriod * app_store.update_frequency));
-
-  if(app_store.working_date < app_store.coverage.end) {
+  updateSimulationTime(app_store.working_date);
+  console.log("I JUST CALLED UPDATE SIM TIME!!!");
+  if(app_store.working_date < app_store.coverage.end && app_store.working_date > app_store.coverage.start) {
     update_objects();
 
     //reissue timeout;
@@ -111,6 +115,7 @@ export
 function set_working_date(date) {
     app_store.working_date = date;
     update_objects();
+    restart_loop();
 }
 
 export

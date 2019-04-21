@@ -7,7 +7,7 @@ import { subDays, startOfToday, format, getTime } from "date-fns";
 import { scaleTime } from "d3-scale";
 import { updateSimulationTime } from '../actions/spaceSceneActions';
 import { selectSimulationTime } from '../reducers';
-import { set_working_date, get_coverage } from '../libraries/position_store';
+import { set_working_date, get_coverage, get_working_date } from '../libraries/position_store';
 
 const sliderStyle = {
   position: "relative",
@@ -29,24 +29,46 @@ class TimelineSlider extends Component {
 
     // Setting min and max of slider
     let coverage = get_coverage();
-    const missionStart = getTime(coverage.start);
-    const missionEnd = getTime(coverage.end);
-
+    //Plus and minuus half hour added to keep slider from rounding to uncovered dates.
+    const missionStart = getTime(coverage.start) + halfHour;
+    const missionEnd = getTime(coverage.end) - halfHour;
+    let today = get_working_date();
+    console.log("WORKING DATE!!!");
+    console.log(today);
+    console.log(today.getTime());
+    if (today.getTime() <= missionStart || today.getTime() >= missionEnd){
+      today = missionStart;
+    }
     this.state = {
-      updated: this.props.simulationTime,
+      updated: today,
+      simulationTime: today,
       min: missionStart,
       max: missionEnd
     };
   }
 
   onChange = ([ms]) => {
-    set_working_date(new Date(ms));
+    if (!Number.isNaN(ms) && ms != undefined && ms != null) {
+      console.log("CHANGING!!!");
+      console.log(ms);
+      set_working_date(new Date(ms));
+      this.setState({
+        simulationTime: get_working_date() 
+      })
+    }
   };
 
   onUpdate = ([ms]) => {
-    this.setState({
-      updated: new Date(ms)
-    });
+    if (!Number.isNaN(ms) && ms != undefined && ms != null){ 
+      console.log("UPDATING!!!!");
+      console.log(ms);
+      
+      this.setState({
+        updated: new Date(ms)
+      });
+      
+      //this.state.updated = new Date(ms);
+    }
   };
 
   renderDateTime(date) {
@@ -67,7 +89,7 @@ class TimelineSlider extends Component {
 
     return (
       <div className="date-picker">
-        {this.renderDateTime(updated)}
+        {this.renderDateTime(this.props.simulationTime)}
         <div className="core-slider">
           <Slider
             mode={1}
@@ -130,7 +152,7 @@ class TimelineSlider extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   simulationTime: selectSimulationTime(state)
 });
 

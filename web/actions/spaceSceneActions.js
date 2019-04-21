@@ -40,6 +40,7 @@ const SATELLITE_CAMERA = 'satellite';
  * and given a payload to send to the reducers 
 */
 export const updateSimulationTime = (newTime) => dispatch => {
+  console.log("updating time!");
   dispatch({type: UPDATE_SIMULATION_TIME, payload: newTime});
 }
 
