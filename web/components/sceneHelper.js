@@ -77,7 +77,7 @@ export function buildScene() {
  * addObjects
  * Adds earth and moon to the scene
  */
-export async function addObjects(scene, camera, renderer, earthScale, moonScale) {
+export async function addObjects(scene, earthScale, moonScale) {
 
     // Create base objects
     let earth = new Earth(1, earthScale);
@@ -87,9 +87,6 @@ export async function addObjects(scene, camera, renderer, earthScale, moonScale)
     // Load earth texture, and add to the scene
     const earthMesh = await earth.load();
     earth = earthMesh;
-    earth.position.x = 0;
-    earth.position.y = 0;
-    earth.position.z = 0;
     scene.add(earth);
 
     // Load moon texture, and add to scene
@@ -112,9 +109,9 @@ export async function addObjects(scene, camera, renderer, earthScale, moonScale)
         satelliteObj: satellite,
         trailObj: trailObj,
         labelList: [
-          new ObjectLabel(renderer, camera, earth, "Earth"),
-          new ObjectLabel(renderer, camera, moon, "Moon"),
-          new ObjectLabel(renderer, camera, satellite, config.mainSpacecraftName)
+          new ObjectLabel(earth, "Earth"),
+          new ObjectLabel(moon, "Moon"),
+          new ObjectLabel(satellite, config.mainSpacecraftName)
         ]
     };
 }

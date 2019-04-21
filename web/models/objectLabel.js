@@ -11,9 +11,7 @@ const visibleHeightOfObject = ( object, camera ) => {
 
 export default
 class ObjectLabel {
-  constructor(renderer, camera, object, string) {
-    this.renderer = renderer;
-    this.camera = camera;
+  constructor(object, string) {
     this.object = object;
 
     let html_label = document.createElement("div");
@@ -29,35 +27,26 @@ class ObjectLabel {
     this.html_label = html_label;
 
     document.body.appendChild(html_label);
-
-    this.updatePosition();
   }
 
-  hide() {
-    this.visible = false;
-  }
-
-  show() {
-    this.visible = true;
-  }
-
-  updatePosition(showLabel) {
+  updatePosition(renderer, camera, showLabel) {
     //get world position of object
     let screen_position = new THREE.Vector3()
     screen_position.setFromMatrixPosition( this.object.matrixWorld );
 
     //project vector onto camera plane
-    screen_position.project(this.camera);
+    window.log = camera
+    screen_position.project(camera);
 
     //get height of object
     let obj_width = new THREE.Box3().setFromObject(this.object).getSize().y;
     //get ratio of size of object to size of screen
-    let display_ratio = obj_width / visibleHeightOfObject(this.object, this.camera);
+    let display_ratio = obj_width / visibleHeightOfObject(this.object, camera);
     //get display height of object in pixels
-    let display_height = this.renderer.domElement.height * display_ratio;
+    let display_height = renderer.domElement.height * display_ratio;
 
-    let widthHalf = (this.renderer.domElement.width/2),
-    heightHalf = (this.renderer.domElement.height/2)
+    let widthHalf = (renderer.domElement.width/2),
+    heightHalf = (renderer.domElement.height/2)
 
     //convert projection coordinates into screen coordinates
     this.html_label.style.left = ( screen_position.x * widthHalf ) + widthHalf;
@@ -66,7 +55,7 @@ class ObjectLabel {
 
     //calculate camera frustum
     let frustum = new THREE.Frustum();
-    frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse));
+    frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
 
     //check if the parent object intersects the frustum
     // this allows us to check is in front of, or behind the screen.

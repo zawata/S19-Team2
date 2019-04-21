@@ -87,7 +87,8 @@ class SpaceScene extends Component {
       moonObj.rotateOnAxis(axis, 0.001);
 
       labelList.forEach(label => {
-        label.updatePosition(this.props.showLabels);
+        
+        label.updatePosition(renderer, selectedCameraObj, this.props.showLabels);
       });
     };
 
@@ -96,19 +97,7 @@ class SpaceScene extends Component {
      * sends scene and camera props to renderer
      */
     const render = () => {
-      switch(this.props.selectedCamera) {
-        case 'solar':
-          renderer.render(scene, solarCamera);
-          break;
-        case 'moon':
-          renderer.render(scene, moonCamera);
-          break;
-        case 'spacecraft':
-          renderer.render(scene, spacecraftCamera);
-          break;
-        default:
-          renderer.render(scene, solarCamera);
-      }
+      renderer.render(scene, selectedCameraObj);
     };
 
     /**
@@ -117,6 +106,21 @@ class SpaceScene extends Component {
      */
     const animate = () => {
       requestAnimationFrame(animate);
+
+      switch(this.props.selectedCamera) {
+      case 'solar':
+        selectedCameraObj = solarCamera;
+        break;
+      case 'moon':
+        selectedCameraObj = moonCamera;
+        break;
+      case 'spacecraft':
+        selectedCameraObj = spacecraftCamera;
+        break;
+      default:
+        selectedCameraObj = solarCamera;
+      }
+
       update();
       render();
     };
@@ -136,6 +140,7 @@ class SpaceScene extends Component {
       labelList
     } = await addObjects(scene, earthScale, moonScale);
     let currentTrailObj;
+    let selectedCameraObj = solarCamera;
 
     addAxisHelper(scene);
 
