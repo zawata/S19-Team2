@@ -8,7 +8,8 @@ class TrailControls extends Component {
     super(props);
     this.state = {
       showFullTrail: (this.props.currentTrailType === 'full'),
-      showPartialTrail: (this.props.currentTrailType === 'partial')
+      showPartialTrail: (this.props.currentTrailType === 'partial'),
+      showNoTrail: (this.props.currentTrailType === '')
     };
     this.handleClick = this.handleClick.bind(this)
   }
@@ -18,16 +19,26 @@ class TrailControls extends Component {
       case 'fullTrail':
         this.setState({
           showFullTrail: true,
-          showPartialTrail: false
+          showPartialTrail: false,
+          showNoTrail: false
         });
         this.props.updateTrailType('full');
         break;
       case 'partialTrail':
         this.setState({
           showPartialTrail: true,
-          showFullTrail: false
+          showFullTrail: false,
+          showNoTrail: false
         });
         this.props.updateTrailType('partial');
+        break;
+      case '':
+        this.setState({
+          showPartialTrail: false,
+          showFullTrail: false,
+          showNoTrail: true
+        });
+        this.props.updateTrailType('');
     }
   }
 
@@ -39,6 +50,8 @@ class TrailControls extends Component {
           onClick={() => {this.handleClick('fullTrail')}}>Full</button>
         <button className={'toggleControlsButton' + (this.state.showPartialTrail ? ' selected' : '')}
           onClick={() => {this.handleClick('partialTrail')}}>Partial</button>
+        <button className={'toggleControlsButton' + (this.state.showNoTrail ? ' selected' : '')}
+          onClick={() => {this.handleClick('')}}>None</button>
       </div>
     )
   }

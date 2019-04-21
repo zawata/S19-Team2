@@ -7,7 +7,8 @@ import earthTextureImg from '../textures/1_earth_8k.jpg';
 import earthBumpImg from '../textures/nasa_bump_map.png';
 
 export default class SatelliteTrail {
-    constructor() {
+    constructor(sat_object) {
+        this.satellite = sat_object;
         this.date_list = []
         this.vector_arr = []
         this.full_path_object = null;
@@ -39,7 +40,7 @@ export default class SatelliteTrail {
     }
 
     getFullPath() {
-        let geometry = new THREE.BufferGeometry().setFromPoints(this.full_path_object.getPoints(this.vector_arr.length * 5));
+        let geometry = new THREE.BufferGeometry().setFromPoints(this.full_path_object.getPoints(this.vector_arr.length * 12));
         let material = new THREE.LineBasicMaterial();
 
         return new THREE.Line(geometry, material);
@@ -60,8 +61,11 @@ export default class SatelliteTrail {
         if((end_index - 23) < 0) start_index = 0;
         else                     start_index = end_index-23;
 
-        let curve = new THREE.CatmullRomCurve3(this.vector_arr.slice(start_index, end_index + 1));
-        let geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(250));
+        let partial_arr = this.vector_arr.slice(start_index, end_index + 1);
+        partial_arr.push(this.satellite.position);
+
+        let curve = new THREE.CatmullRomCurve3(partial_arr);
+        let geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(partial_arr.length * 12));
         let material = new THREE.LineBasicMaterial();
 
         return new THREE.Line(geometry, material);
