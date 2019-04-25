@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { updateTrailType } from '../actions/spaceSceneActions';
-import { selectCurrentTrailType } from '../reducers';
+import { updateTrailType } from '../../actions/spaceSceneActions';
+import { selectCurrentTrailType } from '../../reducers';
 
 class TrailControls extends Component {
   constructor(props) {

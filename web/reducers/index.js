@@ -14,3 +14,4 @@ export const selectMoonPosition = (state) => fromSpaceScene.selectMoonPosition(s
 export const selectLMAPPosition = (state) => fromSpaceScene.selectLMAPPosition(state.app);
 export const selectSunPosition = (state) => fromSpaceScene.selectSunPosition(state.app);
 export const selectCurrentCamera = (state) => fromSpaceScene.selectCurrentCamera(state.app);
+export const selectShowLabels = (state) => fromSpaceScene.selectShowLabels(state.app);
