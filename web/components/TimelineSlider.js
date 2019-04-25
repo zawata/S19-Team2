@@ -28,20 +28,19 @@ class TimelineSlider extends Component {
     super(props);
 
     // Setting min and max of slider
-    let coverage = get_coverage();
+    const coverage = get_coverage();
     //Plus and minuus half hour added to keep slider from rounding to uncovered dates.
     const missionStart = getTime(coverage.start) + halfHour;
     const missionEnd = getTime(coverage.end) - halfHour;
-    let today = get_working_date();
-    console.log("WORKING DATE!!!");
-    console.log(today);
-    console.log(today.getTime());
-    if (today.getTime() <= missionStart || today.getTime() >= missionEnd){
-      today = missionStart;
+
+    // Check that current time is within mission time
+    if (this.props.simulationTime <= missionStart
+      || this.props.simulationTime >= missionEnd) {
+      this.props.updateSimulationTime(missionStart);
     }
     this.state = {
-      updated: today,
-      simulationTime: today,
+      updated: this.props.simulationTime,
+      allowTick: true,
       min: missionStart,
       max: missionEnd
     };
@@ -49,32 +48,30 @@ class TimelineSlider extends Component {
 
   onChange = ([ms]) => {
     if (!Number.isNaN(ms) && ms != undefined && ms != null) {
-      console.log("CHANGING!!!");
-      console.log(ms);
-      set_working_date(new Date(ms));
+      // Only change the date if it was triggered by a user input
+      if (!this.state.allowTick) {
+        set_working_date(new Date(ms));
+        this.props.updateSimulationTime(ms);
+      }
       this.setState({
-        simulationTime: get_working_date() 
+        allowTick: true,
       })
     }
   };
 
   onUpdate = ([ms]) => {
-    if (!Number.isNaN(ms) && ms != undefined && ms != null){ 
-      console.log("UPDATING!!!!");
-      console.log(ms);
-      
+    if (!Number.isNaN(ms) && ms != undefined && ms != null){
       this.setState({
-        updated: new Date(ms)
+        updated: new Date(ms),
+        allowTick: false,
       });
-      
-      //this.state.updated = new Date(ms);
     }
   };
 
   renderDateTime(date) {
     return (
       <div className="displayed-date">
-        <div className="date">Date: {format(date, "MMM Do YYYY h:mm a")}</div>
+        <div className="date">Date: {format(date, "MMM Do YYYY h:mm:ss a")}</div>
       </div>
     );
   }
@@ -89,7 +86,7 @@ class TimelineSlider extends Component {
 
     return (
       <div className="date-picker">
-        {this.renderDateTime(this.props.simulationTime)}
+        {this.state.allowTick ? this.renderDateTime(this.props.simulationTime) : this.renderDateTime(this.state.updated)}
         <div className="core-slider">
           <Slider
             mode={1}

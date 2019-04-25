@@ -1,6 +1,7 @@
 import config from '../config/config'
 import net from './network_layer';
-import { updateSimulationTime } from '../actions/spaceSceneActions';
+import reduxStore from '../store';
+import { UPDATE_SIMULATION_TIME } from '../actions/spaceSceneActions';
 
 const base_objects = [
   "sun",
@@ -60,7 +61,7 @@ async function init_store() {
   } else {
     app_store.working_date = new Date(app_store.coverage.start);
   }
-  updateSimulationTime(app_store.working_date);
+  reduxStore.dispatch({type: UPDATE_SIMULATION_TIME, payload: app_store.working_date.getTime() })
   app_store.update_frequency = 1;
 
   app_store.objects = {};
@@ -90,10 +91,8 @@ function stop_loop() {
 }
 
 async function request_loop() {
-  console.log("LOOOPIN");
   app_store.working_date.setTime(app_store.working_date.getTime() + (config.updatePeriod * app_store.update_frequency));
-  updateSimulationTime(app_store.working_date);
-  console.log("I JUST CALLED UPDATE SIM TIME!!!");
+  reduxStore.dispatch({type: UPDATE_SIMULATION_TIME, payload: app_store.working_date.getTime()});
   if(app_store.working_date < app_store.coverage.end && app_store.working_date > app_store.coverage.start) {
     update_objects();
 

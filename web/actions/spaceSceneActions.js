@@ -33,14 +33,13 @@ const SOLAR_CAMERA = 'solar';
 const MOON_CAMERA = 'moon';
 const SATELLITE_CAMERA = 'satellite';
 
-/** 
+/**
  * Thunks (actions that return a function that calls dispatch after async request(s))
- * 
- * Dispatched actions are categorized by their type, 
- * and given a payload to send to the reducers 
+ *
+ * Dispatched actions are categorized by their type,
+ * and given a payload to send to the reducers
 */
 export const updateSimulationTime = (newTime) => dispatch => {
-  console.log("updating time!");
   dispatch({type: UPDATE_SIMULATION_TIME, payload: newTime});
 }
 

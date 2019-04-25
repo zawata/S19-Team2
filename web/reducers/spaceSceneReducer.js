@@ -32,8 +32,6 @@ const initialState = {
 const spaceSceneReducer = (state = {}, action) => {
   switch(action.type) {
     case UPDATE_SIMULATION_TIME:
-      console.log("SIM TIME UPDATED!");
-      console.log(action.payload);
       return {
         ...state,
         simulationTime: action.payload
@@ -112,8 +110,6 @@ export const selectSunPosition = (state) => {
 }
 
 export const selectSimulationTime = (state) => {
-  console.log("SELECTING SIM TIME!");
-  console.log("SIM TIME SELECTED: " + state.simulationTime);
   return state.simulationTime;
 }
 
