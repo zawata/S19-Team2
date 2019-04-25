@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { connect } from 'react-redux';
-import { render } from "react-dom";
 import { Slider, Rail, Handles, Tracks, Ticks } from "react-compound-slider";
 import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
-import { subDays, startOfToday, format, getTime } from "date-fns";
+import { format, getTime } from "date-fns";
 import { scaleTime } from "d3-scale";
 import { updateSimulationTime } from '../actions/spaceSceneActions';
 import { selectSimulationTime } from '../reducers';
