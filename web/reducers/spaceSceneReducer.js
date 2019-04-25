@@ -12,7 +12,7 @@ import {
 } from '../actions/spaceSceneActions';
 
 const initialState = {
-  simulationStartTime: new Date(),
+  simulationTime: new Date(),
   animationSpeed: 1,
   mainObject: {},
   allObjects: [],
@@ -34,7 +34,7 @@ const spaceSceneReducer = (state = {}, action) => {
     case UPDATE_SIMULATION_TIME:
       return {
         ...state,
-        simulationStartTime: action.payload
+        simulationTime: action.payload
       }
     case UPDATE_ANIMATION_SPEED:
       return {
@@ -110,7 +110,7 @@ export const selectSunPosition = (state) => {
 }
 
 export const selectSimulationTime = (state) => {
-  return state.simulationStartTime;
+  return state.simulationTime;
 }
 
 export const selectAnimationSpeed = (state) => {
