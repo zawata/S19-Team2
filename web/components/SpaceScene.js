@@ -64,17 +64,19 @@ class SpaceScene extends Component {
 
       moonCamera.lookAt(this.state.moon.position);
 
-      let satVelocityMagnitude = Math.sqrt(
-        Math.pow(sat_pos.dx, 2) + Math.pow(sat_pos.dy, 2) + Math.pow(sat_pos.dz, 2)
+      let satMoonDistance = Math.sqrt(
+        Math.pow((moon_pos.x - sat_pos.x), 2) +
+        Math.pow((moon_pos.y - sat_pos.y), 2) +
+        Math.pow((moon_pos.z - sat_pos.z), 2)
       );
-      let normalizedSatelliteVelocityVector = {
-        x: sat_pos.dx/satVelocityMagnitude,
-        y: sat_pos.dy/satVelocityMagnitude,
-        z: sat_pos.dz/satVelocityMagnitude
+      let normalizedSatelliteMoonVector = {
+        x: (moon_pos.x - sat_pos.x)/satMoonDistance,
+        y: (moon_pos.y - sat_pos.y)/satMoonDistance,
+        z: (moon_pos.z - sat_pos.z)/satMoonDistance
       }
-      spacecraftCamera.position.x = sat_pos.x - normalizedSatelliteVelocityVector.x*.001;
-      spacecraftCamera.position.y = sat_pos.y - normalizedSatelliteVelocityVector.y*.001;
-      spacecraftCamera.position.z = sat_pos.z - normalizedSatelliteVelocityVector.z*.001;
+      spacecraftCamera.position.x = sat_pos.x - normalizedSatelliteMoonVector.x*.001;
+      spacecraftCamera.position.y = sat_pos.y - normalizedSatelliteMoonVector.y*.001;
+      spacecraftCamera.position.z = sat_pos.z - normalizedSatelliteMoonVector.z*.001;
       spacecraftCamera.lookAt(this.state.satellite.position);
 
       this.state.earth.rotateOnAxis(axis, 0.0009);
