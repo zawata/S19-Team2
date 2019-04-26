@@ -1,13 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { connect } from 'react-redux';
-import { render } from "react-dom";
 import { Slider, Rail, Handles, Tracks, Ticks } from "react-compound-slider";
 import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
-import { subDays, startOfToday, format, getTime } from "date-fns";
+import { format, getTime } from "date-fns";
 import { scaleTime } from "d3-scale";
 import { updateSimulationTime } from '../actions/spaceSceneActions';
 import { selectSimulationTime } from '../reducers';
-import { set_working_date, get_coverage } from '../libraries/position_store';
+import { set_working_date, get_coverage, get_working_date } from '../libraries/position_store';
 
 const sliderStyle = {
   position: "relative",
@@ -28,31 +27,50 @@ class TimelineSlider extends Component {
     super(props);
 
     // Setting min and max of slider
-    let coverage = get_coverage();
-    const missionStart = getTime(coverage.start);
-    const missionEnd = getTime(coverage.end);
+    const coverage = get_coverage();
+    //Plus and minuus half hour added to keep slider from rounding to uncovered dates.
+    const missionStart = getTime(coverage.start) + halfHour;
+    const missionEnd = getTime(coverage.end) - halfHour;
 
+    // Check that current time is within mission time
+    if (this.props.simulationTime <= missionStart
+      || this.props.simulationTime >= missionEnd) {
+      this.props.updateSimulationTime(missionStart);
+    }
     this.state = {
       updated: this.props.simulationTime,
+      allowTick: true,
       min: missionStart,
       max: missionEnd
     };
   }
 
   onChange = ([ms]) => {
-    set_working_date(new Date(ms));
+    if (!Number.isNaN(ms) && ms != undefined && ms != null) {
+      // Only change the date if it was triggered by a user input
+      if (!this.state.allowTick) {
+        set_working_date(new Date(ms));
+        this.props.updateSimulationTime(ms);
+      }
+      this.setState({
+        allowTick: true,
+      })
+    }
   };
 
   onUpdate = ([ms]) => {
-    this.setState({
-      updated: new Date(ms)
-    });
+    if (!Number.isNaN(ms) && ms != undefined && ms != null){
+      this.setState({
+        updated: new Date(ms),
+        allowTick: false,
+      });
+    }
   };
 
   renderDateTime(date) {
     return (
       <div className="displayed-date">
-        <div className="date">Date: {format(date, "MMM Do YYYY h:mm a")}</div>
+        <div className="date">Date: {format(date, "MMM Do YYYY h:mm:ss a")}</div>
       </div>
     );
   }
@@ -67,7 +85,7 @@ class TimelineSlider extends Component {
 
     return (
       <div className="date-picker">
-        {this.renderDateTime(updated)}
+        {this.state.allowTick ? this.renderDateTime(this.props.simulationTime) : this.renderDateTime(this.state.updated)}
         <div className="core-slider">
           <Slider
             mode={1}
@@ -130,7 +148,7 @@ class TimelineSlider extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   simulationTime: selectSimulationTime(state)
 });
 

@@ -3,9 +3,14 @@ import { loadTexture } from '../textures/texture';
 import OrbitControls from '../three/OrbitControls';
 import LensFlare from '../three/LensFlare'
 import solarFlare from '../textures/lensflare0.png';
+
 import Earth from '../models/earth'
 import Moon from '../models/moon'
 import Satellite from '../models/satellite'
+import SatelliteTrail from '../models/satelliteTrail'
+import ObjectLabel from '../models/objectLabel';
+
+import config from '../config/config'
 
 /**
  * buildScene
@@ -21,9 +26,9 @@ export function buildScene() {
 
   // Create solar camera
   let solarCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
-  solarCamera.position.z = 0.05;
-  solarCamera.position.x = 0.05;
-  solarCamera.position.y = 0;
+  solarCamera.position.set(0.05, 0.05, 0);
+  solarCamera.updateWorldMatrix();
+  solarCamera.updateProjectionMatrix();
   // Add solar camera mouse controls
   const controls = new OrbitControls(solarCamera, renderer.domElement);
 
@@ -47,10 +52,14 @@ export function buildScene() {
     renderer.setSize(widthWindow, heightWindow);
     solarCamera.aspect = widthWindow / heightWindow;
     solarCamera.updateProjectionMatrix();
+    solarCamera.updateWorldMatrix()
     moonCamera.aspect = solarCamera.aspect;
     moonCamera.updateProjectionMatrix();
+    moonCamera.updateWorldMatrix()
     spacecraftCamera.aspect = solarCamera.aspect;
     spacecraftCamera.updateProjectionMatrix();
+    spacecraftCamera.updateWorldMatrix()
+
   });
 
   // Return created objects to the scene
@@ -73,14 +82,11 @@ export async function addObjects(scene, earthScale, moonScale) {
     // Create base objects
     let earth = new Earth(1, earthScale);
     let moon = new Moon(1, moonScale);
-    let satellite = new Satellite(5);
+    let satellite = new Satellite(6);
 
     // Load earth texture, and add to the scene
     const earthMesh = await earth.load();
     earth = earthMesh;
-    earth.position.x = 0;
-    earth.position.y = 0;
-    earth.position.z = 0;
     scene.add(earth);
 
     // Load moon texture, and add to scene
@@ -93,11 +99,20 @@ export async function addObjects(scene, earthScale, moonScale) {
     satellite = satMesh;
     scene.add(satellite);
 
+    let trailObj = new SatelliteTrail(satellite);
+    trailObj.preload();
+
     // Return loaded earth and moon objects
     return {
         earthObj: earth,
         moonObj: moon,
         satelliteObj: satellite,
+        trailObj: trailObj,
+        labelList: [
+          new ObjectLabel(earth, "Earth"),
+          new ObjectLabel(moon, "Moon"),
+          new ObjectLabel(satellite, config.mainSpacecraftName)
+        ]
     };
 }
 

@@ -12,7 +12,7 @@ const sliderStyle = {
   width: "100%"
 };
 
-const domain = [0, 50];
+const domain = [0, 3000];
 const stepSize = 0.5;
 
 class SpeedSlider extends Component {
