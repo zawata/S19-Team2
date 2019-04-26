@@ -30,6 +30,7 @@ class SpeedSlider extends Component {
 
   onChange = ([newSpeed]) => {
     set_update_frequency(newSpeed);
+    this.props.updateAnimationSpeed(newSpeed);
   }
 
   renderSpeedHeading(speed){
