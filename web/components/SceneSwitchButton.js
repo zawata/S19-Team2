@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-  updateCamera,
-  SOLAR_CAMERA,
-  MOON_CAMERA,
-  SPACECRACFT_CAMERA
-} from '../actions/spaceSceneActions';
+import { updateCamera } from '../actions/spaceSceneActions';
 
 class SceneSwitchButton extends Component {
   constructor(props) {
@@ -20,7 +15,6 @@ class SceneSwitchButton extends Component {
 
   handleToggle() {
     this.setState({ viewingMoon: !this.state.viewingMoon });
-    // event.target.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> loading...';
     this.state.viewingMoon ? this.props.updateCamera('solar')
       : this.props.updateCamera('moon');
   }
@@ -29,7 +23,7 @@ class SceneSwitchButton extends Component {
     return(
       <div className="changeSceneButton">
         <button onClick={this.handleToggle}>{
-          this.state.viewingMoon ? 'View Earth' : 'View Moon' 
+          this.state.viewingMoon ? 'View Earth' : 'View Moon'
           }
         </button>
       </div>
