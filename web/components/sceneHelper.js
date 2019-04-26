@@ -1,7 +1,7 @@
 import * as THREE from '../three/three';
 import { loadTexture } from '../textures/texture';
 import OrbitControls from '../three/OrbitControls';
-import LensFlare from '../three/LensFlare'
+import LensFlare from '../three/LensFlare'; //used by addLighting
 import solarFlare from '../textures/lensflare0.png';
 
 import Earth from '../models/earth'
@@ -39,9 +39,6 @@ export function buildScene() {
   moonCamera.position.y = 0;
   moonCamera.zoom = 25;
   moonCamera.updateProjectionMatrix();
-  // const moonCameraControls = new OrbitControls(moonCamera, renderer.domElement);
-  // moonCameraControls.enableRotate = false;
-  // moonCameraControls.enablePan = false;
 
   let spacecraftCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
 

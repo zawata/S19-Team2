@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { CSSTransitionGroup } from 'react-transition-group';
-import TimelineSlider from './TimelineSlider';
-import SpeedSlider from './SpeedSlider';
+import TimelineSlider from './sliders/TimelineSlider';
+import SpeedSlider from './sliders/SpeedSlider';
 import TrailControls from './toggleControls/TrailControls';
 import CameraControls from './toggleControls/CameraControls';
 import LabelControls from './toggleControls/LabelControls';

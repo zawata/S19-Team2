@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { render } from "react-dom";
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
-import { selectAnimationSpeed } from '../reducers';
-import { updateAnimationSpeed } from '../actions/spaceSceneActions';
-import { set_update_frequency } from '../libraries/position_store';
+import { selectAnimationSpeed } from '../../reducers';
+import { updateAnimationSpeed } from '../../actions/spaceSceneActions';
+import { set_update_frequency } from '../../libraries/position_store';
 
 const sliderStyle = {
   position: "relative",

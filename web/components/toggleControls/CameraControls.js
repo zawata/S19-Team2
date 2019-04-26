@@ -3,56 +3,34 @@ import { connect } from 'react-redux';
 import { updateCamera } from '../../actions/spaceSceneActions';
 import { selectCurrentCamera } from '../../reducers';
 
+const SOLAR = 'solar';
+const MOON = 'moon';
+const SPACECRAFT = 'spacecraft';
+
 class CameraControls extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      solarCamera: (this.props.currentCamera === 'solar'),
-      moonCamera: (this.props.currentCamera === 'moon'),
-      spacecraftCamera: (this.props.currentCamera == 'spacecraft')
+      selectedCamera: this.props.currentCamera
     };
     this.handleClick = this.handleClick.bind(this)
   }
 
   handleClick(buttonClicked) {
-    switch(buttonClicked) {
-      case 'solar':
-        this.setState({
-          solarCamera: true,
-          moonCamera: false,
-          spacecraftCamera: false
-        });
-        this.props.updateCamera('solar');
-        break;
-      case 'moon':
-        this.setState({
-          solarCamera: false,
-          moonCamera: true,
-          spacecraftCamera: false
-        });
-        this.props.updateCamera('moon');
-        break;
-      case 'spacecraft':
-        this.setState({
-          solarCamera: false,
-          moonCamera: false,
-          spacecraftCamera: true
-        });
-        this.props.updateCamera('spacecraft');
-        break;
-    }
+    this.props.updateCamera(buttonClicked);
+    this.setState({ selectedCamera: buttonClicked });
   }
 
   render() {
     return(
       <div className="multi-option-toggler">
         <span>Camera </span>
-        <button className={'toggleControlsButton' + (this.state.solarCamera ? ' selected' : '')}
-          onClick={() => {this.handleClick('solar')}}>Solar</button>
-        <button className={'toggleControlsButton' + (this.state.moonCamera ? ' selected' : '')}
-          onClick={() => {this.handleClick('moon')}}>Moon</button>
-        <button className={'toggleControlsButton' + (this.state.spacecraftCamera ? ' selected' : '')}
-          onClick={() => {this.handleClick('spacecraft')}}>Spacecraft</button>
+        <button className={'toggleControlsButton' + (this.state.selectedCamera === SOLAR ? ' selected' : '')}
+          onClick={() => {this.handleClick(SOLAR)}}>Solar</button>
+        <button className={'toggleControlsButton' + (this.state.selectedCamera === MOON ? ' selected' : '')}
+          onClick={() => {this.handleClick(MOON)}}>Moon</button>
+        <button className={'toggleControlsButton' + (this.state.selectedCamera === SPACECRAFT ? ' selected' : '')}
+          onClick={() => {this.handleClick(SPACECRAFT)}}>Spacecraft</button>
       </div>
     )
   }
