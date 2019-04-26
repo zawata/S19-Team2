@@ -6,11 +6,14 @@ import * as pos_store from '../libraries/position_store'
 import {
   addLighting,
   buildScene,
-  addObjects,
-  addAxisHelper
+  addObjects
 } from './sceneHelper';
 import config from '../config/config';
-import { selectCurrentTrailType, selectCurrentCamera, selectShowLabels } from '../reducers';
+import {
+  selectCurrentTrailType,
+  selectCurrentCamera,
+  selectShowLabels
+} from '../reducers';
 
 const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
@@ -87,7 +90,6 @@ class SpaceScene extends Component {
       moonObj.rotateOnAxis(axis, 0.001);
 
       labelList.forEach(label => {
-        
         label.updatePosition(renderer, selectedCameraObj, this.props.showLabels);
       });
     };
@@ -141,8 +143,6 @@ class SpaceScene extends Component {
     } = await addObjects(scene, earthScale, moonScale);
     let currentTrailObj;
     let selectedCameraObj = solarCamera;
-
-    addAxisHelper(scene);
 
     animate();
   }

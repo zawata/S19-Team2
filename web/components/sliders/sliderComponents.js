@@ -1,7 +1,7 @@
 //Base code, used from example in library demo: https://codesandbox.io/s/rw97j317p
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-import colors from '../styles/colors';
+import colors from '../../styles/colors';
 
 // *******************************************************
 // RAIL
