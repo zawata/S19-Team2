@@ -1,10 +1,16 @@
 import * as THREE from '../three/three';
 import { loadTexture } from '../textures/texture';
 import OrbitControls from '../three/OrbitControls';
-import LensFlare from '../three/LensFlare'
+import LensFlare from '../three/LensFlare'; //used by addLighting
 import solarFlare from '../textures/lensflare0.png';
+
 import Earth from '../models/earth'
 import Moon from '../models/moon'
+import Satellite from '../models/satellite'
+import SatelliteTrail from '../models/satelliteTrail'
+import ObjectLabel from '../models/objectLabel';
+
+import config from '../config/config'
 
 /**
  * buildScene
@@ -13,32 +19,52 @@ import Moon from '../models/moon'
 export function buildScene() {
   let scene = new THREE.Scene();
 
-  let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 10;
-  camera.position.x = 10;
-  camera.position.y = 0;
-
   // Create renderer
   let renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Add mouse controls
-  const controls = new OrbitControls(camera, renderer.domElement);
+  // Create solar camera
+  let solarCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
+  solarCamera.position.set(0.05, 0.05, 0);
+  solarCamera.updateWorldMatrix();
+  solarCamera.updateProjectionMatrix();
+  // Add solar camera mouse controls
+  const controls = new OrbitControls(solarCamera, renderer.domElement);
+
+  // Create moon view camera
+  let moonCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
+  moonCamera.position.z = 0;
+  moonCamera.position.x = 0;
+  moonCamera.position.y = 0;
+  moonCamera.zoom = 25;
+  moonCamera.updateProjectionMatrix();
+
+  let spacecraftCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
 
   // Make scene responsive
   window.addEventListener('resize', function() {
     let widthWindow = window.innerWidth;
     let heightWindow = window.innerHeight;
     renderer.setSize(widthWindow, heightWindow);
-    camera.aspect = widthWindow / heightWindow;
-    camera.updateProjectionMatrix();
+    solarCamera.aspect = widthWindow / heightWindow;
+    solarCamera.updateProjectionMatrix();
+    solarCamera.updateWorldMatrix()
+    moonCamera.aspect = solarCamera.aspect;
+    moonCamera.updateProjectionMatrix();
+    moonCamera.updateWorldMatrix()
+    spacecraftCamera.aspect = solarCamera.aspect;
+    spacecraftCamera.updateProjectionMatrix();
+    spacecraftCamera.updateWorldMatrix()
+
   });
 
   // Return created objects to the scene
   return {
     scene,
-    camera,
+    solarCamera,
+    moonCamera,
+    spacecraftCamera,
     controls,
     renderer
   }
@@ -51,15 +77,13 @@ export function buildScene() {
 export async function addObjects(scene, earthScale, moonScale) {
 
     // Create base objects
-    let earth = new Earth(0.5, earthScale);
-    let moon = new Moon(0.1, moonScale);
+    let earth = new Earth(1, earthScale);
+    let moon = new Moon(1, moonScale);
+    let satellite = new Satellite(6);
 
     // Load earth texture, and add to the scene
     const earthMesh = await earth.load();
     earth = earthMesh;
-    earth.position.x = 0;
-    earth.position.y = 0;
-    earth.position.z = 0;
     scene.add(earth);
 
     // Load moon texture, and add to scene
@@ -67,10 +91,25 @@ export async function addObjects(scene, earthScale, moonScale) {
     moon = moonMesh;
     scene.add(moon);
 
+    // Load Satellite, and add to scene
+    const satMesh = await satellite.load();
+    satellite = satMesh;
+    scene.add(satellite);
+
+    let trailObj = new SatelliteTrail(satellite);
+    trailObj.preload();
+
     // Return loaded earth and moon objects
     return {
         earthObj: earth,
-        moonObj: moon
+        moonObj: moon,
+        satelliteObj: satellite,
+        trailObj: trailObj,
+        labelList: [
+          new ObjectLabel(earth, "Earth"),
+          new ObjectLabel(moon, "Moon"),
+          new ObjectLabel(satellite, config.mainSpacecraftName)
+        ]
     };
 }
 

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { CSSTransitionGroup } from 'react-transition-group';
-import TimelineSlider from './TimelineSlider';
-import SpeedSlider from './SpeedSlider';
+import TimelineSlider from './sliders/TimelineSlider';
+import SpeedSlider from './sliders/SpeedSlider';
+import TrailControls from './toggleControls/TrailControls';
+import CameraControls from './toggleControls/CameraControls';
+import LabelControls from './toggleControls/LabelControls';
 
 export default class SimulationControls extends Component {
   constructor(props) {
@@ -21,6 +24,13 @@ export default class SimulationControls extends Component {
           onClick={this.handleClick}>{this.state.controlsVisible ? 'Hide Controls' : 'Show Controls'}</button>
         <div className="simulation-controls">
           <CSSTransitionGroup transitionName="controls" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+            {this.state.controlsVisible && (
+              <div className="toggleControls">
+                <CameraControls/>
+                <TrailControls/>
+                <LabelControls/>
+              </div>
+            )}
             {this.state.controlsVisible && <TimelineSlider/>}
             {this.state.controlsVisible && <SpeedSlider/>}
           </CSSTransitionGroup>

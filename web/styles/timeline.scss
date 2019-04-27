@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .simulation-controls-container {
   position: absolute;
   bottom: 0;
@@ -8,20 +10,49 @@
   padding-bottom: 0.75em;
   opacity: 0.99;
   overflow: hidden;
+  z-index: 20;
 }
 
 .toggleControlsButton {
-  background-color: #324856;
+  background-color: $blue;
   border: none;
+  opacity: 0.7;
   color: white;
   padding: 0.5em;
   text-align: center;
   text-decoration: none;
   display: inline-block;
+
+  &:hover {
+    background-color: #2a3c49;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &.selected {
+    background-color: #212f39;
+  }
 }
 
-.toggleControlsButton:focus {
-  outline: 0;
+.multi-option-toggler {
+  display: inline-block;
+  color: white;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  background-color: #121a21;
+  padding: 0.5em;
+  margin-right: 1.5em;
+
+  span {
+    padding-right: 0.5em;
+  }
+}
+
+.toggle-controls-container {
+  display: block;
+  width: 20em;
 }
 
 //timeline slider container

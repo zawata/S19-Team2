@@ -1,7 +1,9 @@
 @import './timeline.scss';
 @import './speedSlider.scss';
+@import './variables.scss';
 
 body {
+  overflow: hidden;
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -11,14 +13,37 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.changeSceneButtonID {
-  position: absolute;
-  top: 2em;
-  right: 2em;
-  opacity: 0.7;
-  margin-bottom: 1em;
+.changeSceneButton {
+
+  button {
+    position: absolute;
+    top: 2em;
+    right: 2em;
+    opacity: 0.7;
+    margin-bottom: 1em;
+    background-color: $blue;
+    border: none;
+    color: white;
+    padding: 0.5em;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  button:hover {
+    background-color: $blue-dark;
+  }
+
+  button:focus {
+    outline: 0;
+  }
 }
 
 .button-text {
   margin-left: 1em;
+}
+
+.text-label {
+  color: #ffffff;
+  pointer-events:none;
+  z-index: 0;
 }

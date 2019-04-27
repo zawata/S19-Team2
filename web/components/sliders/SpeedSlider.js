@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { render } from "react-dom";
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { SliderRail, Handle, Track, Tick } from "./sliderComponents"; // example render components - source in sliderComponents
-import { selectAnimationSpeed } from '../reducers';
-import { updateAnimationSpeed } from '../actions/spaceSceneActions';
+import { selectAnimationSpeed } from '../../reducers';
+import { updateAnimationSpeed } from '../../actions/spaceSceneActions';
+import { set_update_frequency } from '../../libraries/position_store';
 
 const sliderStyle = {
   position: "relative",
   width: "100%"
 };
 
-const domain = [0.5, 4];
+const domain = [0, 3000];
 const stepSize = 0.5;
 
 class SpeedSlider extends Component {
@@ -29,6 +29,7 @@ class SpeedSlider extends Component {
   }
 
   onChange = ([newSpeed]) => {
+    set_update_frequency(newSpeed);
     this.props.updateAnimationSpeed(newSpeed);
   }
 

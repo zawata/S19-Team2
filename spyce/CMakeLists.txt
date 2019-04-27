@@ -40,10 +40,6 @@ add_library( spyce SHARED
         py_wrapper.cpp
         spyce_main.cpp)
 
-#Move library back to source folder for easy access
-set_target_properties( spyce PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "../../spyce")
-
 #Remove the "lib-" prefix because the naming scheme
 set_target_properties( spyce PROPERTIES
         PREFIX "")
