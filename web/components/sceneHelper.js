@@ -13,6 +13,12 @@ import ObjectLabel from '../models/objectLabel';
 import config from '../config/config'
 
 /**
+ * Scene Helper
+ * Holds all helper functions used by SpaceScene
+ * to help build the scene (lights, camera, models, etc)
+ */
+
+/**
  * buildScene
  * Creates the scene, camera, and controls
  */
@@ -40,6 +46,7 @@ export function buildScene() {
   moonCamera.zoom = 25;
   moonCamera.updateProjectionMatrix();
 
+  // Create spacecraft view camera
   let spacecraftCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0001, 10000);
 
   // Make scene responsive
@@ -55,8 +62,7 @@ export function buildScene() {
     moonCamera.updateWorldMatrix()
     spacecraftCamera.aspect = solarCamera.aspect;
     spacecraftCamera.updateProjectionMatrix();
-    spacecraftCamera.updateWorldMatrix()
-
+    spacecraftCamera.updateWorldMatrix();
   });
 
   // Return created objects to the scene
@@ -72,7 +78,8 @@ export function buildScene() {
 
 /**
  * addObjects
- * Adds earth and moon to the scene
+ * Adds earth, moon, satellite, satellite trail,
+ * and object labels to the scene
  */
 export async function addObjects(scene, earthScale, moonScale) {
 
@@ -96,10 +103,11 @@ export async function addObjects(scene, earthScale, moonScale) {
     satellite = satMesh;
     scene.add(satellite);
 
+    // Create trail object, based on satellite
     let trailObj = new SatelliteTrail(satellite);
     trailObj.preload();
 
-    // Return loaded earth and moon objects
+    // Return loaded objects
     return {
         earthObj: earth,
         moonObj: moon,

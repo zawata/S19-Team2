@@ -24,10 +24,12 @@ class SpeedSlider extends Component {
     };
   }
 
+  // On user drag
   onUpdate = (update) => {
     this.setState({ update })
   }
 
+  // On user letting go of slider after change
   onChange = ([newSpeed]) => {
     set_update_frequency(newSpeed);
     this.props.updateAnimationSpeed(newSpeed);

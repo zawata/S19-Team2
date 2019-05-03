@@ -6,6 +6,11 @@ import TrailControls from './toggleControls/TrailControls';
 import CameraControls from './toggleControls/CameraControls';
 import LabelControls from './toggleControls/LabelControls';
 
+/**
+ * Simulation Controls
+ * Wrapper React component for all simulation controls
+ */
+
 export default class SimulationControls extends Component {
   constructor(props) {
     super(props);

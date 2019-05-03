@@ -45,6 +45,7 @@ class TimelineSlider extends Component {
     };
   }
 
+  // On user letting go of slider after update
   onChange = ([ms]) => {
     if (!Number.isNaN(ms) && ms != undefined && ms != null) {
       // Only change the date if it was triggered by a user input
@@ -52,14 +53,17 @@ class TimelineSlider extends Component {
         set_working_date(new Date(ms));
         this.props.updateSimulationTime(ms);
       }
+      // Allow the slider to tick after user is done changing the date
       this.setState({
         allowTick: true,
       })
     }
   };
 
+  // On user drag
   onUpdate = ([ms]) => {
     if (!Number.isNaN(ms) && ms != undefined && ms != null){
+      // Don't allow the slider to tick while the user is updating the date
       this.setState({
         updated: new Date(ms),
         allowTick: false,
@@ -67,6 +71,7 @@ class TimelineSlider extends Component {
     }
   };
 
+  // Returns a div with proper date formatting
   renderDateTime(date) {
     return (
       <div className="displayed-date">
@@ -148,6 +153,11 @@ class TimelineSlider extends Component {
   }
 }
 
+/**
+ * Redux Pattern
+ * binds this.props.simulationTime to the
+ * current value of the simulation time in the store
+ */
 const mapStateToProps = (state) => ({
   simulationTime: selectSimulationTime(state)
 });

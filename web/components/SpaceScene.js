@@ -19,13 +19,19 @@ const earthScale = 0.0085270424;
 const moonScale = 0.0023228;
 const axis = new THREE.Vector3(0, 0.4101524, 0).normalize();
 
+/**
+ * SpaceScene
+ * Main scene component
+ * Holds the ThreeJS scene and the rendering logic
+ */
+
 class SpaceScene extends Component {
 
   constructor(props) {
     super(props);
     this.state = {};
 
-    //starts the update loop
+    // starts the update loop
     pos_store.init_store();
   }
 
@@ -41,6 +47,8 @@ class SpaceScene extends Component {
      * Runs every frame to animate the scene
      */
     const update = () => {
+
+      // Update positions of sun, moon, and spacecraft
       let sun_pos = pos_store.get_object_position("sun");
       pointLight.position.x = sun_pos.x;
       pointLight.position.y = sun_pos.y;
@@ -56,10 +64,11 @@ class SpaceScene extends Component {
       satelliteObj.position.y = sat_pos.y;
       satelliteObj.position.z = sat_pos.z;
 
+      // Have moon look at the earth, and the moon camera look at the moon
       moonObj.lookAt(0,0,0);
-
       moonCamera.lookAt(moonObj.position);
 
+      // Calculate where to position the spacecraft camera based on its velocity vector
       let satVelocityMagnitude = Math.sqrt(
         Math.pow(sat_pos.dx, 2) + Math.pow(sat_pos.dy, 2) + Math.pow(sat_pos.dz, 2)
       );
@@ -73,6 +82,7 @@ class SpaceScene extends Component {
       spacecraftCamera.position.z = sat_pos.z - normalizedSatelliteVelocityVector.z*.001;
       spacecraftCamera.lookAt(satelliteObj.position);
 
+      // Determine whether to display full, partial, or no spacecraft trail
       scene.remove(currentTrailObj);
       if(this.props.currentTrailType == "full") {
         currentTrailObj = trailObj.getFullPath();
@@ -81,7 +91,6 @@ class SpaceScene extends Component {
       } else {
         currentTrailObj = null;
       }
-
       if(currentTrailObj) {
         scene.add(currentTrailObj);
       }
@@ -89,6 +98,7 @@ class SpaceScene extends Component {
       earthObj.rotateOnAxis(axis, 0.0009);
       moonObj.rotateOnAxis(axis, 0.001);
 
+      // Update position of labels based on current camera and label controls state
       labelList.forEach(label => {
         label.updatePosition(renderer, selectedCameraObj, this.props.showLabels);
       });
@@ -109,6 +119,7 @@ class SpaceScene extends Component {
     const animate = () => {
       requestAnimationFrame(animate);
 
+      // Choose which camera to render the scene with
       switch(this.props.selectedCamera) {
       case 'solar':
         selectedCameraObj = solarCamera;
